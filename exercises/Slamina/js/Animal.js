@@ -1,3 +1,5 @@
+//This is the class to hold the images and behaviours of the animals
+
 class Animal {
 //Create general animal object
   constructor(x, y, vx, image) {

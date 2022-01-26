@@ -15,7 +15,7 @@ let trap = {
   easing: 0.05,
 }
 
-let otherDogs = {
+let animals = {
   images: [],
   objects: [],
   x: 50,
@@ -23,15 +23,38 @@ let otherDogs = {
   vy: 150,
   vx: 0,
 };
-const OTHER_DOGS_NUM = 10;
-const OTHER_DOGS_PREFIX = `assets/images/animal`;
+const ANIMAL_NUM = 10;
+const ANIMAL_PREFIX = `assets/images/animal`;
+const ANIMAL_NAMES = [
+  "lion",
+  "hyena",
+  "alpaca",
+  "antelope",
+  "ape",
+  "armadillo",
+  "baboon",
+  "badger",
+  "bat",
+  "bear",
+  "beaver",
+  "bison",
+  "boar",
+];
+
+//Text appearance
+const QUESTION_DELAY = 2000;
+// The current answer to display (we use it initially to display the click instruction)
+let currentAnswer = `Click to begin.`;
+// The current animal name the user is trying to guess
+let currentAnimal = ``;
 
 let colour = 200;
 
 function preload() {
-  for(let i=0; i < OTHER_DOGS_NUM; i++) {
-    let otherDog = loadImage(`${OTHER_DOGS_PREFIX}${i}.png`);
-    otherDogs.images.push(otherDog);
+  //load the images of the animals in a loop
+  for(let i=0; i < ANIMAL_NUM; i++) {
+    let animal = loadImage(`${ANIMAL_PREFIX}${i}.png`);
+    animals.images.push(animal);
   }
 }
 
@@ -39,19 +62,33 @@ function preload() {
 function setup() {
   createCanvas(1600, 600);
   
-  //Create random dogs moving left and right
-  for (let i=0; i< OTHER_DOGS_NUM; i++) {
+  //Create random animals moving left and right
+  for (let i=0; i< ANIMAL_NUM; i++) {
     // otherDogs.y += otherDogs.vy;
-    otherDogs.y = random(100, 600);
-    otherDogs.x = random(50, 1600);
-    otherDogs.vx = random(2,5);
-    let otherDogImg = random(otherDogs.images);
-    let otherDogObject = new Animal(otherDogs.x, otherDogs.y, otherDogs.vx, otherDogImg);
-    otherDogs.objects.push(otherDogObject);
+    animals.y = random(100, 600);
+    animals.x = random(50, 1600);
+    animals.vx = random(2,5);
+    let animalImg = animals.images[i];
+    let animalObject = new Animal(animals.x, animals.y, animals.vx, animalImg);
+    animals.objects.push(animalObject);
   } 
+
+  //Speech recognition
+  if (annyang) {
+    // Create the guessing command
+    let commands = {
+      'I think it is *animal': guess,
+      'hello': function() {
+        alert(`Hi there!`);
+      },
+    };
+    // Setup annyang and start
+    annyang.addCommands(commands);
+    annyang.start();
+  }
 }
 
-// Display and move the cars
+// general game structures
 function draw() {
   background(colour);
 
@@ -61,6 +98,10 @@ function draw() {
 
   if (state === `game`) {
     game();
+  }
+
+  if (state === `guess`) {
+    guess();
   }
 
   else if (state === `ending`) {
@@ -74,9 +115,11 @@ function title() {
   textSize(32);
   text(`Press any key to start!`, 150, 300);
   pop();
+
 }
 
 function game() {
+  //Setting up an easing for the ellipse
   stroke(0);
   noFill();
   let dx = mouseX - trap.x;
@@ -85,12 +128,21 @@ function game() {
   trap.y += dy * trap.easing;
   ellipse(trap.x, trap.y, trap.size);
 
-  for (let i=0; i< otherDogs.objects.length; i++) {
-    otherDogs.objects[i].display();
-    otherDogs.objects[i].move();
-    otherDogs.objects[i].wrap();
-    otherDogs.objects[i].checkOverlap();
+  //animating the animals
+  for (let i=0; i< animals.objects.length; i++) {
+    animals.objects[i].display();
+    animals.objects[i].move();
+    animals.objects[i].wrap();
+    animals.objects[i].checkOverlap();
   }
+
+  //
+}
+
+// guessing state
+function guess() {
+  // currentAnswer = animal.toLowerCase();
+  displaySpeech();
 }
 
 function ending() {
@@ -101,12 +153,38 @@ function ending() {
   pop();
 }
 
-function mousePressed() {
-  otherDogs.objects[0].mousePressed();
-  if (otherDogs.objects[0].found) {
-    state = `ending`;
+//Display the text version of the speech input
+function displaySpeech() {
+  if (currentAnswer === currentAnimal) {
+    fill(0, 255, 0);
+    text(`Correct Guess!`, width / 2, height*2 / 3);
   }
   else {
-    colour -= 50;
+    fill(255, 0, 0);
+    text(`Wrong Guess!`, width / 2, height*2 / 3);
+  }
+  text(currentAnswer, width / 2, height / 2);
+}
+
+//Clear out current answer
+function nextQuestion() {
+  currentAnswer = ``;
+  currentAnimal = random(ANIMAL_NAMES);
+  responsiveVoice.speak(currentAnimal);
+}
+
+function mousePressed() {
+  animals.objects[0].mousePressed();
+  if (animals.objects[0].found) {
+    state = `guess`;
+  }
+  else {
+    nextQuestion();
+  }
+}
+
+function keyPressed() {
+  if (state === `title`) {
+    state = `game`;
   }
 }

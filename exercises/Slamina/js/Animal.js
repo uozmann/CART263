@@ -6,6 +6,8 @@ class Animal {
     this.image = image;
 
     this.flip = false;
+    this.found = false;
+    this.overlap = false;
 
     this.vx = vx;
     this.vy = 0;
@@ -22,6 +24,25 @@ class Animal {
     if (this.x > width || this.x < 0) {
       this.vx = -this.vx;
       this.flip = !this.flip;
+    }
+  }
+
+//Check if animal overlaps with the ellipse
+  checkOverlap() {
+    let d = dist(trap.x, trap.y, this.x, this.y);
+    if (d<= 75) {
+      this.overlap = true;
+    }
+    else {
+      this.overlap = false;
+    }
+  }
+
+// Checks if this sausage dog was clicked and remembers it was found if so
+  mousePressed() {
+    if (!this.found && this.overlap) {
+      this.found = true;
+      this.react();
     }
   }
 

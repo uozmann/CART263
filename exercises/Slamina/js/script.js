@@ -1,15 +1,12 @@
 "use strict";
+//Slamina plus Game version
+//Man Zou
 
-let state = `game`;
-// The sausage dog
-let sausageDog = {
-  object: undefined,
-  image: undefined,
-  x: undefined,
-  y: undefined,
-  vx: 0,
-};
-const SAUSAGEDOG_PREFIX = `assets/images/sausage-dog.png`;
+//Mouseclick on the named animal
+//Press any key to change animal
+
+//begin with the title page
+let state = `title`;
 
 let trap = {
   x: 800,
@@ -36,7 +33,6 @@ function preload() {
     let otherDog = loadImage(`${OTHER_DOGS_PREFIX}${i}.png`);
     otherDogs.images.push(otherDog);
   }
-  sausageDog.image = loadImage(`assets/images/sausage-dog.png`);
 }
 
 // Set up the canvas and the animal objects
@@ -52,21 +48,16 @@ function setup() {
     let otherDogImg = random(otherDogs.images);
     let otherDogObject = new Animal(otherDogs.x, otherDogs.y, otherDogs.vx, otherDogImg);
     otherDogs.objects.push(otherDogObject);
-  }
-
-  sausageDog.x = random(50, 1600);
-  sausageDog.y = random(100, 600);
-  sausageDog.vx = random(2,5);
-  sausageDog.object = new Sausagedog(sausageDog.x, sausageDog.y, sausageDog.vx, sausageDog.image);
-
-
-
-  
+  } 
 }
 
 // Display and move the cars
 function draw() {
   background(colour);
+
+  if (state === `title`) {
+    title();
+  }
 
   if (state === `game`) {
     game();
@@ -74,10 +65,15 @@ function draw() {
 
   else if (state === `ending`) {
     ending();
-  }
+  } 
+}
 
-
-  
+function title() {
+  push();
+  fill(0);
+  textSize(32);
+  text(`Press any key to start!`, 150, 300);
+  pop();
 }
 
 function game() {
@@ -93,28 +89,21 @@ function game() {
     otherDogs.objects[i].display();
     otherDogs.objects[i].move();
     otherDogs.objects[i].wrap();
+    otherDogs.objects[i].checkOverlap();
   }
-
-  sausageDog.object.display();
-  sausageDog.object.move();
-  sausageDog.object.wrap();
-  sausageDog.object.checkOverlap();
 }
 
 function ending() {
   push();
-  sausageDog.object.displayRotation();
-  sausageDog.object.react();
-  pop();
-
   fill(0);
   textSize(32);
   text(`You got this!`, 150, 300);
+  pop();
 }
 
 function mousePressed() {
-  sausageDog.object.mousePressed();
-  if (sausageDog.object.found) {
+  otherDogs.objects[0].mousePressed();
+  if (otherDogs.objects[0].found) {
     state = `ending`;
   }
   else {

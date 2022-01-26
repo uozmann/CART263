@@ -2,10 +2,11 @@
 
 class Animal {
 //Create general animal object
-  constructor(x, y, vx, image) {
+  constructor(x, y, vx, image, name) {
     this.x = x;
     this.y = y;
     this.image = image;
+    this.name = name;
 
     this.flip = false;
     this.found = false;
@@ -13,6 +14,7 @@ class Animal {
 
     this.vx = vx;
     this.vy = 0;
+
   }
 
 //Add movement to the racing animals
@@ -44,7 +46,6 @@ class Animal {
   mousePressed() {
     if (!this.found && this.overlap) {
       this.found = true;
-      this.react();
     }
   }
 

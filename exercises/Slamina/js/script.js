@@ -18,6 +18,7 @@ let trap = {
 let animals = {
   images: [],
   objects: [],
+  name: ``,
   x: 50,
   y: 100,
   vy: 150,
@@ -26,19 +27,18 @@ let animals = {
 const ANIMAL_NUM = 10;
 const ANIMAL_PREFIX = `assets/images/animal`;
 const ANIMAL_NAMES = [
+  "wolf",
+  "cat",
   "lion",
+  "dog",
+  "lynx",
+  "leopard",
   "hyena",
-  "alpaca",
-  "antelope",
-  "ape",
-  "armadillo",
-  "baboon",
-  "badger",
-  "bat",
   "bear",
-  "beaver",
-  "bison",
-  "boar",
+  "polar bear",
+  "panda",
+  
+  
 ];
 
 //Text appearance
@@ -62,15 +62,17 @@ function preload() {
 function setup() {
   createCanvas(1600, 600);
   
+  // Associate the animal name with its object
+  
   //Create random animals moving left and right
   for (let i=0; i< ANIMAL_NUM; i++) {
-    // otherDogs.y += otherDogs.vy;
-    animals.y = random(100, 600);
-    animals.x = random(50, 1600);
-    animals.vx = random(2,5);
-    let animalImg = animals.images[i];
-    let animalObject = new Animal(animals.x, animals.y, animals.vx, animalImg);
-    animals.objects.push(animalObject);
+      animals.y = random(100, 600);
+      animals.x = random(50, 1600);
+      animals.vx = random(2,5);
+      animals.name = ANIMAL_NAMES[i];
+      let animalImg = animals.images[i];
+      let animalObject = new Animal(animals.x, animals.y, animals.vx, animalImg, animals.name);
+      animals.objects.push(animalObject);
   } 
 
   //Speech recognition
@@ -134,6 +136,7 @@ function game() {
     animals.objects[i].move();
     animals.objects[i].wrap();
     animals.objects[i].checkOverlap();
+    animals.objects[i].mousePressed()
   }
 
   //
@@ -142,6 +145,7 @@ function game() {
 // guessing state
 function guess() {
   // currentAnswer = animal.toLowerCase();
+  text(currentAnswer, width / 2, height / 3);
   displaySpeech();
 }
 
@@ -173,18 +177,28 @@ function nextQuestion() {
   responsiveVoice.speak(currentAnimal);
 }
 
+//Mouse Pressed Commands
 function mousePressed() {
-  animals.objects[0].mousePressed();
-  if (animals.objects[0].found) {
-    state = `guess`;
+  // check if correct animal is pressed
+  for (let i=0; i< animals.objects.length; i++) {
+    animals.objects[i].mousePressed();
+    if (animals.objects[i].found && animals.objects[i].name === currentAnimal) {
+      state = `ending`;
+      
+    }
+    else if (animals.objects[i].found && animals.objects[i].name !== currentAnimal){
+      state = `guess`;
+    }
   }
-  else {
-    nextQuestion();
-  }
+  
 }
 
 function keyPressed() {
   if (state === `title`) {
     state = `game`;
+  }
+
+  if (state === `game`) {
+    nextQuestion();
   }
 }

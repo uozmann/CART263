@@ -42,7 +42,7 @@ class Animal {
     }
   }
 
-// Checks if this sausage dog was clicked and remembers it was found if so
+// Checks if the animal was clicked and remembers it was found if so
   mousePressed() {
     if (!this.found && this.overlap) {
       this.found = true;

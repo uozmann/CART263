@@ -80,6 +80,7 @@ function conversationText() {
   text(`You now live in ` + playerEZodiac.element + ` because you are born in ` + playerWZodiac.ruling_body_modern, width/2, height/3 + 200);
   text(`You are the ` + playerWZodiac.gloss + ` of the ` + playerEZodiac.direction, width/2, height/3 + 225);
   text(`Your mysterious surname is ` + playerEZodiac.unicode_symbol + `儿`, width/2, height/3 + 250);
+  text(`You are very likely to adopt an elf on the ` + playerEZodiac.trine + ` of the coming ` + playerEZodiac.season, width/2, height/3 + 275);
   } 
 }
 

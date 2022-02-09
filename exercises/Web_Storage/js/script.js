@@ -21,6 +21,10 @@ let modelName = `Handpose`;
 let handpose;
 // The current set of predictions made by Handpose once it's running
 let predictions = [];
+// The current index position
+let index;
+let indexX;
+let indexY;
 // Falling Bubbles
 let bubble = {
   group:[],
@@ -29,6 +33,8 @@ let bubble = {
   size: undefined,
   current: 0,
   bottom: false,
+  overlap: false,
+  found: false,
 }
 let bubbleNum = 10;
 
@@ -118,9 +124,9 @@ Provided with a detected hand it highlights the tip of the index finger
 */
 function highlightHand(hand) {
   // Display a circle at the tip of the index finger
-  let index = hand.annotations.indexFinger[3];
-  let indexX = index[0];
-  let indexY = index[1];
+  index = hand.annotations.indexFinger[3];
+  indexX = index[0];
+  indexY = index[1];
   push();
   fill(255, 255, 0);
   noStroke();
@@ -136,13 +142,14 @@ function bubbleDisplay() {
       bubble.group[i].display();
       
       bubble.group[bubble.current].move();
+      bubble.group[bubble.current].checkOverlap();
       bubble.group[i].clear();
-      if (bubble.bottom === true) {
+      if (bubble.bottom === true || bubble.found === true) {
         bubble.group.shift();
         bubble.bottom = false;
       }
     } 
   }
   
-  console.log(`The current length is ` + bubble.group.length);
+  console.log(`Bubble found ` + bubble.found);
 }

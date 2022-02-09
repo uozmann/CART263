@@ -1,17 +1,16 @@
-//This is the class to hold the images and behaviours of the animals
+//This is the class to hold the images and behaviours of the bubbles
 
 class Bubble {
-//Create general animal object
+//Create general bubble object
   constructor(x, y, size) {
     this.x = x;
     this.y = y;
     this.size = size;
     this.vx = 1;
     this.vy = 1;
-    this.found = false;
   }
 
-//Add movement to the racing animals
+//Add movement to the bubble
   move() {
     this.x += this.vx;
     this.y += this.vy;
@@ -20,32 +19,34 @@ class Bubble {
     }
   }
 
-//Return to initial position
+//Clear bubble once it reaches the bottom
   clear() {
     if (this.y > height) {
       bubble.bottom = true;
     }
   }
 
-//Check if animal overlaps with the ellipse
+//Check if bubble overlaps with the needle
   checkOverlap() {
-    let d = dist(indexX, indexY-100, this.x, this.y);
-    if (d<= 75) {
-      this.overlap = true;
+    let d = dist(indexX, indexY, this.x, this.y);
+    if (d<= 100) {
+      bubble.overlap = true;
+      bubble.found = true;
     }
     else {
-      this.overlap = false;
+      bubble.overlap = false;
     }
+    // Checks if the bubble was clicked and remembers it was found
+    // if (!bubble.found && bubble.overlap) {
+      
+    // }
   }
 
-// Checks if the animal was clicked and remembers it was found if so
+
   mousePressed() {
-    if (!this.found && this.overlap) {
-      this.found = true;
-    }
   }
 
- // Display the animal image
+ // Display the bubble shape
   display() {
     push();
     fill(0, 0, 255);

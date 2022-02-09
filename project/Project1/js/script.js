@@ -79,7 +79,7 @@ function conversationText() {
   if (qNum === 5) {
   push();
   textSize(18);
-  text(`You are a very ` + playerWZodiac.keywords.join(', ') + ` ` + adj + ` ` + noun, width/2, height/3 + 175);
+  text(`You are a very ` + playerWZodiac.keywords + ` ` + adj + ` ` + noun, width/2, height/3 + 175);
   text(`You now live in ` + playerEZodiac.element + ` because you are born in ` + playerWZodiac.ruling_body_modern, width/2, height/3 + 200);
   text(`You are the ` + playerWZodiac.gloss + ` of the ` + playerEZodiac.direction, width/2, height/3 + 225);
   text(`Your mysterious surname is ` + playerEZodiac.unicode_symbol + `儿`, width/2, height/3 + 250);

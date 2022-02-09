@@ -73,7 +73,7 @@ function setup() {
     fill(none, none, full);
     let bubbleX = random(0, width);
     let bubbleSize = random(25,100);
-    let individualBubble = new Bubble(bubbleX, bubble.y, bubbleSize);
+    let individualBubble = new Bubble(bubbleX, bubble.y, bubbleSize); //add the class into the script
     bubble.group.push(individualBubble);
   } 
 }
@@ -99,6 +99,7 @@ Displays a simple loading screen with the loading model's name
 function loading() {
   background(255);
 
+  //text saying loading
   push();
   textSize(32);
   textStyle(BOLD);
@@ -124,16 +125,15 @@ function running() {
     // Highlight it on the canvas
     highlightHand(hand);
   }
+  // display the bubbles
   bubbleDisplay();
-
-  text(bubble.foundNum, 50, 450);
 }
 
 /**
 Provided with a detected hand it highlights the tip of the index finger
 */
 function highlightHand(hand) {
-  // Display a circle at the tip of the index finger
+  // Display a circle and a tiny line at the tip of the index finger
   index = hand.annotations.indexFinger[3];
   indexX = index[0];
   indexY = index[1];
@@ -146,35 +146,39 @@ function highlightHand(hand) {
   pop();
 }
 
+//Animating the bubbles and displaying them
 function bubbleDisplay() {
-  if (bubble.group.length >0) {
+  if (bubble.group.length >0) { //if there are still bubbles 
     for (let i=0; i < bubble.group.length; i++) {
-      bubble.group[i].display();
-      
-      bubble.group[bubble.current].move();
-      bubble.group[bubble.current].checkOverlap();
-      bubble.group[i].clear();
+      bubble.group[i].display(); //display the ellipse
+      bubble.group[bubble.current].move(); //move the ellipse
+      bubble.group[bubble.current].checkOverlap(); //check if the bubble has been touched
+      bubble.group[i].clear(); //clear the bubble when it reaches the bottom
+      //delete the cleared bubble from the array
       if (bubble.bottom === true || bubble.found === true) {
         bubble.group.shift();
         bubble.bottom = false;
         bubble.found = false;
       }
     } 
-  } else if (bubble.group.length === 0) {
+  } else if (bubble.group.length === 0) { //if there is no more bubble go to ending
     state = `ending`;
   }
-  
   console.log(`Array length ` + bubble.group.length);
 }
 
+//State when all bubbles are gone
 function ending() {
   push();
+  //add a white rectangle
   fill(full);
   rect(0, 0, width, height);
+  //add title text
   fill(none,none,full);
   textAlign(CENTER, CENTER);
   textSize(72);
   text(`ENDING`, width/2, height/2);
+  //add score text
   textSize(32);
   text(`Score: ` + bubble.foundNum, width/2, height*2/3);
   pop();

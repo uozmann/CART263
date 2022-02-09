@@ -14,7 +14,7 @@ class Bubble {
   move() {
     this.x += this.vx;
     this.y += this.vy;
-    if (this.x > width || this.x < 0) {
+    if (this.x > width || this.x < 0) { //wrap
       this.vx = -this.vx;
     }
   }
@@ -32,19 +32,11 @@ class Bubble {
     if (d<= 100) {
       bubble.overlap = true;
       bubble.found = true;
-      bubble.foundNum ++;
+      bubble.foundNum ++; //add 1 point to the score
     }
     else {
       bubble.overlap = false;
     }
-    // Checks if the bubble was clicked and remembers it was found
-    // if (!bubble.found && bubble.overlap) {
-      
-    // }
-  }
-
-
-  mousePressed() {
   }
 
  // Display the bubble shape

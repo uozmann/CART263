@@ -32,6 +32,7 @@ class Bubble {
     if (d<= 100) {
       bubble.overlap = true;
       bubble.found = true;
+      bubble.foundNum ++;
     }
     else {
       bubble.overlap = false;

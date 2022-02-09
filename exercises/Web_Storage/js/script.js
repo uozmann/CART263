@@ -35,6 +35,7 @@ let bubble = {
   bottom: false,
   overlap: false,
   found: false,
+  foundNum: 0,
 }
 let bubbleNum = 10;
 
@@ -83,6 +84,9 @@ function draw() {
   else if (state === `running`) {
     running();
   }
+  else if (state === `ending`) {
+    ending();
+  }
 }
 
 /**
@@ -117,6 +121,8 @@ function running() {
     highlightHand(hand);
   }
   bubbleDisplay();
+
+  text(bubble.foundNum, 50, 450);
 }
 
 /**
@@ -131,8 +137,8 @@ function highlightHand(hand) {
   fill(255, 255, 0);
   noStroke();
   ellipse(indexX, indexY, 50);
-  stroke(255, 255, 0);
-  line(indexX, indexY, indexX, indexY-100);
+  stroke(0, 0, 255);
+  line(indexX, indexY, indexX, indexY-25);
   pop();
 }
 
@@ -150,7 +156,22 @@ function bubbleDisplay() {
         bubble.found = false;
       }
     } 
+  } else if (bubble.group.length === 0) {
+    state = `ending`;
   }
   
-  console.log(`Bubble found ` + bubble.found);
+  console.log(`Array length ` + bubble.group.length);
+}
+
+function ending() {
+  push();
+  fill(255);
+  rect(0, 0, width, height);
+  fill(0,0,255);
+  textAlign(CENTER, CENTER);
+  textSize(72);
+  text(`ENDING`, width/2, height/2);
+  textSize(32);
+  text(`Score: ` + bubble.foundNum, width/2, height*2/3);
+  pop();
 }

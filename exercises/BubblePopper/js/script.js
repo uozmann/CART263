@@ -1,11 +1,10 @@
 /**
 
-Handpose Framework
-Pippin Barr
+Bubble Popping Game
+Man Zou
 
-A skeleton framework for using ml5.js's Handpose feature. Includes a
-loading screen followed by a live webcam feed with a circle drawn at
-the tip of the user's index finger.
+Use your index finger to touch the bubbles and pop them.
+Each popped bubble corresponds to 1 point.
 
 */
 
@@ -27,17 +26,21 @@ let indexX;
 let indexY;
 // Falling Bubbles
 let bubble = {
-  group:[],
-  x: 0,
-  y: 0,
-  size: undefined,
-  current: 0,
-  bottom: false,
-  overlap: false,
-  found: false,
-  foundNum: 0,
+  group:[], //array containing the bubbles
+  x: 0, //starting position
+  y: 0, //starting position
+  size: undefined, //size of bubble
+  current: 0, //counting the current bubble falling
+  bottom: false, //see if bubble reached the bottom
+  overlap: false, //check if bubble is touching with the finger
+  found: false, //bubble not yet popped
+  foundNum: 0, //score
 }
-let bubbleNum = 10;
+let bubbleNum = 10; //total number of bubbles
+
+//for colours
+let full = 255;
+let none = 0;
 
 /**
 Starts the webcam and the Handpose
@@ -66,7 +69,8 @@ function setup() {
 
   // Set an initial random x position for the bubbles
   for (let i=0; i < bubbleNum; i++) {
-    fill(0, 0, 255);
+    noStroke();
+    fill(none, none, full);
     let bubbleX = random(0, width);
     let bubbleSize = random(25,100);
     let individualBubble = new Bubble(bubbleX, bubble.y, bubbleSize);
@@ -165,9 +169,9 @@ function bubbleDisplay() {
 
 function ending() {
   push();
-  fill(255);
+  fill(full);
   rect(0, 0, width, height);
-  fill(0,0,255);
+  fill(none,none,full);
   textAlign(CENTER, CENTER);
   textSize(72);
   text(`ENDING`, width/2, height/2);

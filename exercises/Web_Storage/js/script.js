@@ -1,10 +1,11 @@
 /**
 
-Handpose Bubble Pop
-Man Zou
+Handpose Framework
+Pippin Barr
 
-Move the needle with your finger. 
-The ballons are going down one by one, you have to pop them before they reached the ground.
+A skeleton framework for using ml5.js's Handpose feature. Includes a
+loading screen followed by a live webcam feed with a circle drawn at
+the tip of the user's index finger.
 
 */
 
@@ -20,7 +21,16 @@ let modelName = `Handpose`;
 let handpose;
 // The current set of predictions made by Handpose once it's running
 let predictions = [];
-
+// Falling Bubbles
+let bubble = {
+  group:[],
+  x: 0,
+  y: 0,
+  size: undefined,
+  current: 0,
+  bottom: false,
+}
+let bubbleNum = 10;
 
 /**
 Starts the webcam and the Handpose
@@ -47,6 +57,14 @@ function setup() {
     predictions = results;
   });
 
+  // Set an initial random x position for the bubbles
+  for (let i=0; i < bubbleNum; i++) {
+    fill(0, 0, 255);
+    let bubbleX = random(0, width);
+    let bubbleSize = random(25,100);
+    let individualBubble = new Bubble(bubbleX, bubble.y, bubbleSize);
+    bubble.group.push(individualBubble);
+  } 
 }
 
 /**
@@ -110,4 +128,21 @@ function highlightHand(hand) {
   stroke(255, 255, 0);
   line(indexX, indexY, indexX, indexY-100);
   pop();
+}
+
+function bubbleDisplay() {
+  if (bubble.group.length >0) {
+    for (let i=0; i < bubble.group.length; i++) {
+      bubble.group[i].display();
+      
+      bubble.group[bubble.current].move();
+      bubble.group[i].clear();
+      if (bubble.bottom === true) {
+        bubble.group.shift();
+        bubble.bottom = false;
+      }
+    } 
+  }
+  
+  console.log(`The current length is ` + bubble.group.length);
 }

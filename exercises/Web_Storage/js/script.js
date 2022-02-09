@@ -147,6 +147,7 @@ function bubbleDisplay() {
       if (bubble.bottom === true || bubble.found === true) {
         bubble.group.shift();
         bubble.bottom = false;
+        bubble.found = false;
       }
     } 
   }

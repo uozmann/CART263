@@ -123,11 +123,12 @@ label and confidence value
 function highlightObject(object) {
   // Display a box around it
   push();
-  if (object.label === `person`) {
-    fill(0);
-  } else {
-    noFill();
-  }
+  noFill();
+  // if (object.label === `person`) {
+  //   fill(0);
+  // } else {
+  //   noFill();
+  // }
   stroke(255, 255, 0);
   rect(object.x, object.y, object.width, object.height);
   pop();

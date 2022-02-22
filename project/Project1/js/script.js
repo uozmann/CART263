@@ -39,57 +39,191 @@ let btn = {
   game: undefined,
 }
 
+// let q = {
+//   x: undefined,
+//   y: undefined,
+//   colour: 0,
+//   num: [0,1,2,3,4,5],
+//   content: [`Are you willing to be a man?`, `Are you willing to marry a man?`, `Are you willing to act like a woman?`, `Are you willing to be owned by a man?`, `Are you willing to...`],
+//   description: [`To work in the Paper world, you should be a male gender.`, `To work in your dream job you should marry a man.`, `To work in your dream job you should act like a woman.`, `To protect your loved ones you should be owned by a man.`, `To have the role you want you should...`],
+//   current: 0,
+//   responses: [],
+//   sanityLevel: {
+//     content: undefined,
+//     x: undefined,
+//     y: undefined,
+//   },
+// }
+
 let q = {
   x: undefined,
   y: undefined,
   colour: 0,
-  num: [0,1,2,3,4,5],
-  content: [`Are you willing to be a man?`, `Are you willing to marry a man?`, `Are you willing to act like a woman?`, `Are you willing to be owned by a man?`, `Are you willing to...`],
-  description: [`To work in the Paper world, you should be a male gender.`, `To work in your dream job you should marry a man.`, `To work in your dream job you should act like a woman.`, `To protect your loved ones you should be owned by a man.`, `To have the role you want you should...`],
   current: 0,
-  responses: [],
+  questions: [
+    {
+      content: `Are you willing to be a man?`,
+      description: `To work in the Paper World, you should be a male gender.`,
+      response: ``,
+      sanityTest: {
+        answer: `yes`,
+        condition: {
+          property: `identifiedGenderInput`,
+          value: `Female`
+        },
+        penalty: -10
+      }
+    },
+    {
+      content: `Are you willing to marry a man?`,
+      description: `To work in your dream job you should marry a man...`,
+      response: ``,
+      sanityTest: {
+        answer: `no`,
+        condition: {
+          property: `sexualOrientationInput`,
+          value: `Female (women)`
+        },
+        penalty: -20
+      }
+    },
+    {
+      content: `Are you willing to act like a woman?`,
+      description: `To work in your dream job you should act like a woman.`,
+      response: ``,
+      sanityTest: {
+        answer: `no`,
+        condition: {
+          property: `sexualOrientationInput`,
+          value: `Female (women)`
+        },
+        penalty: -10
+      }
+    },
+    {
+      content: `Are you willing to be owned by a man?`,
+      description: `To protect your loved ones you should be owned by a man.`,
+      response: ``,
+      sanityTest: {
+        answer: `no`,
+        condition: {
+          property: `sexualOrientationInput`,
+          value: `Female (women)`
+        },
+        penalty: -10
+      }
+    },
+    {
+      content: `Are you willing to?`,
+      description: `To .`,
+      response: ``,
+      sanityTest: {
+        answer: `no`,
+        condition: {
+          property: `sexualOrientationInput`,
+          value: `Female (women)`
+        },
+        penalty: -10
+      }
+    },
+    {
+      content: `Are you willing to?`,
+      description: `To.`,
+      response: ``,
+      sanityTest: {
+        answer: `no`,
+        condition: {
+          property: `sexualOrientationInput`,
+          value: `Female (women)`
+        },
+        penalty: -60
+      }
+    },
+    {
+      content: `Are you willing to be a man?`,
+      description: `To work in the Paper World, you should be a male gender.`,
+      response: ``,
+      sanityTest: {
+        answer: `yes`,
+        condition: {
+          property: `identifiedGenderInput`,
+          value: `Female`
+        },
+        penalty: -10
+      }
+    },
+    {
+      content: `Are you willing to marry a man?`,
+      description: `To work in your dream job you should marry a man...`,
+      response: ``,
+      sanityTest: {
+        answer: `no`,
+        condition: {
+          property: `sexualOrientationInput`,
+          value: `Female (women)`
+        },
+        penalty: -20
+      }
+    },
+    {
+      content: `Are you willing to act like a woman?`,
+      description: `To work in your dream job you should act like a woman.`,
+      response: ``,
+      sanityTest: {
+        answer: `no`,
+        condition: {
+          property: `sexualOrientationInput`,
+          value: `Female (women)`
+        },
+        penalty: -10
+      }
+    },
+    {
+      content: `Are you willing to be owned by a man?`,
+      description: `To protect your loved ones you should be owned by a man.`,
+      response: ``,
+      sanityTest: {
+        answer: `no`,
+        condition: {
+          property: `sexualOrientationInput`,
+          value: `Female (women)`
+        },
+        penalty: -10
+      }
+    },
+    {
+      content: `Are you willing to?`,
+      description: `To .`,
+      response: ``,
+      sanityTest: {
+        answer: `no`,
+        condition: {
+          property: `sexualOrientationInput`,
+          value: `Female (women)`
+        },
+        penalty: -10
+      }
+    },
+    {
+      content: `Are you willing to?`,
+      description: `To.`,
+      response: ``,
+      sanityTest: {
+        answer: `no`,
+        condition: {
+          property: `sexualOrientationInput`,
+          value: `Female (women)`
+        },
+        penalty: -60
+      }
+    }
+  ],
   sanityLevel: {
     content: undefined,
     x: undefined,
     y: undefined,
   },
 }
-
-// let q = {
-//   x: undefined,
-//   y: undefined,
-//   color: 0,
-//   current: 0,
-//   questions: [
-//     {
-//       content: `Are you willing to be a man?`,
-//       description: `To work in the Paper World, you should be a male gender.`,
-//       response: ``,
-//       sanityTest: {
-//         answer: `yes`,
-//         condition: {
-//           property: `identifiedGenderInput`,
-//           value: `Female`
-//         },
-//         penalty: -10
-//       }
-//     },
-//     {
-//       content: `Are you willing to marry a man?`,
-//       description: `To work in your dream job you should marry a man..`,
-//       response: ``,
-//       sanityTest: {
-//         answer: `no`,
-//         condition: {
-//           property: `sexualOrientationInput`,
-//           value: `Female (women)`
-//         },
-//         penalty: -20
-//       }
-//     }
-//   ],
-//   sanityLevel: 100,
-// }
 
 let doors = {
   objects: [],
@@ -185,7 +319,7 @@ p5.setup = function() {
       let y = j*240;
       let colour = 100;
       colours.doors.push(colour);
-      q.responses.push(``);
+      // q.responses.push(``); 
       let doorObject= new Door(x, y, colours.black, colours.doors[i*j], p5);
       doors.objects.push(doorObject);
     } 
@@ -207,7 +341,7 @@ p5.setup = function() {
     if (window.annyang) {
       // Create commands
       let commands = {
-        'My answer id *answer': setAnswer,
+        'My answer is *answer': setAnswer,
       }
       // Add the commands and start annyang
       window.annyang.addCommands(commands);
@@ -378,9 +512,9 @@ function game() {
 
   //display the doors behind
   for (let prop in doors.objects) {
-    if (q.responses[prop] === `yes`) { //change colour depending on the response
+    if (q.questions[prop].response === `yes`) { //change colour depending on the response
       doors.objects[prop].openDoor();
-    } else if (q.responses[prop] === `no`) {
+    } else if (q.questions[prop].response === `no`) {
       doors.objects[prop].closeDoor();
     }
     doors.objects[prop].display();
@@ -393,10 +527,10 @@ function game() {
   p5.textWrap(p5.WORD);
   q.colour = 128 + 128 * p5.sin(p5.millis() / 1000);
   p5.fill(q.colour);
-  p5.text(`Q${q.num[q.current]}: ${q.content[q.current]}`, q.x, q.y, p5.width*7/8);
+  p5.text(`Q${q.current}: ${q.questions[q.current].content}`, q.x, q.y, p5.width*7/8);
   p5.textFont(courier.regular);
   p5.textSize(24);
-  p5.text(q.description[q.current], q.x, q.y +100);
+  p5.text(q.questions[q.current].description, q.x, q.y +100);
 
   //Sanity Level
   p5.textFont(courier.bold);
@@ -414,145 +548,145 @@ function ending() {
 // //Annyang functions that update the questions and sanity level depending on the answer.
 // //From here to line 520
 
-// function setAnswer(answer) {
-//   let question = q.question[q.current];
-//   question.response = answer;
-//   q.current++;
-//   window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
-//   q.y = p5.height/8;
-//   if (answer === question.sanityTest.answer &&
-//       btn[question.sanityTest.condition.property] === question.sanityTest.condition.value) {
-//     q.sanityLevel.content += question.sanityTest.penalty;
+function setAnswer(answer) {
+  let question = q.questions[q.current];
+  question.response = answer;
+  q.current++;
+  window.responsiveVoice.speak(`Question${q.current}: ${q.questions[q.current].content}`);
+  q.y = p5.height/8;
+  if (answer === question.sanityTest.answer &&
+      btn[question.sanityTest.condition.property] === question.sanityTest.condition.value) {
+    q.sanityLevel.content += question.sanityTest.penalty;
+  }
+}
+// function setAnswer0(answer) { //1st question
+//   if (answer) {
+//     q.responses[0] = answer;
+//     q.current +=1;
+//     window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
+//     q.y = p5.height/8;
+//     if (answer === `yes` && btn.identifiedGenderInput === `Female`) {
+//       q.sanityLevel.content -= 10;
+//     }
 //   }
 // }
-function setAnswer0(answer) { //1st question
-  if (answer) {
-    q.responses[0] = answer;
-    q.current +=1;
-    window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
-    q.y = p5.height/8;
-    if (answer === `yes` && btn.identifiedGenderInput === `Female`) {
-      q.sanityLevel.content -= 10;
-    }
-  }
-}
 
-function setAnswer1(answer) {
-  if (answer) {
-    q.responses[1] = answer;
-    q.current +=1;
-    window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
-    q.y = p5.height/8;
-    if (answer === `yes` && btn.sexualOrientationInput === `Female (women)`) {
-      q.sanityLevel.content -= 10;
-    }
-  }
-}
+// function setAnswer1(answer) {
+//   if (answer) {
+//     q.responses[1] = answer;
+//     q.current +=1;
+//     window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
+//     q.y = p5.height/8;
+//     if (answer === `yes` && btn.sexualOrientationInput === `Female (women)`) {
+//       q.sanityLevel.content -= 10;
+//     }
+//   }
+// }
 
-function setAnswer2(answer) {
-  if (answer) {
-    q.responses[2] = answer;
-    q.current +=1;
-    window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
-    q.y = p5.height/8;
-    if (answer === `yes` && btn.identifiedGenderInput === `Male`) {
-      q.sanityLevel.content -= 10;
-    }
-  }
-}
+// function setAnswer2(answer) {
+//   if (answer) {
+//     q.responses[2] = answer;
+//     q.current +=1;
+//     window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
+//     q.y = p5.height/8;
+//     if (answer === `yes` && btn.identifiedGenderInput === `Male`) {
+//       q.sanityLevel.content -= 10;
+//     }
+//   }
+// }
 
-function setAnswer3(answer) {
-  if (answer) {
-    q.responses[3] = answer;
-    q.current +=1;
-    window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
-    q.y = p5.height/8;
-    if (answer === `yes`) {
-      q.sanityLevel.content -= 10;
-    }
-  }
-}
+// function setAnswer3(answer) {
+//   if (answer) {
+//     q.responses[3] = answer;
+//     q.current +=1;
+//     window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
+//     q.y = p5.height/8;
+//     if (answer === `yes`) {
+//       q.sanityLevel.content -= 10;
+//     }
+//   }
+// }
 
-function setAnswer4(answer) {
-  if (answer) {
-    q.responses[4] = answer;
-    q.current +=1;
-    window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
-    q.y = p5.height/8;
-  }
-}
+// function setAnswer4(answer) {
+//   if (answer) {
+//     q.responses[4] = answer;
+//     q.current +=1;
+//     window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
+//     q.y = p5.height/8;
+//   }
+// }
 
-function setAnswer5(answer) {
-  if (answer) {
-    q.responses[5] = answer;
-    q.current +=1;
-    window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
-    q.y = p5.height/8;
-  }
-}
+// function setAnswer5(answer) {
+//   if (answer) {
+//     q.responses[5] = answer;
+//     q.current +=1;
+//     window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
+//     q.y = p5.height/8;
+//   }
+// }
 
-function setAnswer6(answer) {
-  if (answer) {
-    q.responses[6] = answer;
-    q.current +=1;
-    window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
-    q.y = p5.height/8;
-  }
-}
+// function setAnswer6(answer) {
+//   if (answer) {
+//     q.responses[6] = answer;
+//     q.current +=1;
+//     window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
+//     q.y = p5.height/8;
+//   }
+// }
 
-function setAnswer7(answer) {
-  if (answer) {
-    q.responses[7] = answer;
-    q.current +=1;
-    window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
-    q.y = p5.height/8;
-  }
-}
+// function setAnswer7(answer) {
+//   if (answer) {
+//     q.responses[7] = answer;
+//     q.current +=1;
+//     window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
+//     q.y = p5.height/8;
+//   }
+// }
 
-function setAnswer8(answer) {
-  if (answer) {
-    q.responses[8] = answer;
-    q.current +=1;
-    window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
-    q.y = p5.height/8;
-  }
-}
+// function setAnswer8(answer) {
+//   if (answer) {
+//     q.responses[8] = answer;
+//     q.current +=1;
+//     window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
+//     q.y = p5.height/8;
+//   }
+// }
 
-function setAnswer9(answer) {
-  if (answer) {
-    q.responses[9] = answer;
-    q.current +=1;
-    window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
-    q.y = p5.height/8;
-  }
-}
+// function setAnswer9(answer) {
+//   if (answer) {
+//     q.responses[9] = answer;
+//     q.current +=1;
+//     window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
+//     q.y = p5.height/8;
+//   }
+// }
 
-function setAnswer10(answer) {
-  if (answer) {
-    q.responses[10] = answer;
-    q.current +=1;
-    window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
-    q.y = p5.height/8;
-  }
-}
+// function setAnswer10(answer) {
+//   if (answer) {
+//     q.responses[10] = answer;
+//     q.current +=1;
+//     window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
+//     q.y = p5.height/8;
+//   }
+// }
 
-function setAnswer11(answer) {
-  if (answer) {
-    q.responses[11] = answer;
-    q.current +=1;
-    window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
-    q.y = p5.height/8;
-  }
-}
+// function setAnswer11(answer) {
+//   if (answer) {
+//     q.responses[11] = answer;
+//     q.current +=1;
+//     window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
+//     q.y = p5.height/8;
+//   }
+// }
 
-function setAnswer12(answer) {
-  if (answer) {
-    q.responses[12] = answer;
-    q.current +=1;
-    window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
-    q.y = p5.height/8;
-  }
-}
+// function setAnswer12(answer) {
+//   if (answer) {
+//     q.responses[12] = answer;
+//     q.current +=1;
+//     window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
+//     q.y = p5.height/8;
+//   }
+// }
 
 //Prompt question when the user mousepress
 p5.mousePressed = function() {
@@ -600,10 +734,10 @@ p5.mousePressed = function() {
       state = `assignID`;
     }
   }
- 
-  //Start the responsive voice for the first time
+
+  //Start the responsive voice for the first time 
   if (q.current === 0) {
-    window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
+    window.responsiveVoice.speak(`Question${q.current}: ${ q.questions[q.current].content}`);
   }
 }
 

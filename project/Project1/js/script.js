@@ -48,6 +48,11 @@ let q = {
   description: [`To work in the Paper world, you should be a male gender.`, `To work in your dream job you should marry a man.`, `To work in your dream job you should act like a woman.`, `To protect your loved ones you should be owned by a man.`, `To have the role you want you should...`],
   current: 0,
   responses: [],
+  sanityLevel: {
+    content: undefined,
+    x: undefined,
+    y: undefined,
+  },
 }
 
 let doors = {
@@ -117,25 +122,25 @@ p5.setup = function() {
     let x = p5.width/2 + i*(200 + 25);
     let btnObject= new ChoiceBtn(x, p5.height*2/5 + 55, 200, 50, colours.black, courier.regular, btn.birthGenderInput[i], p5);
     btn.birthGender.push(btnObject);
-  };
+  }
 
   for (let i = 0; i<3; i++) { //identified gender buttons
     let x = p5.width/2 + i*(150 + 25);
     let btnObject= new ChoiceBtn(x, p5.height*2/5 + 130, 150, 50, colours.black, courier.regular, btn.identifiedGenderInput[i], p5);
     btn.identifiedGender.push(btnObject);
-  };
+  }
 
   for (let i = 0; i<4; i++) { //sexual orientation buttons
     let x = p5.width/2 + i*(150 + 25);
     let btnObject= new ChoiceBtn(x, p5.height*2/5 + 205, 100, 50, colours.black, courier.regular, btn.sexualOrientationInput[i], p5);
     btn.sexualOrientation.push(btnObject);
-  };
+  }
 
   for (let i = 0; i<2; i++) { //specie buttons
     let x = p5.width/2 + i*(200 + 25);
     let btnObject= new ChoiceBtn(x, p5.height*2/5 + 280, 200, 50, colours.black, courier.regular, btn.identifiedSpeciesInput[i], p5);
     btn.identifiedSpecies.push(btnObject);
-  };  
+  } 
 
   // Doors at the game state
   for (let i = 0; i<4; i++) { 
@@ -148,11 +153,16 @@ p5.setup = function() {
       let doorObject= new Door(x, y, colours.black, colours.doors[i*j], p5);
       doors.objects.push(doorObject);
     } 
-  };  
+  }
 
   // Question Position at the game state
   q.x= p5.width/8;
   q.y= p5.height/8;
+
+  // Sanity Level Position
+  q.sanityLevel.content = 100;
+  q.sanityLevel.x = p5.width*7/8;
+  q.sanityLevel.y = p5.height/10;
   
     //Animation 1 for Yuji
     visual.videoYuji = new AnimationYuji(visual.animationYuji, 0, 0, p5);
@@ -209,6 +219,10 @@ p5.draw = function() {
 
     case `game`:
       game();
+      break;
+
+    case `ending`:
+      ending();
       break;
   }
 
@@ -307,6 +321,7 @@ function assignID() {
   p5.textSize(24);
   p5.text(`Before entering the paper world, you should obtain a valid ID`, p5.width/2, p5.height/8 +50);
 
+  //Identity card
   p5.image(visual.bg3,  p5.width/5 -70, p5.height*2/5 - 75);
   //Prompt Table
   p5.textAlign(p5.LEFT);
@@ -331,12 +346,15 @@ function assignID() {
   p5.pop();
 }
 
+
+//Game state
 function game() {
   p5.push();
-  p5.image(visual.bg1, 0, 0);
+  p5.image(visual.bg1, 0, 0); //background
 
+  //display the doors behind
   for (let prop in doors.objects) {
-    if (q.responses[prop] === `yes`) {
+    if (q.responses[prop] === `yes`) { //change colour depending on the response
       doors.objects[prop].openDoor();
     } else if (q.responses[prop] === `no`) {
       doors.objects[prop].closeDoor();
@@ -344,7 +362,7 @@ function game() {
     doors.objects[prop].display();
   }
 
-  //header
+  //header questions
   q.y +=1;
   p5.textFont(courier.bold);
   p5.textSize(48);
@@ -356,20 +374,31 @@ function game() {
   p5.textSize(24);
   p5.text(q.description[q.current], q.x, q.y +100);
 
-
+  //Sanity Level
+  p5.textFont(courier.bold);
+  p5.text(`San: ${q.sanityLevel.content}`, q.sanityLevel.x, q.sanityLevel.y);
   p5.pop();
-
 }
 
-function setAnswer0(answer) {
+//Ending State
+function ending() {
+  p5.push();
+  p5.image(visual.bg1, 0, 0);
+  p5.pop();
+}
+
+//Annyang functions that update the questions and sanity level depending on the answer.
+//From here to line 520
+function setAnswer0(answer) { //1st question
   if (answer) {
     q.responses[0] = answer;
     q.current +=1;
     window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
     q.y = p5.height/8;
+    if (answer === `yes` && btn.identifiedGender.input === `Female`) {
+      q.sanityLevel.content -= 10;
+    }
   }
-  
-
 }
 
 function setAnswer1(answer) {
@@ -378,6 +407,9 @@ function setAnswer1(answer) {
     q.current +=1;
     window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
     q.y = p5.height/8;
+    if (answer === `yes` && btn.sexualOrientation.input === `Female (women)`) {
+      q.sanityLevel.content -= 10;
+    }
   }
 }
 
@@ -387,6 +419,9 @@ function setAnswer2(answer) {
     q.current +=1;
     window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
     q.y = p5.height/8;
+    if (answer === `yes` && btn.identifiedGender.input === `Male`) {
+      q.sanityLevel.content -= 10;
+    }
   }
 }
 
@@ -396,6 +431,9 @@ function setAnswer3(answer) {
     q.current +=1;
     window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
     q.y = p5.height/8;
+    if (answer === `yes`) {
+      q.sanityLevel.content -= 10;
+    }
   }
 }
 
@@ -550,3 +588,5 @@ p5.mouseClicked = function() {
 }
 
 });
+
+//Not add after

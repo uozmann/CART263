@@ -23,10 +23,19 @@ class Door {
   display() {
     //Setting up the case for the door
   p5Copy3.push();
-  p5Copy3.stroke(this.edge);
+  // p5Copy3.stroke(this.edge);
+  p5Copy3.noStroke();
   p5Copy3.fill(this.currentFill, 50);
   p5Copy3.rect(this.x, this.y, this.sizeX, this.sizeY);
   p5Copy3.pop();
+  }
+
+  choose() {
+    this.clicked = p5Copy3.collidePointRect(p5Copy3.mouseX, p5Copy3.mouseY, this.x, this.y, this.sizeX, this.sizeY);
+    if (this.clicked === true && this.currentFill === 255 && p5Copy3.mousePressed) {
+      state = `ending`;
+      console.log(`You got this!`);
+    }
   }
 
 }

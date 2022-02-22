@@ -55,6 +55,42 @@ let q = {
   },
 }
 
+// let q = {
+//   x: undefined,
+//   y: undefined,
+//   color: 0,
+//   current: 0,
+//   questions: [
+//     {
+//       content: `Are you willing to be a man?`,
+//       description: `To work in the Paper World, you should be a male gender.`,
+//       response: ``,
+//       sanityTest: {
+//         answer: `yes`,
+//         condition: {
+//           property: `identifiedGenderInput`,
+//           value: `Female`
+//         },
+//         penalty: -10
+//       }
+//     },
+//     {
+//       content: `Are you willing to marry a man?`,
+//       description: `To work in your dream job you should marry a man..`,
+//       response: ``,
+//       sanityTest: {
+//         answer: `no`,
+//         condition: {
+//           property: `sexualOrientationInput`,
+//           value: `Female (women)`
+//         },
+//         penalty: -20
+//       }
+//     }
+//   ],
+//   sanityLevel: 100,
+// }
+
 let doors = {
   objects: [],
   edge: 0,
@@ -117,7 +153,7 @@ p5.setup = function() {
   btn.start= new ChoiceBtn(p5.width*5/7 +70, p5.height*5/8, 200, 50, colours.black, courier.regular, `START`, p5);
   btn.about= new ChoiceBtn(p5.width*5/7 +70, p5.height*5/8 + 100, 200, 50, colours.black, courier.regular, `ABOUT`, p5);
   btn.game= new ChoiceBtn(p5.width*7/8, p5.height/10, 100, 100, colours.black, courier.regular, `NEXT`, p5);
-  btn.name= new ChoiceBtn(p5.width/2, p5.height*2/5 - 20, 400, 50, colours.black, courier.regular, btn.nameInput, p5);
+  btn.name= new ChoiceBtn(p5.width/2, p5.height*2/5 - 20, 400, 50, colours.black, courier.regular, ``, p5);
   for (let i = 0; i<2; i++) { //birth gender buttons
     let x = p5.width/2 + i*(200 + 25);
     let btnObject= new ChoiceBtn(x, p5.height*2/5 + 55, 200, 50, colours.black, courier.regular, btn.birthGenderInput[i], p5);
@@ -171,19 +207,7 @@ p5.setup = function() {
     if (window.annyang) {
       // Create commands
       let commands = {
-        'Question zero *answer': setAnswer0,
-        'Question one *answer': setAnswer1,
-        'Question two *answer': setAnswer2,
-        'Question three *answer': setAnswer3,
-        'Question four *answer': setAnswer4,
-        'Question five *answer': setAnswer5,
-        'Question six *answer': setAnswer6,
-        'Question seven *answer': setAnswer7,
-        'Question eight *answer': setAnswer8,
-        'Question nine *answer': setAnswer9,
-        'Question ten *answer': setAnswer10,
-        'Question eleven *answer': setAnswer11,
-        'Question twelve *answer': setAnswer12,
+        'My answer id *answer': setAnswer,
       }
       // Add the commands and start annyang
       window.annyang.addCommands(commands);
@@ -192,10 +216,6 @@ p5.setup = function() {
 
     // //Responsice voice
     // window.responsiveVoice.speak("Hello");
-}
-
-function setName(name) {
-  console.log(name);
 }
 
 p5.draw = function() {
@@ -256,31 +276,6 @@ function about() {
 function profileSetting() {
   p5.push();
   p5.image(visual.bg1, 0, 0);
-  p5.textAlign(p5.CENTER, p5.CENTER);
-
-  //header
-  p5.textFont(courier.bold);
-  p5.textSize(48);
-  p5.text(`Profile Setting`, p5.width/2, p5.height/8);
-  p5.textFont(courier.regular);
-  p5.textSize(24);
-  p5.text(`Click on the choices to set your profile`, p5.width/2, p5.height/8 +50);
-  
-  //prompt table
-  p5.textAlign(p5.LEFT);
-  p5.textFont(courier.bold);
-  p5.text(`NAME`, p5.width/5, p5.height*2/5);
-  p5.text(`BIRTH GENDER`, p5.width/5, p5.height*2/5 + 75);
-  p5.text(`IDENTIFIED GENDER`, p5.width/5, p5.height*2/5 + 150);
-  p5.text(`SEXUAL ORIENTATION`, p5.width/5, p5.height*2/5 + 225);
-  p5.text(`IDENTIFIED SPECIE`, p5.width/5, p5.height*2/5 + 300);
-  p5.textFont(courier.regular);
-  p5.textSize(18);
-  p5.text(`Recorded Answer: ${btn.birthGender.input}`, p5.width/5, p5.height*2/5 + 100);
-  p5.text(`Recorded Answer: ${btn.identifiedGender.input}`, p5.width/5, p5.height*2/5 + 175);
-  p5.text(`Recorded Answer: ${btn.sexualOrientation.input}`, p5.width/5, p5.height*2/5 + 250);
-  p5.text(`Recorded Answer: ${btn.identifiedSpecies.input}`, p5.width/5, p5.height*2/5 + 325);
-
   // //Display the buttons for the page
   btn.game.display();
   btn.name.display();
@@ -296,6 +291,35 @@ function profileSetting() {
   for (let prop in btn.identifiedSpecies) {
     btn.identifiedSpecies[prop].display();
   }
+
+  //header
+  p5.textAlign(p5.CENTER, p5.CENTER);
+  p5.textFont(courier.bold);
+  p5.textSize(48);
+  p5.text(`Profile Setting`, p5.width/2, p5.height/8);
+  p5.textFont(courier.regular);
+  p5.textSize(24);
+  p5.text(`Click on the choices to set your profile`, p5.width/2, p5.height/8 +50);
+  
+  //prompt table
+  p5.textAlign(p5.LEFT);
+  p5.textFont(courier.bold);
+  p5.text(`NAME`, p5.width/5, p5.height*2/5); 
+  p5.text(`BIRTH GENDER`, p5.width/5, p5.height*2/5 + 75);
+  p5.text(`IDENTIFIED GENDER`, p5.width/5, p5.height*2/5 + 150);
+  p5.text(`SEXUAL ORIENTATION`, p5.width/5, p5.height*2/5 + 225);
+  p5.text(`IDENTIFIED SPECIE`, p5.width/5, p5.height*2/5 + 300);
+  p5.textFont(courier.regular);
+  p5.textSize(18);
+  p5.text(`Recorded Answer: ${btn.birthGenderInput}`, p5.width/5, p5.height*2/5 + 100);
+  p5.text(`Recorded Answer: ${btn.identifiedGenderInput}`, p5.width/5, p5.height*2/5 + 175);
+  p5.text(`Recorded Answer: ${btn.sexualOrientationInput}`, p5.width/5, p5.height*2/5 + 250);
+  p5.text(`Recorded Answer: ${btn.identifiedSpeciesInput}`, p5.width/5, p5.height*2/5 + 325);
+  p5.textAlign(p5.CENTER, p5.CENTER);
+  p5.textSize(32);
+  p5.text(btn.nameInput, p5.width*2/3, p5.height*2/5 +5); // Name input field
+
+  
 
   //Animation
   visual.bgX -= 10;
@@ -387,15 +411,27 @@ function ending() {
   p5.pop();
 }
 
-//Annyang functions that update the questions and sanity level depending on the answer.
-//From here to line 520
+// //Annyang functions that update the questions and sanity level depending on the answer.
+// //From here to line 520
+
+// function setAnswer(answer) {
+//   let question = q.question[q.current];
+//   question.response = answer;
+//   q.current++;
+//   window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
+//   q.y = p5.height/8;
+//   if (answer === question.sanityTest.answer &&
+//       btn[question.sanityTest.condition.property] === question.sanityTest.condition.value) {
+//     q.sanityLevel.content += question.sanityTest.penalty;
+//   }
+// }
 function setAnswer0(answer) { //1st question
   if (answer) {
     q.responses[0] = answer;
     q.current +=1;
     window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
     q.y = p5.height/8;
-    if (answer === `yes` && btn.identifiedGender.input === `Female`) {
+    if (answer === `yes` && btn.identifiedGenderInput === `Female`) {
       q.sanityLevel.content -= 10;
     }
   }
@@ -407,7 +443,7 @@ function setAnswer1(answer) {
     q.current +=1;
     window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
     q.y = p5.height/8;
-    if (answer === `yes` && btn.sexualOrientation.input === `Female (women)`) {
+    if (answer === `yes` && btn.sexualOrientationInput === `Female (women)`) {
       q.sanityLevel.content -= 10;
     }
   }
@@ -419,7 +455,7 @@ function setAnswer2(answer) {
     q.current +=1;
     window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
     q.y = p5.height/8;
-    if (answer === `yes` && btn.identifiedGender.input === `Male`) {
+    if (answer === `yes` && btn.identifiedGenderInput === `Male`) {
       q.sanityLevel.content -= 10;
     }
   }
@@ -520,7 +556,6 @@ function setAnswer12(answer) {
 
 //Prompt question when the user mousepress
 p5.mousePressed = function() {
-  console.log(btn.name.clicked);
   if (btn.start.clicked) {
     state = `profileSetting`;
   } else if (btn.about.clicked) {
@@ -530,35 +565,43 @@ p5.mousePressed = function() {
   if (btn.name.clicked) {
     btn.nameInput = ``;
   } else if (btn.birthGender[0].clicked) {
-    btn.birthGender.input = `Female`;
+    btn.birthGenderInput = `Female`;
   } else if (btn.birthGender[1].clicked) {
-    btn.birthGender.input = `Male`;
+    btn.birthGenderInput = `Male`;
   } else if (btn.identifiedGender[0].clicked) {
-    btn.identifiedGender.input = `Female`;
+    btn.identifiedGenderInput = `Female`;
   } else if (btn.identifiedGender[1].clicked) {
-    btn.identifiedGender.input = `Male`;
+    btn.identifiedGenderInput = `Male`;
   } else if (btn.identifiedGender[2].clicked) {
-    btn.identifiedGender.input = `Non-binary`;
+    btn.identifiedGenderInput = `Non-binary`;
   } else if (btn.sexualOrientation[0].clicked) {
-    btn.sexualOrientation.input = `Bi-sexual`;
+    btn.sexualOrientationInput = `Bi-sexual`;
   } else if (btn.sexualOrientation[1].clicked) {
-    btn.sexualOrientation.input = `Female (women)`;
+    btn.sexualOrientationInput = `Female (women)`;
   } else if (btn.sexualOrientation[2].clicked) {
-    btn.sexualOrientation.input = `Male (men)`;
+    btn.sexualOrientationInput = `Male (men)`;
   } else if (btn.sexualOrientation[3].clicked) {
-    btn.sexualOrientation.input = `Not mentioned`;
+    btn.sexualOrientationInput = `Not mentioned`;
   } else if (btn.identifiedSpecies[0].clicked) {
-    btn.identifiedSpecies.input = `Human`;
+    btn.identifiedSpeciesInput = `Human`;
   } else if (btn.identifiedSpecies[1].clicked) {
-    btn.identifiedSpecies.input = `Interesting!`;
+    btn.identifiedSpeciesInput = `Interesting!`;
   } 
 
-  if (btn.game.clicked && state === `profileSetting`) {
-    state = `assignID`;
-  } else if (btn.game.clicked && state === `assignID`) {
-    state = `game`;
-    } 
+  //Next Button
+  if (state === `assignID`) {
+    if (btn.game.clicked) {
+      state = `game`;
+    }
+  } 
   
+  if (state === `profileSetting`) {
+    if (btn.game.clicked) {
+      state = `assignID`;
+    }
+  }
+ 
+  //Start the responsive voice for the first time
   if (q.current === 0) {
     window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
   }

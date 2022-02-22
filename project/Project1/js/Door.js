@@ -23,8 +23,8 @@ class Door {
   display() {
     //Setting up the case for the door
   p5Copy3.push();
-  // p5Copy3.stroke(this.edge);
-  p5Copy3.noStroke();
+  p5Copy3.stroke(this.edge);
+  // p5Copy3.noStroke();
   p5Copy3.fill(this.currentFill, 50);
   p5Copy3.rect(this.x, this.y, this.sizeX, this.sizeY);
   p5Copy3.pop();

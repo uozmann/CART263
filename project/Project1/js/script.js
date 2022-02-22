@@ -5,6 +5,7 @@ import "/js/libraries/p5.sound.min.js";
 //Classes
 import AnimationYuji from "./AnimationYuji.js";
 import ChoiceBtn from "./ChoiceBtn.js";
+import Door from "./Door.js";
 //Annyang Library
 import "//cdnjs.cloudflare.com/ajax/libs/annyang/2.6.0/annyang.min.js"; 
 
@@ -38,6 +39,23 @@ let btn = {
   game: undefined,
 }
 
+let q = {
+  x: undefined,
+  y: undefined,
+  colour: 0,
+  num: [0,1,2,3,4,5],
+  content: [`Are you willing to be a man?`, `Are you willing to marry a man?`, `Are you willing to act like a woman?`, `Are you willing to be owned by a man?`, `Are you willing to...`],
+  description: [`To work in the Paper world, you should be a male gender.`, `To work in your dream job you should marry a man.`, `To work in your dream job you should act like a woman.`, `To protect your loved ones you should be owned by a man.`, `To have the role you want you should...`],
+  current: 0,
+  responses: [],
+}
+
+let doors = {
+  objects: [],
+  edge: 0,
+  fill: 255,
+}
+
 //p5.images
 let visual = {
   bg0: undefined,
@@ -54,7 +72,7 @@ let visual = {
 let colours = {
   black: 0,
   white: 255,
-  yellowPale: [255,255,150],
+  doors: [],
 }
 
 //imported p5, all the rest of the codes are inside this anonymous function
@@ -118,20 +136,49 @@ p5.setup = function() {
     let btnObject= new ChoiceBtn(x, p5.height*2/5 + 280, 200, 50, colours.black, courier.regular, btn.identifiedSpeciesInput[i], p5);
     btn.identifiedSpecies.push(btnObject);
   };  
+
+  // Doors at the game state
+  for (let i = 0; i<4; i++) { 
+    for (let j = 0; j<3; j++) {
+      let x = i*320;
+      let y = j*240;
+      let colour = 100;
+      colours.doors.push(colour);
+      q.responses.push(``);
+      let doorObject= new Door(x, y, colours.black, colours.doors[i*j], p5);
+      doors.objects.push(doorObject);
+    } 
+  };  
+
+  // Question Position at the game state
+  q.x= p5.width/8;
+  q.y= p5.height/8;
   
     //Animation 1 for Yuji
     visual.videoYuji = new AnimationYuji(visual.animationYuji, 0, 0, p5);
 
-    // //Annyang
-    // if (window.annyang) {
-    //   // Create commands
-    //   let commands = {
-    //     'My name is *name': setName,
-    //   }
-    //   // Add the commands and start annyang
-    //   window.annyang.addCommands(commands);
-    //   window.annyang.start();
-    // }
+    //Annyang
+    if (window.annyang) {
+      // Create commands
+      let commands = {
+        'Question zero *answer': setAnswer0,
+        'Question one *answer': setAnswer1,
+        'Question two *answer': setAnswer2,
+        'Question three *answer': setAnswer3,
+        'Question four *answer': setAnswer4,
+        'Question five *answer': setAnswer5,
+        'Question six *answer': setAnswer6,
+        'Question seven *answer': setAnswer7,
+        'Question eight *answer': setAnswer8,
+        'Question nine *answer': setAnswer9,
+        'Question ten *answer': setAnswer10,
+        'Question eleven *answer': setAnswer11,
+        'Question twelve *answer': setAnswer12,
+      }
+      // Add the commands and start annyang
+      window.annyang.addCommands(commands);
+      window.annyang.start();
+    }
 
     // //Responsice voice
     // window.responsiveVoice.speak("Hello");
@@ -287,7 +334,150 @@ function assignID() {
 function game() {
   p5.push();
   p5.image(visual.bg1, 0, 0);
+
+  for (let prop in doors.objects) {
+    if (q.responses[prop] === `yes`) {
+      doors.objects[prop].openDoor();
+    } else if (q.responses[prop] === `no`) {
+      doors.objects[prop].closeDoor();
+    }
+    doors.objects[prop].display();
+  }
+
+  //header
+  q.y +=1;
+  p5.textFont(courier.bold);
+  p5.textSize(48);
+  p5.textWrap(p5.WORD);
+  q.colour = 128 + 128 * p5.sin(p5.millis() / 1000);
+  p5.fill(q.colour);
+  p5.text(`Q${q.num[q.current]}: ${q.content[q.current]}`, q.x, q.y, p5.width*7/8);
+  p5.textFont(courier.regular);
+  p5.textSize(24);
+  p5.text(q.description[q.current], q.x, q.y +100);
+
+
   p5.pop();
+
+}
+
+function setAnswer0(answer) {
+  if (answer) {
+    q.responses[0] = answer;
+    q.current +=1;
+    window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
+    q.y = p5.height/8;
+  }
+  
+
+}
+
+function setAnswer1(answer) {
+  if (answer) {
+    q.responses[1] = answer;
+    q.current +=1;
+    window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
+    q.y = p5.height/8;
+  }
+}
+
+function setAnswer2(answer) {
+  if (answer) {
+    q.responses[2] = answer;
+    q.current +=1;
+    window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
+    q.y = p5.height/8;
+  }
+}
+
+function setAnswer3(answer) {
+  if (answer) {
+    q.responses[3] = answer;
+    q.current +=1;
+    window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
+    q.y = p5.height/8;
+  }
+}
+
+function setAnswer4(answer) {
+  if (answer) {
+    q.responses[4] = answer;
+    q.current +=1;
+    window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
+    q.y = p5.height/8;
+  }
+}
+
+function setAnswer5(answer) {
+  if (answer) {
+    q.responses[5] = answer;
+    q.current +=1;
+    window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
+    q.y = p5.height/8;
+  }
+}
+
+function setAnswer6(answer) {
+  if (answer) {
+    q.responses[6] = answer;
+    q.current +=1;
+    window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
+    q.y = p5.height/8;
+  }
+}
+
+function setAnswer7(answer) {
+  if (answer) {
+    q.responses[7] = answer;
+    q.current +=1;
+    window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
+    q.y = p5.height/8;
+  }
+}
+
+function setAnswer8(answer) {
+  if (answer) {
+    q.responses[8] = answer;
+    q.current +=1;
+    window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
+    q.y = p5.height/8;
+  }
+}
+
+function setAnswer9(answer) {
+  if (answer) {
+    q.responses[9] = answer;
+    q.current +=1;
+    window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
+    q.y = p5.height/8;
+  }
+}
+
+function setAnswer10(answer) {
+  if (answer) {
+    q.responses[10] = answer;
+    q.current +=1;
+    window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
+    q.y = p5.height/8;
+  }
+}
+
+function setAnswer11(answer) {
+  if (answer) {
+    q.responses[11] = answer;
+    q.current +=1;
+    window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
+    q.y = p5.height/8;
+  }
+}
+
+function setAnswer12(answer) {
+  if (answer) {
+    q.responses[12] = answer;
+    q.current +=1;
+    window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
+    q.y = p5.height/8;
+  }
 }
 
 //Prompt question when the user mousepress
@@ -301,7 +491,6 @@ p5.mousePressed = function() {
 
   if (btn.name.clicked) {
     btn.nameInput = ``;
-    state = `title`;
   } else if (btn.birthGender[0].clicked) {
     btn.birthGender.input = `Female`;
   } else if (btn.birthGender[1].clicked) {
@@ -326,12 +515,14 @@ p5.mousePressed = function() {
     btn.identifiedSpecies.input = `Interesting!`;
   } 
 
-  if (btn.game.clicked) {
-      if (state === `profileSetting`) {
-        state = `assignID`;
-      } else if (state === `assignID`) {
-        state = `game`;
-      } 
+  if (btn.game.clicked && state === `profileSetting`) {
+    state = `assignID`;
+  } else if (btn.game.clicked && state === `assignID`) {
+    state = `game`;
+    } 
+  
+  if (q.current === 0) {
+    window.responsiveVoice.speak(`Question${q.num[q.current]}: ${q.content[q.current]}`);
   }
 }
 

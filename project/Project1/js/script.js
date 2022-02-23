@@ -97,6 +97,7 @@ p5.preload = function() {
 
 //Canvas, buttons, animation, annyang
 p5.setup = function() {
+  console.log(`New Versiion`);
   p5.createCanvas(1280, 720);
   //Buttons
   btn.start= new ChoiceBtn(p5.width*5/7 +70, p5.height*5/8, 200, 50, colours.black, courier.regular, `START`, p5);

@@ -13,8 +13,8 @@ import "//cdnjs.cloudflare.com/ajax/libs/annyang/2.6.0/annyang.min.js";
 "use strict";
 
 //Initial State
-// let state = `title`;
-let state = `assignID`;
+let state = `title`;
+// let state = `assignID`;
 
 //Distances
 let courier = {
@@ -224,6 +224,7 @@ function about() {
 //State
 function profileSetting() {
   p5.push();
+  console.log(visual.bg1);
   p5.image(visual.bg1, 0, 0);
   // //Display the buttons for the page
   btn.game.display();
@@ -271,11 +272,11 @@ function profileSetting() {
   
 
   //Animation
-  visual.bgX -= 10;
-  if (visual.bgX <= -1280) {
-    visual.bgX = -1280;
-  }
-  p5.image(visual.bg2, visual.bgX, visual.bgY);
+  // visual.bgX -= 10;
+  // if (visual.bgX <= -1280) {
+  //   visual.bgX = -1280;
+  // }
+  // p5.image(visual.bg2, visual.bgX, visual.bgY);
   p5.pop();
 
   
@@ -423,7 +424,7 @@ p5.mousePressed = function() {
   }
 
   //Start the responsive voice for the first time 
-  if (q.current === 0) {
+  if (q.current === 0 && state === `game`) {
     window.responsiveVoice.speak(`Question${q.current}: ${ q.questions[q.current].content}`);
   }
 }

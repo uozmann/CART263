@@ -1,7 +1,7 @@
 //P5 Library
-import "js/libraries/p5.min.js" ;
-import "js/libraries/p5.collide2d.min.js";
-import "js/libraries/p5.sound.min.js";
+import "./libraries/p5.min.js" ;
+import "./libraries/p5.collide2d.min.js";
+import "./libraries/p5.sound.min.js";
 //Classes
 import AnimationYuji from "./AnimationYuji.js";
 import ChoiceBtn from "./ChoiceBtn.js";
@@ -97,7 +97,7 @@ p5.preload = function() {
 
 //Canvas, buttons, animation, annyang
 p5.setup = function() {
-  console.log(`New Versiion`);
+  console.log(`New Version 2`);
   p5.createCanvas(1280, 720);
   //Buttons
   btn.start= new ChoiceBtn(p5.width*5/7 +70, p5.height*5/8, 200, 50, colours.black, courier.regular, `START`, p5);

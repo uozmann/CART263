@@ -1,7 +1,7 @@
 //P5 Library
-import "/js/libraries/p5.min.js" ;
-import "/js/libraries/p5.collide2d.min.js";
-import "/js/libraries/p5.sound.min.js";
+import "js/libraries/p5.min.js" ;
+import "js/libraries/p5.collide2d.min.js";
+import "js/libraries/p5.sound.min.js";
 //Classes
 import AnimationYuji from "./AnimationYuji.js";
 import ChoiceBtn from "./ChoiceBtn.js";

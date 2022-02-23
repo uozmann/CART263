@@ -14,10 +14,10 @@ class AnimationYuji {
       index =0;
     } 
     else if (p5Copy.mouseX >= 1190) { //same
-      index = 119;
+      index = 299;
     }
     else { //assign an index to each mouseX position
-      index = p5Copy.floor(p5Copy.map(p5Copy.mouseX, 0, 1190, 0, 119));
+      index = p5Copy.floor(p5Copy.map(p5Copy.mouseX, 0, 1190, 0, 299));
     }
     //displaying the corresponding image
     p5Copy.image(this.animation[index], this.x, this.y);

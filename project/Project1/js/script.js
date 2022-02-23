@@ -79,16 +79,16 @@ p5.preload = function() {
   visual.bg1 = p5.loadImage(`assets/images/bg1.jpg`);
   visual.bg2 = p5.loadImage(`assets/images/bg2.png`);
   visual.bg3 = p5.loadImage(`assets/images/bg3.png`);
-  for (let i = 0; i < 120; i++) { //images frame for the animation
+  for (let i = 0; i < 300; i++) { //images frame for the animation
     let loadedImage;
     if (i< 10) {
-      loadedImage = p5.loadImage(`assets/images/comp1/yujiAnim_0000${i}.png`);
+      loadedImage = p5.loadImage(`assets/images/comp2/yujiAnim_0000${i}.png`);
     }
     else if (i>= 10 && i< 100) {
-      loadedImage = p5.loadImage(`assets/images/comp1/yujiAnim_000${i}.png`);
+      loadedImage = p5.loadImage(`assets/images/comp2/yujiAnim_000${i}.png`);
     }
     else {
-      loadedImage = p5.loadImage(`assets/images/comp1/yujiAnim_00${i}.png`);
+      loadedImage = p5.loadImage(`assets/images/comp2/yujiAnim_00${i}.png`);
     }
     visual.animationYuji.push(loadedImage);
   }
@@ -97,7 +97,6 @@ p5.preload = function() {
 
 //Canvas, buttons, animation, annyang
 p5.setup = function() {
-  console.log(`New Version 2`);
   p5.createCanvas(1280, 720);
   //Buttons
   btn.start= new ChoiceBtn(p5.width*5/7 +70, p5.height*5/8, 200, 50, colours.black, courier.regular, `START`, p5);
@@ -155,6 +154,7 @@ p5.setup = function() {
 
     //Annyang
     if (window.annyang) {
+      console.log(`annyang`);
       // Create commands
       let commands = {
         'My answer is *answer': setAnswer,
@@ -195,9 +195,6 @@ p5.draw = function() {
       ending();
       break;
   }
-
-  console.log(state);
-  
 }
 
 function title() {
@@ -225,7 +222,6 @@ function about() {
 //State
 function profileSetting() {
   p5.push();
-  console.log(visual.bg1);
   p5.image(visual.bg1, 0, 0);
   // //Display the buttons for the page
   btn.game.display();
@@ -269,15 +265,16 @@ function profileSetting() {
   p5.textAlign(p5.CENTER, p5.CENTER);
   p5.textSize(32);
   p5.text(btn.nameInput, p5.width*2/3, p5.height*2/5 +5); // Name input field
+  
 
   
 
   //Animation
-  // visual.bgX -= 10;
-  // if (visual.bgX <= -1280) {
-  //   visual.bgX = -1280;
-  // }
-  // p5.image(visual.bg2, visual.bgX, visual.bgY);
+  visual.bgX -= 10;
+  if (visual.bgX <= -1280) {
+    visual.bgX = -1280;
+  }
+  p5.image(visual.bg2, visual.bgX, visual.bgY);
   p5.pop();
 
   
@@ -335,6 +332,7 @@ function game() {
       doors.objects[prop].closeDoor();
     }
     doors.objects[prop].display();
+    doors.objects[prop].choose();
   }
 
   //header questions
@@ -366,6 +364,7 @@ function ending() {
 // //From here to line 520
 
 function setAnswer(answer) {
+  console.log(answer);
   let question = q.questions[q.current];
   question.response = answer;
   q.current++;
@@ -379,12 +378,17 @@ function setAnswer(answer) {
 
 //Prompt question when the user mousepress
 p5.mousePressed = function() {
-  if (btn.start.clicked) {
+  
+  //Title page start button
+  if (btn.start.clicked ) {
     state = `profileSetting`;
-  } else if (btn.about.clicked) {
+    btn.start.clicked = false;
+  } else if (btn.about.clicked ) { //about button
     state = `about`;
+    btn.about.clicked = false;
   } 
 
+  //Profile setting page buttons
   if (btn.name.clicked) {
     btn.nameInput = ``;
   } else if (btn.birthGender[0].clicked) {
@@ -412,45 +416,49 @@ p5.mousePressed = function() {
   } 
 
   //Next Button
-  if (state === `assignID`) {
-    if (btn.game.clicked) {
-      state = `game`;
-    }
-  } 
-  
   if (state === `profileSetting`) {
     if (btn.game.clicked) {
       state = `assignID`;
+      btn.game.clicked = false;
     }
   }
+  //Next Button
+  if (state === `assignID`) {
+    if (btn.game.clicked) {
+      state = `game`;
+      btn.game.clicked = false;
+    }
+  } 
 
   //Start the responsive voice for the first time 
   if (q.current === 0 && state === `game`) {
     window.responsiveVoice.speak(`Question${q.current}: ${ q.questions[q.current].content}`);
   }
-}
 
-p5.keyTyped = function() {
-  //Add a place for input
-  if (btn.name.clicked) {
-    btn.nameInput += p5.key;
-    if (p5.keyCode === p5.BACKSPACE) {
-      // Remove the last character in a string!
-      btn.nameInput = btn.nameInput.slice(0, btn.nameInput.length - 1);
+  //Open a path towards the ending
+  for (let prop in doors.objects) {
+    if (doors.objects[prop].clicked === true && doors.objects[prop].currentFill === 255) {
+      state = `ending`;
     }
   }
   
 }
 
+
+p5.keyTyped = function() {
+  //For name input under the state profileSetting
+  if (btn.name.clicked) {
+    btn.nameInput += p5.key;
+  }
+  
+}
+
 p5.keyPressed = function() {
+  //For name input under the state profileSetting
   if (btn.name.clicked && p5.keyCode === p5.BACKSPACE) {
       // Remove the last character in a string!
       btn.nameInput = btn.nameInput.slice(0, btn.nameInput.length - 1);
   }
-}
-
-p5.mouseClicked = function() {
-
 }
 
 });

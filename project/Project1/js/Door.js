@@ -32,10 +32,6 @@ class Door {
 
   choose() {
     this.clicked = p5Copy3.collidePointRect(p5Copy3.mouseX, p5Copy3.mouseY, this.x, this.y, this.sizeX, this.sizeY);
-    console.log(this.clicked);
-    // if (this.clicked === true && this.currentFill === 255 && p5Copy3.mousePressed) {
-    //   state = `ending`;
-    // }
   }
 
 }

@@ -3,7 +3,8 @@ import "./libraries/p5.min.js" ;
 import "./libraries/p5.collide2d.min.js";
 import "./libraries/p5.sound.min.js";
 //Classes
-import AnimationYuji from "./AnimationYuji.js";
+// import AnimationYuji from "./AnimationYuji.js";
+import Animation from "./Animation.js";
 import ChoiceBtn from "./ChoiceBtn.js";
 import Door from "./Door.js";
 import q from "./questions.js"
@@ -38,6 +39,8 @@ let btn = {
   identifiedSpecies: [],
   identifiedSpeciesInput: [`Human`, `Other`],
   game: undefined,
+  assignID: [],
+  assignIDInput: [`Yes`,`No`],
 }
 
 let doors = {
@@ -52,10 +55,15 @@ let visual = {
   bg1: undefined,
   bg2: undefined,
   bg3: undefined,
+  bg4: undefined,
+  bg5: undefined,
   bgX: 0,
   bgY:0,
   animationYuji: [],
   videoYuji: undefined,
+  animationPaper: [],
+  videoPaper: undefined,
+  index: undefined,
 }
 
 //colours
@@ -79,7 +87,9 @@ p5.preload = function() {
   visual.bg1 = p5.loadImage(`assets/images/bg1.jpg`);
   visual.bg2 = p5.loadImage(`assets/images/bg2.png`);
   visual.bg3 = p5.loadImage(`assets/images/bg3.png`);
-  for (let i = 0; i < 300; i++) { //images frame for the animation
+  visual.bg4 = p5.loadImage(`assets/images/bg4.png`);
+  visual.bg5 = p5.loadImage(`assets/images/bg5.jpg`);
+  for (let i = 0; i < 300; i++) { //images frame for the animation Yuji
     let loadedImage;
     if (i< 10) {
       loadedImage = p5.loadImage(`assets/images/comp2/yujiAnim_0000${i}.png`);
@@ -91,6 +101,17 @@ p5.preload = function() {
       loadedImage = p5.loadImage(`assets/images/comp2/yujiAnim_00${i}.png`);
     }
     visual.animationYuji.push(loadedImage);
+  }
+
+  for (let i = 0; i < 60; i++) { //images frame for the Paper animation
+    let loadedImage;
+    if (i< 10) {
+      loadedImage = p5.loadImage(`assets/images/comp3/paperAnim_0000${i}.png`); 
+    }
+    else {
+      loadedImage = p5.loadImage(`assets/images/comp3/paperAnim_000${i}.png`);
+    }
+    visual.animationPaper.push(loadedImage);
   }
   
 }
@@ -126,6 +147,11 @@ p5.setup = function() {
     let btnObject= new ChoiceBtn(x, p5.height*2/5 + 280, 200, 50, colours.black, courier.regular, btn.identifiedSpeciesInput[i], p5);
     btn.identifiedSpecies.push(btnObject);
   } 
+  for (let i = 0; i<2; i++) { //assignID state buttons
+    let x = p5.width/5 -70 + i*(150 + 25);
+    let btnObject= new ChoiceBtn(x, p5.height*4/5 + 55, 150, 50, colours.black, courier.regular, btn.assignIDInput[i], p5);
+    btn.assignID.push(btnObject);
+  }
 
   // Doors at the game state
   for (let i = 0; i<4; i++) { 
@@ -150,11 +176,12 @@ p5.setup = function() {
   q.sanityLevel.y = p5.height/10;
   
     //Animation 1 for Yuji
-    visual.videoYuji = new AnimationYuji(visual.animationYuji, 0, 0, p5);
+    visual.videoYuji = new Animation(visual.animationYuji, 0, 0, 299, p5);
+    //Animation 2 for Paper
+    visual.videoPaper = new Animation(visual.animationPaper, -10, 25, 59, p5);
 
     //Annyang
     if (window.annyang) {
-      console.log(`annyang`);
       // Create commands
       let commands = {
         'My answer is *answer': setAnswer,
@@ -187,12 +214,20 @@ p5.draw = function() {
       assignID();
       break;
 
+    case `instruction`:
+      instruction();
+      break;
+
     case `game`:
       game();
       break;
 
     case `ending`:
       ending();
+      break;
+    
+    case `badEnding`:
+      badEnding();
       break;
   }
 }
@@ -207,7 +242,7 @@ function title() {
   p5.text(`PaperMan`, p5.width*5/7 +70 + 100, p5.height/3);
   p5.pop();
 
-  visual.videoYuji.display();//display the animation frame
+  visual.videoYuji.displayMouseAnim();//display the animation frame
 
   //Call functionalities of buttons
   btn.start.display();
@@ -294,7 +329,8 @@ function assignID() {
   p5.text(`Before entering the paper world, you should obtain a valid ID`, p5.width/2, p5.height/8 +50);
 
   //Identity card
-  p5.image(visual.bg3,  p5.width/5 -70, p5.height*2/5 - 75);
+  p5.image(visual.bg3, p5.width/5 -70, p5.height*2/5 - 75);
+  
   //Prompt Table
   p5.textAlign(p5.LEFT);
   p5.textFont(courier.bold);
@@ -311,7 +347,46 @@ function assignID() {
   p5.text(`Men`, p5.width/5, p5.height*2/5 + 180);
   p5.text(`Human`, p5.width*3/5, p5.height*2/5 + 180);
 
-  //
+  //Question at the buttom
+  p5.text(`Would you like to spend 10 sanity units to get the ID?`, p5.width/5 -70, p5.height*4/5 + 30);
+  if (q.sanityLevel.content === 90) {
+    p5.text(`Decision Recorded! You are good to go.`, p5.width/2 -50, p5.height*4/5 + 75);
+  } else if (btn.assignIDInput === `No`) {
+    p5.text(`At your risks.`, p5.width/2 -50, p5.height*4/5 + 75);
+  }
+  //Yes or No button
+  for (let prop in btn.assignID) {
+    btn.assignID[prop].display();
+  }
+
+  //display the animation for the paper
+  visual.videoPaper.displayMouseAnim();
+
+  btn.game.display(); //button to switch to instruction state
+
+  p5.pop();
+}
+
+
+//Instruction State
+function instruction() {
+  p5.push();
+  p5.image(visual.bg1, 0, 0); //background
+  p5.textAlign(p5.CENTER, p5.CENTER);
+
+  //Instruction texts
+  p5.textFont(courier.bold);
+  p5.textSize(48);
+  p5.text(`Instructions`, p5.width/2, p5.height/8);
+  p5.textFont(courier.regular);
+  p5.textSize(24);
+  p5.text(`Some rules about the Paper world`, p5.width/2, p5.height/8 +50);
+
+  p5.textAlign(p5.LEFT);
+  p5.text(`1. Answer the asked questions by saying "My answer is (yes/no)."`, p5.width/8, p5.height*3/8);
+  p5.text(`2. Once your sanity level is under 30, you are eliminated.`, p5.width/8, p5.height*3/8 +50);
+  p5.text(`3. When all questions are answered, choose a lightened box to enter.`, p5.width/8, p5.height*3/8 +100);
+  p5.text(`ATTENTION: Please use google Chrome, and remember to allow access to the microphone.`, 50, p5.height*6/8);
 
   btn.game.display(); //button to switch to game state
 
@@ -345,13 +420,19 @@ function game() {
   p5.text(`Q${q.current}: ${q.questions[q.current].content}`, q.x, q.y, p5.width*7/8);
   p5.textFont(courier.regular);
   p5.textSize(24);
-  p5.text(q.questions[q.current].description, q.x, q.y +100);
+  p5.text(q.questions[q.current].description, q.x, q.sanityLevel.y);
 
   //Sanity Level
   p5.textFont(courier.bold);
   p5.text(`San: ${q.sanityLevel.content}`, q.sanityLevel.x, q.sanityLevel.y);
   p5.pop();
+
+  //Bad ending condition
+  if (q.sanityLevel.content <= 30) {
+    state = `badEnding`;
+  }
 }
+
 
 //Ending State
 function ending() {
@@ -360,11 +441,22 @@ function ending() {
   p5.pop();
 }
 
+function badEnding() {
+  p5.push();
+  p5.image(visual.bg5, 0, 0);
+
+  //Animation
+  visual.bgX += 10;
+  if (visual.bgX >= 0) {
+    visual.bgX = 0;
+  }
+  p5.image(visual.bg4, visual.bgX, visual.bgY);
+  p5.pop();
+}
+
 // //Annyang functions that update the questions and sanity level depending on the answer.
-// //From here to line 520
 
 function setAnswer(answer) {
-  console.log(answer);
   let question = q.questions[q.current];
   question.response = answer;
   q.current++;
@@ -378,7 +470,6 @@ function setAnswer(answer) {
 
 //Prompt question when the user mousepress
 p5.mousePressed = function() {
-  
   //Title page start button
   if (btn.start.clicked ) {
     state = `profileSetting`;
@@ -415,19 +506,32 @@ p5.mousePressed = function() {
     btn.identifiedSpeciesInput = `Interesting!`;
   } 
 
-  //Next Button
+  //Next Button in the profileSetting state
   if (state === `profileSetting`) {
     if (btn.game.clicked) {
       state = `assignID`;
       btn.game.clicked = false;
     }
   }
-  //Next Button
-  if (state === `assignID`) {
-    if (btn.game.clicked) {
-      state = `game`;
+  //Next Button in the assignID state
+  if (state === `assignID` && btn.game.clicked) {
+    if ( btn.assignIDInput === `No` || q.sanityLevel.content === 90) {
+      state = `instruction`;
       btn.game.clicked = false;
     }
+  } 
+
+  //Yes Button in the assignID state
+  if (btn.assignID[0].clicked) {
+    q.sanityLevel.content -= 10;
+  } else if (btn.assignID[1].clicked) {
+    btn.assignIDInput = `No`;
+  }
+
+  //Next Button in the game state
+  if (state === `instruction` && btn.game.clicked) {
+      state = `game`;
+      btn.game.clicked = false;
   } 
 
   //Start the responsive voice for the first time 
@@ -442,7 +546,7 @@ p5.mousePressed = function() {
     }
   }
   
-}
+} //End of mousePressed
 
 
 p5.keyTyped = function() {
@@ -450,7 +554,6 @@ p5.keyTyped = function() {
   if (btn.name.clicked) {
     btn.nameInput += p5.key;
   }
-  
 }
 
 p5.keyPressed = function() {
@@ -461,6 +564,6 @@ p5.keyPressed = function() {
   }
 }
 
-});
+}); //End of p5 object
 
 //Not add after

@@ -109,24 +109,7 @@ function fadeOut(element, opacity, padding) {
 Increases the opacity of the provided element until it reaches
 1 and then stops.
 */
-function fadeIn(element, opacity, padding) {
-  // Increase the opacity
-  opacity += 0.01;
-  padding -= 0.01;
-  element.style[`opacity`] = opacity;
-  element.style[`padding`] = `${padding}rem`;
-  // Check if opacity is still less than 1
-  if (opacity < 1) {
-    // Keep fading. Note the use of an anonymous function here so we
-    // can pass arguments to fadeIn()
-    requestAnimationFrame(function() {
-      fadeIn(element, opacity, padding);
-    });
-  }
-  else {
-    // Do nothing - we're done!
-  }
-}
+
 
 /**
 Sets the text of the element to a randomly chosen haiku line, accounting for

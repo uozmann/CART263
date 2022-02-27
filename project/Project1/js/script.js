@@ -63,6 +63,14 @@ let visual = {
   videoYuji: undefined,
   animationPaper: [],
   videoPaper: undefined,
+  animationDoor0: [],
+  videoDoor0: undefined,
+  animationDoor1: [],
+  videoDoor1: undefined,
+  animationDoor2: [],
+  videoDoor2: undefined,
+  animationDoor3: [],
+  videoDoor3: undefined,
   index: undefined,
 }
 
@@ -89,7 +97,8 @@ p5.preload = function() {
   visual.bg3 = p5.loadImage(`assets/images/bg3.png`);
   visual.bg4 = p5.loadImage(`assets/images/bg4.png`);
   visual.bg5 = p5.loadImage(`assets/images/bg5.jpg`);
-  for (let i = 0; i < 300; i++) { //images frame for the animation Yuji
+  //images frame for the animation Yuji
+  for (let i = 0; i < 300; i++) { 
     let loadedImage;
     if (i< 10) {
       loadedImage = p5.loadImage(`assets/images/comp2/yujiAnim_0000${i}.png`);
@@ -102,8 +111,8 @@ p5.preload = function() {
     }
     visual.animationYuji.push(loadedImage);
   }
-
-  for (let i = 0; i < 60; i++) { //images frame for the Paper animation
+  //images frame for the Paper animation
+  for (let i = 0; i < 60; i++) { 
     let loadedImage;
     if (i< 10) {
       loadedImage = p5.loadImage(`assets/images/comp3/paperAnim_0000${i}.png`); 
@@ -112,6 +121,29 @@ p5.preload = function() {
       loadedImage = p5.loadImage(`assets/images/comp3/paperAnim_000${i}.png`);
     }
     visual.animationPaper.push(loadedImage);
+  }
+  //images frame for the Door animations (all four of them)
+  for (let i = 0; i < 89; i++) { 
+    let loadedImage0;
+    let loadedImage1;
+    let loadedImage2;
+    let loadedImage3;
+    if (i< 10) {
+      loadedImage0 = p5.loadImage(`assets/images/comp4/doorAnim1_0000${i}.png`); 
+      loadedImage1 = p5.loadImage(`assets/images/comp5/doorAnim2_0000${i}.png`); 
+      loadedImage2 = p5.loadImage(`assets/images/comp6/doorAnim3_0000${i}.png`); 
+      loadedImage3 = p5.loadImage(`assets/images/comp7/doorAnim4_0000${i}.png`); 
+    }
+    else {
+      loadedImage0 = p5.loadImage(`assets/images/comp4/doorAnim1_000${i}.png`);
+      loadedImage1 = p5.loadImage(`assets/images/comp5/doorAnim2_000${i}.png`);
+      loadedImage2 = p5.loadImage(`assets/images/comp6/doorAnim3_000${i}.png`);
+      loadedImage3 = p5.loadImage(`assets/images/comp7/doorAnim4_000${i}.png`);
+    }
+    visual.animationDoor0.push(loadedImage0);
+    visual.animationDoor1.push(loadedImage1);
+    visual.animationDoor2.push(loadedImage2);
+    visual.animationDoor3.push(loadedImage3);
   }
   
 }
@@ -441,6 +473,8 @@ function ending() {
   p5.pop();
 }
 
+
+//Ending State (bad)
 function badEnding() {
   p5.push();
   p5.image(visual.bg5, 0, 0);
@@ -454,8 +488,8 @@ function badEnding() {
   p5.pop();
 }
 
-// //Annyang functions that update the questions and sanity level depending on the answer.
 
+// //Annyang functions that update the questions and sanity level depending on the answer.
 function setAnswer(answer) {
   let question = q.questions[q.current];
   question.response = answer;

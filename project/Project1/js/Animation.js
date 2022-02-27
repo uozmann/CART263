@@ -6,19 +6,17 @@ class Animation {
     this.animation = animation;
     this.frames = frames;
     p5Copy= p5;
+    this.indexAuto = 0;
   }
 
-  displayAutoAnim() { 
-    let indexAuto; 
-    indexAuto = 0;
-    console.log(indexAuto);
-    if (indexAuto < this.frames) {
-      indexAuto += 1;
+  displayAutoAnim(longueurValue, largeurValue) { 
+    if (this.indexAuto < this.frames) {
+      this.indexAuto += 1;
     } else {
-      indexAuto = 0;
+      this.indexAuto = 0;
     }
     //displaying the corresponding image
-    p5Copy.image(this.animation[indexAuto], this.x, this.y);
+    p5Copy.image(this.animation[this.indexAuto], this.x, this.y, longueurValue, largeurValue);
   }
 
 

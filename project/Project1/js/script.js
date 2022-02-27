@@ -14,8 +14,8 @@ import "//cdnjs.cloudflare.com/ajax/libs/annyang/2.6.0/annyang.min.js";
 "use strict";
 
 //Initial State
-let state = `title`;
-// let state = `assignID`;
+// let state = `title`;
+let state = `game`;
 
 //Distances
 let courier = {
@@ -59,6 +59,7 @@ let visual = {
   bg5: undefined,
   bgX: 0,
   bgY:0,
+  index: undefined,
   animationYuji: [],
   videoYuji: undefined,
   animationPaper: [],
@@ -71,7 +72,7 @@ let visual = {
   videoDoor2: undefined,
   animationDoor3: [],
   videoDoor3: undefined,
-  index: undefined,
+  
 }
 
 //colours
@@ -207,12 +208,18 @@ p5.setup = function() {
   q.sanityLevel.x = p5.width*7/8;
   q.sanityLevel.y = p5.height/10;
   
-    //Animation 1 for Yuji
-    visual.videoYuji = new Animation(visual.animationYuji, 0, 0, 299, p5);
-    //Animation 2 for Paper
-    visual.videoPaper = new Animation(visual.animationPaper, -10, 25, 59, p5);
+  //Animation 1 for Yuji
+  visual.videoYuji = new Animation(visual.animationYuji, 0, 0, 299, p5);
+  //Animation 2 for Paper
+  visual.videoPaper = new Animation(visual.animationPaper, -10, 25, 59, p5);
+  //Animation 3 for Doors
+  visual.videoDoor0 = new Animation(visual.animationDoor0, doors.objects[2].x, doors.objects[2].y, 88, p5);
+  visual.videoDoor1 = new Animation(visual.animationDoor1, doors.objects[3].x, doors.objects[3].y, 88, p5);
+  visual.videoDoor2 = new Animation(visual.animationDoor2, doors.objects[9].x, doors.objects[9].y, 88, p5);
+  visual.videoDoor3 = new Animation(visual.animationDoor3, doors.objects[8].x, doors.objects[8].y, 88, p5);
+  
 
-    //Annyang
+  //Annyang
     if (window.annyang) {
       // Create commands
       let commands = {
@@ -430,6 +437,21 @@ function instruction() {
 function game() {
   p5.push();
   p5.image(visual.bg1, 0, 0); //background
+
+  //display the animations for doors when the corresponding door is illuminated
+  if (q.questions[2].response === `yes`) {
+    visual.videoDoor0.displayAutoAnim(320, 240);
+  }
+  if (q.questions[3].response === `yes`) {
+    visual.videoDoor1.displayAutoAnim(320, 240);
+  }
+  if (q.questions[9].response === `yes`) {
+    visual.videoDoor2.displayAutoAnim(320, 240);
+  }
+  if (q.questions[8].response === `yes`) {
+    visual.videoDoor3.displayAutoAnim(320, 240);
+  }
+  
 
   //display the doors behind
   for (let prop in doors.objects) {

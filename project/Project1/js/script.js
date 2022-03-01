@@ -72,6 +72,10 @@ let visual = {
   videoDoor2: undefined,
   animationDoor3: [],
   videoDoor3: undefined,
+  animationDoorEnding: [],
+  videoDoorEnding: [undefined, undefined, undefined, undefined],
+  animationDoorBadEnding: [],
+  videoDoorBadEnding: [undefined, undefined, undefined, undefined],
   
 }
 
@@ -146,11 +150,20 @@ p5.preload = function() {
     visual.animationDoor2.push(loadedImage2);
     visual.animationDoor3.push(loadedImage3);
   }
-  
+  //image frames for the normal ending door animations
+  for (let i = 0; i< 5; i++) {
+    let loadedImageEnding;
+    let loadedImageBadEnding;
+    loadedImageEnding = p5.loadImage(`assets/images/comp8/doorAnimEnding_0000${i}.png`); 
+    loadedImageBadEnding = p5.loadImage(`assets/images/comp9/doorAnimBadEnding_0000${i}.png`); 
+    visual.animationDoorEnding.push(loadedImageEnding);
+    visual.animationDoorBadEnding.push(loadedImageBadEnding);
+  }
 }
 
 //Canvas, buttons, animation, annyang
 p5.setup = function() {
+  console.log(visual.videoDoorEnding.length);
   p5.createCanvas(1280, 720);
   //Buttons
   btn.start= new ChoiceBtn(p5.width*5/7 +70, p5.height*5/8, 200, 50, colours.black, courier.regular, `START`, p5);
@@ -217,6 +230,14 @@ p5.setup = function() {
   visual.videoDoor1 = new Animation(visual.animationDoor1, doors.objects[4].x, doors.objects[4].y, 88, p5);
   visual.videoDoor2 = new Animation(visual.animationDoor2, doors.objects[9].x, doors.objects[9].y, 88, p5);
   visual.videoDoor3 = new Animation(visual.animationDoor3, doors.objects[8].x, doors.objects[8].y, 88, p5);
+  visual.videoDoorEnding[0] = new Animation(visual.animationDoorEnding, doors.objects[1].x, doors.objects[1].y, 4, p5);
+  visual.videoDoorEnding[1] = new Animation(visual.animationDoorEnding, doors.objects[3].x, doors.objects[3].y, 4, p5);
+  visual.videoDoorEnding[2] = new Animation(visual.animationDoorEnding, doors.objects[5].x, doors.objects[5].y, 4, p5);
+  visual.videoDoorEnding[3] = new Animation(visual.animationDoorEnding, doors.objects[0].x, doors.objects[0].y, 4, p5);
+  visual.videoDoorBadEnding[0] = new Animation(visual.animationDoorBadEnding, doors.objects[6].x, doors.objects[6].y, 4, p5);
+  visual.videoDoorBadEnding[1] = new Animation(visual.animationDoorBadEnding, doors.objects[7].x, doors.objects[7].y, 4, p5);
+  visual.videoDoorBadEnding[2] = new Animation(visual.animationDoorBadEnding, doors.objects[10].x, doors.objects[10].y, 4, p5);
+  visual.videoDoorBadEnding[3] = new Animation(visual.animationDoorBadEnding, doors.objects[11].x, doors.objects[11].y, 4, p5);
   
 
   //Annyang
@@ -470,6 +491,13 @@ function game() {
   }
   if ( q.questions[4].response === `yes` && q.questions[5].response === `yes`) {
     visual.videoDoor3.displayAutoAnim(320, 240); //door 8
+  }
+  //display the other animations for normal endings when all questions are answered
+  for (let i = 0; i < visual.videoDoorEnding.length; i++) {
+    if (q.finished === true) {
+      visual.videoDoorEnding[i].displayAutoAnim(320, 240);
+      visual.videoDoorBadEnding[i].displayAutoAnim(320, 240);
+    }
   }
 
   //display the doors behind

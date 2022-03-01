@@ -223,8 +223,12 @@ p5.setup = function() {
     if (window.annyang) {
       // Create commands
       let commands = {
-        'My answer is *answer': setAnswer,
+        'My answer is *answer': function(answer){
+          if (q.current < 6) {
+            setAnswer(answer);
+          }
       }
+    }
       // Add the commands and start annyang
       window.annyang.addCommands(commands);
       window.annyang.start();
@@ -455,16 +459,16 @@ function game() {
   p5.image(visual.bg1, 0, 0); //background
 
   //display the animations for special doors when the corresponding door is illuminated
-  if (q.questions[2].response === `yes` && q.questions[1].response === `yes` && q.questions[3].response === `yes` && q.questions[5].response === `yes` && q.questions[6].response === `yes`) {
+  if (q.questions[1].response === `yes` && q.questions[0].response === `yes` && q.questions[2].response === `yes` && q.questions[4].response === `yes` && q.questions[5].response === `yes`) {
     visual.videoDoor0.displayAutoAnim(320, 240); //door 2
   }
-  if (q.questions[4].response === `yes` && q.questions[1].response === `yes` && q.questions[5].response === `yes` && q.questions[6].response === `yes`) {
+  if (q.questions[3].response === `yes` && q.questions[0].response === `yes` && q.questions[4].response === `yes` && q.questions[5].response === `yes`) {
     visual.videoDoor1.displayAutoAnim(320, 240); //door 4
   }
-  if (q.questions[1].response === `yes` && q.questions[3].response === `yes` && q.questions[5].response === `yes` && q.questions[6].response === `yes`) {
+  if (q.questions[0].response === `yes` && q.questions[2].response === `yes` && q.questions[4].response === `yes` && q.questions[5].response === `yes`) {
     visual.videoDoor2.displayAutoAnim(320, 240); //door 9
   }
-  if ( q.questions[5].response === `yes` && q.questions[6].response === `yes`) {
+  if ( q.questions[4].response === `yes` && q.questions[5].response === `yes`) {
     visual.videoDoor3.displayAutoAnim(320, 240); //door 8
   }
 
@@ -473,7 +477,7 @@ function game() {
     doors.objects[prop].display(); 
   }
   //change colour depending on the response
-  for (let i=0; i< 6; i++) { //7 because only 7 questions are going to be asked
+  for (let i=0; i< 6; i++) { //7 because only 6 questions are going to be asked
     if (q.questions[i].response === `yes`) { 
       doors.objects[i].openDoor();
     } else if (q.questions[i].response === `no`) {
@@ -481,12 +485,16 @@ function game() {
     }
     
   }
-    //If more then 7 questions have been asked, let the player choose a door to enter
-  if (q.current >= 7) {
-    for (let i = 7; i< doors.objects.length; i++) { //Loop through the rest of the doors that don't have a corresponding question
+
+    //If more than 6 questions have been asked, let the player choose a door to enter
+  if (q.finished === true) {
+    for (let i = 6; i< doors.objects.length; i++) { //Loop through the rest of the doors that don't have a corresponding question
       doors.objects[i].openDoor(); //Open all of them
     }
-    doors.objects[i].choose();
+    for (let i =0; i< doors.objects.length; i++) { //Loop through all doors
+      doors.objects[i].choose(); //let the player click on them
+    }
+   
   }
   
 
@@ -536,6 +544,8 @@ function detectEnding() {
       } else if (i === 8) { // Student door
         state = `endingStudent`;
       }
+    } else { 
+      //Do nothing if the door is not clicked or the door is not illuminated
     }
   }
 }
@@ -589,21 +599,36 @@ function endingStudent() {
 
 //*595(content) 458(answer)
 // //Annyang functions that update the questions and sanity level depending on the answer.
-function setAnswer(answer) {
+function setAnswer(answer) { //annyang.trigger("")
+  console.log(`HELLO`);
+  console.log(answer);
+
   let question = q.questions[q.current];
   question.response = answer;
-  if (q.current < 6) {
-    q.current++;
-  }  else if (q.current >= 6) {
-    q.current = 5;
-  } 
-  window.responsiveVoice.speak(`Question${q.current}: ${q.questions[q.current].content}`);
-  q.y = p5.height/8;
-  if (answer === question.sanityTest.answer &&
-      btn[question.sanityTest.condition.property] === question.sanityTest.condition.value) {
-    q.sanityLevel.content += question.sanityTest.penalty;
-  } else if (q.current >= 7) {
-    //nothing happens anymore
+  q.current++;
+  // if (q.current < 6) {
+  //   q.current++;
+  // // }  else if (q.current >= 6) {
+  //   q.current = 5;
+  // } 
+  window.responsiveVoice.speak(`Question${q.current}: ${q.questions[q.current].content}`); //Speak question
+  q.y = p5.height/8; //Move question's position
+  // if (answer === question.sanityTest.answer &&
+  //     btn[question.sanityTest.condition.property] === question.sanityTest.condition.value) {
+  //   q.sanityLevel.content += question.sanityTest.penalty;
+  // } else if (q.current >= 7) {
+  //   //nothing happens anymore
+  // }
+  if (answer === question.sanityTest.answer) { //if they said yes
+    for (let i = 0; i < question.sanityTest.condition.value.length; i++){
+      if (btn[question.sanityTest.condition.property] === question.sanityTest.condition.value[i]) {
+        q.sanityLevel.content += question.sanityTest.penalty;
+        break;
+      }
+    }
+  }
+  if (q.current ===6) {
+   q.finished = true;
   }
 }
 
@@ -685,7 +710,7 @@ p5.mousePressed = function() {
   //   }
   // }
 
-  if (state === `game` && q.current >= 7) {
+  if (state === `game` && q.current >= 5) {
     detectEnding();
   }
   

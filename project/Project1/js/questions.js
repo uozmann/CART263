@@ -12,7 +12,7 @@ let q = {
           answer: `yes`,
           condition: {
             property: `birthGenderInput`,
-            value: `Female`
+            value: [`Female`]
           },
           penalty: -10
         }
@@ -25,7 +25,7 @@ let q = {
           answer: `yes`,
           condition: {
             property: `sexualOrientationInput`,
-            value: `Female (women)`
+            value: [`Female (women)`]
           },
           penalty: -10
         }
@@ -38,7 +38,7 @@ let q = {
           answer: `yes`,
           condition: {
             property: `identifiedGenderInput`,
-            value: `M.`
+            value: [`M.`]
           },
           penalty: -10
         }
@@ -51,7 +51,7 @@ let q = {
           answer: `yes`,
           condition: {
             property: `identifiedSpeciesInput`,
-            value: `Human`
+            value: [`Human`]
           },
           penalty: -20
         }
@@ -64,20 +64,20 @@ let q = {
           answer: `yes`,
           condition: {
             property: `identifiedSpeciesInput`,
-            value: `Human`
+            value: [`Human`]
           },
           penalty: -10
         }
       },
       {
         content: `Are you willing to change your name?`,
-        description: `To be a dancer, an actor, an admission officer, or a student you should change your name`,
+        description: `To have a special job you should change your name`,
         response: ``,
         sanityTest: {
           answer: `yes`,
           condition: {
             property: `identifiedSpeciesInput`, 
-            value: `Human`
+            value: [`Human`]
           },
           penalty: -10
         }
@@ -90,7 +90,7 @@ let q = {
           answer: `yes`,
           condition: {
             property: `identifiedGenderInput`,
-            value: `Female`
+            value: [`Female`]
           },
           penalty: 0
         }
@@ -166,6 +166,7 @@ let q = {
       x: undefined,
       y: undefined,
     },
+    finished: false,
 }
 
 export default q;

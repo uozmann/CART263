@@ -33,9 +33,9 @@ let btn = {
   birthGender: [],
   birthGenderInput: [`Female`, `Male`],
   identifiedGender: [],
-  identifiedGenderInput: [`F.`, `M`, `Else`],
+  identifiedGenderInput: [`F.`, `M.`, `Else`],
   sexualOrientation: [],
-  sexualOrientationInput: [`Bi`, `F.`, `M`, `Else`],
+  sexualOrientationInput: [`Bi.`, `F.`, `M.`, `Else`],
   identifiedSpecies: [],
   identifiedSpeciesInput: [`Human`, `Other`],
   game: undefined,
@@ -605,29 +605,19 @@ function setAnswer(answer) { //annyang.trigger("")
 
   let question = q.questions[q.current];
   question.response = answer;
-  q.current++;
-  // if (q.current < 6) {
-  //   q.current++;
-  // // }  else if (q.current >= 6) {
-  //   q.current = 5;
-  // } 
+  q.current++; //goes to next current question
   window.responsiveVoice.speak(`Question${q.current}: ${q.questions[q.current].content}`); //Speak question
   q.y = p5.height/8; //Move question's position
-  // if (answer === question.sanityTest.answer &&
-  //     btn[question.sanityTest.condition.property] === question.sanityTest.condition.value) {
-  //   q.sanityLevel.content += question.sanityTest.penalty;
-  // } else if (q.current >= 7) {
-  //   //nothing happens anymore
-  // }
+
   if (answer === question.sanityTest.answer) { //if they said yes
     for (let i = 0; i < question.sanityTest.condition.value.length; i++){
-      if (btn[question.sanityTest.condition.property] === question.sanityTest.condition.value[i]) {
-        q.sanityLevel.content += question.sanityTest.penalty;
+      if (btn[question.sanityTest.condition.property] === question.sanityTest.condition.value[i]) { //if their profile doesn't match with their response logic
+        q.sanityLevel.content += question.sanityTest.penalty; //take out sanity points
         break;
       }
     }
   }
-  if (q.current ===6) {
+  if (q.current ===6) { //No more questions to be asked
    q.finished = true;
   }
 }
@@ -688,7 +678,13 @@ p5.mousePressed = function() {
   //Yes Button in the assignID state
   if (btn.assignID[0].clicked) {
     q.sanityLevel.content -= 10;
-  } else if (btn.assignID[1].clicked) {
+    btn.nameInput = `Paper Man`;
+    btn.birthGenderInput = `Male`;
+    btn.identifiedGenderInput = `Female`;
+    btn.sexualOrientationInput = `Male (men)`;
+    btn.identifiedSpeciesInput = `Human`;
+
+  } else if (btn.assignID[1].clicked) { //No button in the assignID state
     btn.assignIDInput = `No`;
   }
 
@@ -702,13 +698,6 @@ p5.mousePressed = function() {
   if (q.current === 0 && state === `game`) {
     window.responsiveVoice.speak(`Question${q.current}: ${ q.questions[q.current].content}`);
   }
-
-  // //Open a path towards the ending
-  // for (let prop in doors.objects) {
-  //   if (doors.objects[prop].clicked === true && doors.objects[prop].currentFill === 255) {
-  //     state = `ending`;
-  //   }
-  // }
 
   if (state === `game` && q.current >= 5) {
     detectEnding();

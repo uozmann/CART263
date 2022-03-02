@@ -14,8 +14,8 @@ import "//cdnjs.cloudflare.com/ajax/libs/annyang/2.6.0/annyang.min.js";
 "use strict";
 
 //Initial State
-let state = `title`;
-// let state = `game`;
+// let state = `title`;
+let state = `badEnding`;
 
 //Distances
 let courier = {
@@ -41,6 +41,8 @@ let btn = {
   game: undefined,
   assignID: [],
   assignIDInput: [`Yes`,`No`],
+  messageBox: undefined,
+  messageBoxInput: `Type Here`,
 }
 
 let doors = {
@@ -198,6 +200,7 @@ p5.setup = function() {
     let btnObject= new ChoiceBtn(x, p5.height*4/5 + 55, 150, 50, colours.black, courier.regular, btn.assignIDInput[i], p5);
     btn.assignID.push(btnObject);
   }
+  btn.messageBox= new ChoiceBtn(p5.width/8, p5.height/2 +100, p5.width*6/8, 200, colours.black, courier.regular, ``, p5); //text box input field
 
   // Doors at the game state
   for (let i = 0; i<4; i++) { 
@@ -331,7 +334,25 @@ function title() {
 
 //State
 function about() {
-  
+  p5.push();
+  p5.image(visual.bg5, 0, 0);
+
+  p5.textAlign(p5.CENTER, p5.CENTER);
+  //Header texts
+  p5.textFont(courier.bold);
+  p5.textSize(48);
+  p5.text(`Previous Messages`, p5.width/2, p5.height/8);
+
+  p5.textAlign(p5.LEFT);
+  p5.textFont(courier.regular);
+  p5.textSize(24);
+  p5.text(btn.messageBoxInput, p5.width/8, p5.height*2/8, p5.width*6/8);
+
+  //Go back to title page
+  btn.game.display(); 
+
+
+  p5.pop();
 }
 
 //State
@@ -583,6 +604,25 @@ function detectEnding() {
 function ending() {
   p5.push();
   p5.image(visual.bg1, 0, 0);
+
+  p5.textAlign(p5.CENTER, p5.CENTER);
+  //Header texts
+  p5.textFont(courier.bold);
+  p5.textSize(48);
+  p5.text(`Life of a paper man`, p5.width/2, p5.height/8);
+
+  p5.textAlign(p5.LEFT);
+  p5.textFont(courier.regular);
+  p5.textSize(24);
+  p5.text(`You have been successfully admitted to the Paper World. The Paper government gave you a job, just like how it did for the other paper men. You have gave up on some parts of your identity, in exchange, you live a peaceful life without persecution. You married a man a few years later, and got a paper baby. All seem to go into the right direction, but sometimes you feel like you have forgotten some things.`, p5.width/8, p5.height*2/8, p5.width*6/8);
+  p5.text(`You can leave a message for yourself below: `, p5.width/8, p5.height/2 +50);
+  //Message box below
+  btn.messageBox.display();
+  p5.text(btn.messageBoxInput, p5.width/8 +50, p5.height/2 +150);
+
+  //Go back to title page
+  btn.game.display(); 
+
   p5.pop();
 }
 
@@ -592,12 +632,27 @@ function badEnding() {
   p5.push();
   p5.image(visual.bg5, 0, 0);
 
-  //Animation
-  visual.bgX += 10;
-  if (visual.bgX >= 0) {
-    visual.bgX = 0;
-  }
-  p5.image(visual.bg4, visual.bgX, visual.bgY);
+  p5.textAlign(p5.CENTER, p5.CENTER);
+  //Header texts
+  p5.textFont(courier.bold);
+  p5.textSize(48);
+  p5.text(`Life of a paper man`, p5.width/2, p5.height/8);
+
+  p5.textAlign(p5.LEFT);
+  p5.textFont(courier.regular);
+  p5.textSize(24);
+  p5.text(`You don't feel right in this Paper world. You know from the bottom of your soul that you shouldn't belong here. So, one day, you considered suicide and abandonned everyone. You can finally be free.`, p5.width/8, p5.height*2/8, p5.width*6/8);
+  p5.text(`As the dust of your remaining paper body dance in the air, with the rythm of the wind, you seemed to remember more than vividly who you were, before entering the Paper World.`, p5.width/8, p5.height/2 -50, p5.width*6/8);
+  p5.text(`You can leave a message for yourself below: `, p5.width/8, p5.height/2 +50);
+
+  //Message box below
+  btn.messageBox.display();
+  p5.text(btn.messageBoxInput, p5.width/8 +50, p5.height/2 +150);
+
+  //Go back to title page
+  btn.game.display(); 
+
+
   p5.pop();
 }
 
@@ -726,10 +781,20 @@ p5.mousePressed = function() {
   if (q.current === 0 && state === `game`) {
     window.responsiveVoice.speak(`Question${q.current}: ${ q.questions[q.current].content}`);
   }
-
+  //Detect ending if all six questions have been asked
   if (state === `game` && q.current >= 5) {
     detectEnding();
   }
+
+  //Message field Input
+  if (btn.messageBox.clicked) {
+    btn.messageBoxInput = ``;
+  }
+  //Next Button in the game state
+  if ((state === `ending` || state === `badEnding` || state === `about`) && btn.game.clicked) {
+    state = `title`;
+    btn.game.clicked = false;
+} 
   
 } //End of mousePressed
 
@@ -739,6 +804,9 @@ p5.keyTyped = function() {
   if (btn.name.clicked) {
     btn.nameInput += p5.key;
   }
+  if (btn.messageBox.clicked) {
+    btn.messageBoxInput += p5.key;
+  }
 }
 
 p5.keyPressed = function() {
@@ -747,6 +815,10 @@ p5.keyPressed = function() {
       // Remove the last character in a string!
       btn.nameInput = btn.nameInput.slice(0, btn.nameInput.length - 1);
   }
+  if (btn.messageBox.clicked && p5.keyCode === p5.BACKSPACE) {
+    // Remove the last character in a string!
+    btn.messageBoxInput = btn.messageBoxInput.slice(0, btn.messageBoxInput.length - 1);
+}
 }
 
 }); //End of p5 object

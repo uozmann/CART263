@@ -16,8 +16,8 @@ import "//cdnjs.cloudflare.com/ajax/libs/annyang/2.6.0/annyang.min.js";
 "use strict";
 
 //Initial State
-// let state = `title`;
-let state = `endingOfficer`;
+let state = `title`;
+// let state = `endingStudent`;
 
 //Distances
 let courier = {
@@ -356,6 +356,10 @@ p5.draw = function() {
     case `endingStudent`:
       endingStudent();
       break;
+
+    case `studentMessage`:
+      studentMessage();
+      break;
   }
 }
 
@@ -660,9 +664,9 @@ function detectEnding() {
       } else if (i === 8) { // Student door
         state = `endingStudent`;
       }
-    } else { 
-      //Do nothing if the door is not clicked or the door is not illuminated
-    }
+    } 
+    //return false right after to avoid errors when replaying the game
+    doors.objects[i].clicked = false;
   }
 }
 
@@ -925,6 +929,7 @@ function endingOfficer() {
 }
 
 
+//set the Officer's choice based on annyang
 function setOfficerDesicion(answer) {
   if (answer === `suicide`) {
     narratives.endingOfficerGame.choiceResponse = `You decided to commit suicide. At the edge of dying, you suddenly remembered everything as your life flashes in front of you.You remembered to be a ${btn.identifiedSpeciesInput}, living on Earth. You are not a paper man. Your name is ${btn.nameInput}. But then why are you in this world?`
@@ -933,7 +938,7 @@ function setOfficerDesicion(answer) {
   } else if (answer === `quit my job`) {
     narratives.endingOfficerGame.choiceResponse = `You decided to quit your job. A few years passed and you are getting used to life of a Paper Man in the Paper World.`
   }
-
+  // Print the recorded answer so the player knows what he is saying
   narratives.endingOfficerGame.playerInput = answer;
 }
 
@@ -947,6 +952,60 @@ function endingStudent() {
   //Bottom texts
   p5.textFont(courier.regular);
   visual.texts[0].display(narratives.endingStudent, narratives.currentStudentLine);
+
+  if (narratives.currentStudentLine >= narratives.endingStudent.length) {
+    if (visual.bgX < 0) {
+      visual.bgX += 10;
+    } else if (visual.bgX >= 0) {
+      visual.bgX = 0;
+    }
+    p5.image(visual.bg2, visual.bgX, visual.bgY);
+
+    p5.textAlign(p5.CENTER, p5.CENTER);
+    //Header texts
+    p5.textFont(courier.bold);
+    p5.textSize(48);
+    p5.text(`Diary`, visual.bgX + p5.width/3, p5.height/8);
+
+    p5.textAlign(p5.LEFT);
+    p5.textFont(courier.regular);
+    p5.textSize(24);
+    p5.text(`I am so tired of programming this game... Dude that takes forever to code, and my imagination is drained. I can't even invent more characters than the ones I have for now. Maybe it would be better if I make myself an alias in the game, to live in the Paper World for me and to give me some more inspirations?`, visual.bgX + p5.width/10, p5.height*2/8, p5.width/2);
+    p5.text(`If you are reading this, then it means you are my alias. Please leave me some messages for me to inspire from.`, visual.bgX + p5.width/10, p5.height/2 + 100, p5.width/2);
+
+    btn.game.display();
+  }
+  p5.pop();
+}
+
+function studentMessage() {
+  p5.push();
+  p5.image(visual.bg1, 0, 0);
+
+  //Header
+  p5.textAlign(p5.CENTER, p5.CENTER);
+  //Header texts
+  p5.textFont(courier.bold);
+  p5.textSize(48);
+  p5.text(`Leave message here`, p5.width/2, p5.height/8);
+  //Description Text
+  p5.textAlign(p5.LEFT);
+  p5.textFont(courier.regular);
+  p5.textSize(24);
+  p5.text(`You will be able to access your latest message in the Record section.`, p5.width/8, p5.height*2/8, p5.width/2);
+
+   //Message box below
+   btn.messageBox.display();
+   p5.text(btn.messageBoxInput, p5.width/8 + 50, p5.height/2 +150, p5.width*6/8 - 50);
+  //Button to return to title page
+  btn.game.display();
+
+  //Animation
+  visual.bgX -= 10;
+  if (visual.bgX <= -1280) {
+    visual.bgX = -1280;
+  }
+  p5.image(visual.bg2, visual.bgX, visual.bgY);
   p5.pop();
 }
 
@@ -1036,11 +1095,15 @@ p5.mousePressed = function() {
     btn.messageBoxInput = ``;
   }
   //Next Button in the game state
-  if ((state === `ending` || state === `badEnding` || state === `about` || state === `endingDancer` || state === `endingOfficer`) && btn.game.clicked) {
+  if ((state === `ending` || state === `badEnding` || state === `about` || state === `endingDancer` || state === `endingOfficer` || state === `studentMessage`) && btn.game.clicked) {
     state = `title`;
     btn.game.clicked = false;
   } else if (state === `endingActor` &&  btn.game.clicked) {
     state = `game`;
+    btn.game.clicked = false;
+  } else if (state === `endingStudent` &&  btn.game.clicked) {
+    state = `studentMessage`;
+    btn.game.clicked = false;
   }
 
   //Line switches in the special endings
@@ -1050,6 +1113,8 @@ p5.mousePressed = function() {
     narratives.currentActorLine +=1;
   } else if (state === `endingOfficer`) {
     narratives.currentOfficerLine +=1;
+  } else if (state === `endingStudent`) {
+    narratives.currentStudentLine +=1;
   }
   
 

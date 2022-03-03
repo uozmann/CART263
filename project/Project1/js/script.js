@@ -203,8 +203,6 @@ p5.preload = function() {
 //Canvas, buttons, animation, annyang
 p5.setup = function() {
   p5.createCanvas(1280, 720);
-  //Play bgm
-  bgm.yuji.play();
   visual.sound = visual.soundOn; //set the current icon
   //Buttons
   btn.start= new ChoiceBtn(p5.width*5/7 +70, p5.height*5/8, 200, 50, colours.black, courier.regular, `START`, p5);
@@ -1041,8 +1039,12 @@ function studentMessage() {
 //Prompt question when the user mousepress
 p5.mousePressed = function() {
   //Sound settings
+  if (state === `title` && !bgm.yuji.isPlaying()) {
+    //Play bgm
+    bgm.yuji.play();
+  }
+  // pause the bgm when pressing on the music icon
   if (bgm.yuji.isPlaying() && p5.mouseX < 60 && p5.mouseY < 60) {
-    // pause the bgm when pressing on the music icon
     bgm.yuji.pause();
     visual.sound = visual.soundOff;
   } else if (!bgm.yuji.isPlaying() && p5.mouseX < 60 && p5.mouseY < 60){
@@ -1050,7 +1052,7 @@ p5.mousePressed = function() {
     visual.sound = visual.soundOn;
   }
   //Title page start button
-  if (btn.start.clicked ) {
+  if (btn.start.clicked) {
     state = `profileSetting`;
     btn.start.clicked = false;
   } else if (btn.about.clicked ) { //about button

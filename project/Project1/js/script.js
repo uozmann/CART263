@@ -88,6 +88,15 @@ let visual = {
   characterStudent: undefined,
   //texts associated with each character
   texts: [undefined, undefined, undefined, undefined],
+  //sound icon
+  soundOn: undefined,
+  soundOff: undefined,
+  sound: undefined,
+}
+
+//Sound
+let bgm = {
+  yuji: undefined,
 }
 
 //colours
@@ -106,6 +115,9 @@ p5.preload = function() {
   courier.regular = p5.loadFont(`assets/fonts/Courier/CourierPrime-Regular.ttf`);
   courier.bold = p5.loadFont(`assets/fonts/Courier/CourierPrime-Bold.ttf`);
   courier.italic = p5.loadFont(`assets/fonts/Courier/CourierPrime-Italic.ttf`);
+  //sound
+  p5.soundFormats('mp3');
+  bgm.yuji = p5.loadSound(`assets/sounds/bgm1.mp3`);
   //visuals
   visual.bg0 = p5.loadImage(`assets/images/bg0.jpg`);
   visual.bg1 = p5.loadImage(`assets/images/bg1.jpg`);
@@ -176,11 +188,18 @@ p5.preload = function() {
   visual.characterActor = p5.loadImage(`assets/images/chara3.png`); 
   visual.characterOfficer = p5.loadImage(`assets/images/chara2.png`); 
   visual.characterStudent = p5.loadImage(`assets/images/chara1.png`); 
+
+  //Sound Icons
+  visual.soundOn = p5.loadImage(`assets/images/sound0.png`);
+  visual.soundOff = p5.loadImage(`assets/images/sound1.png`);
 }
 
 //Canvas, buttons, animation, annyang
 p5.setup = function() {
   p5.createCanvas(1280, 720);
+  //Play bgm
+  bgm.yuji.play();
+  visual.sound = visual.soundOn; //set the current icon
   //Buttons
   btn.start= new ChoiceBtn(p5.width*5/7 +70, p5.height*5/8, 200, 50, colours.black, courier.regular, `START`, p5);
   btn.about= new ChoiceBtn(p5.width*5/7 +70, p5.height*5/8 + 100, 200, 50, colours.black, courier.regular, `RECORD`, p5);
@@ -361,8 +380,16 @@ p5.draw = function() {
       studentMessage();
       break;
   }
+  displaySound();
 }
 
+
+function displaySound() {
+  p5.image(visual.sound, 10, 10);
+}
+
+
+//Title State
 function title() {
   // Tittle texts and animations
   p5.push();
@@ -1012,6 +1039,15 @@ function studentMessage() {
 
 //Prompt question when the user mousepress
 p5.mousePressed = function() {
+  //Sound settings
+  if (bgm.yuji.isPlaying() && p5.mouseX < 60 && p5.mouseY < 60) {
+    // pause the bgm when pressing on the music icon
+    bgm.yuji.pause();
+    visual.sound = visual.soundOff;
+  } else if (!bgm.yuji.isPlaying() && p5.mouseX < 60 && p5.mouseY < 60){
+    bgm.yuji.play(); // playback will resume from the pause position
+    visual.sound = visual.soundOn;
+  }
   //Title page start button
   if (btn.start.clicked ) {
     state = `profileSetting`;

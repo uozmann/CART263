@@ -1,3 +1,4 @@
+//Bottom text display during special ending
 let p5Copy4;
 class Narration {
     constructor(p5) {

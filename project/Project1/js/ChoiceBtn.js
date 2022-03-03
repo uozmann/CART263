@@ -1,3 +1,4 @@
+//All clickable buttons
 let p5Copy2;
 class ChoiceBtn {
   constructor(x,y,sizeX,sizeY, colour, font, text, p5) {

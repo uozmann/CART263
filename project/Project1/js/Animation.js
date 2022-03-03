@@ -1,3 +1,4 @@
+//All animations
 let p5Copy;
 class Animation {
   constructor(animation, x, y, frames, p5){

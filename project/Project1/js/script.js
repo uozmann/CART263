@@ -1,9 +1,15 @@
+//Project 1: Paper Man
+//Man Zou
+//CART 263
+
+//This is the main script of the game, the function states are respectively title(), about(), profileSetting(), assignID(), instruction(), game(), ending(), badEnding(), endingDancer(), endingActor(), endingOfficer(), endingStudent.
+//All visuals are originally sourced at unsplash then modified by myself. All drawings are made by myself. The background music is sourced at https://sharefs.ali.kugou.com/202203031221/eb8a393c0ad246a2b6ec50dd44ce4487/G232/M05/18/19/yJQEAF9Ei4GATjklADNKctHnG0E488.mp3. The fonts are taken from google font.
+
 //P5 Library
 import "./libraries/p5.min.js" ;
 import "./libraries/p5.collide2d.min.js";
 import "./libraries/p5.sound.min.js";
 //Classes
-// import AnimationYuji from "./AnimationYuji.js";
 import Animation from "./Animation.js";
 import ChoiceBtn from "./ChoiceBtn.js";
 import Door from "./Door.js";
@@ -17,9 +23,8 @@ import "//cdnjs.cloudflare.com/ajax/libs/annyang/2.6.0/annyang.min.js";
 
 //Initial State
 let state = `title`;
-// let state = `endingStudent`;
 
-//Distances
+//Fonts
 let courier = {
   regular: undefined,
   bold: undefined,
@@ -49,6 +54,7 @@ let btn = {
   choiceActorInput: [`a long sigh`, `a banana`, `the lamp`, `the horse`, `the past`, `the chocolate`, `next life`, `heaven`],
 }
 
+//Doors at game state
 let doors = {
   objects: [],
   edge: 0,
@@ -66,8 +72,8 @@ let visual = {
   bgX: 0,
   bgY:0,
   index: undefined,
-  animationYuji: [],
-  videoYuji: undefined,
+  animationYuji: [], //to store all frames
+  videoYuji: undefined, //to store the animation class object
   animationPaper: [],
   videoPaper: undefined,
   animationDoor0: [],
@@ -258,7 +264,6 @@ p5.setup = function() {
       let y = j*240;
       let colour = 100;
       colours.doors.push(colour);
-      // q.responses.push(``); 
       let doorObject= new Door(x, y, colours.black, colours.doors[i*j], p5);
       doors.objects.push(doorObject);
     } 
@@ -308,9 +313,9 @@ p5.setup = function() {
     if (window.annyang) {
       // Create commands
       let commands = {
-        'Paper *answer': setDancerY,
-        'I want to *answer': setOfficerDesicion,
-        'My answer is *answer': function(answer){
+        'Paper *answer': setDancerY, //endingDancer
+        'I want to *answer': setOfficerDesicion, //endingOfficer
+        'My answer is *answer': function(answer){ //game state
           if (q.current < 6) {
             setAnswer(answer);
           }
@@ -320,11 +325,10 @@ p5.setup = function() {
       window.annyang.addCommands(commands);
       window.annyang.start();
     }
-
-    // //Responsice voice
-    // window.responsiveVoice.speak("Hello");
 }
 
+
+//All states of the game
 p5.draw = function() {
   p5.background(0);
   switch (state) {
@@ -384,6 +388,7 @@ p5.draw = function() {
 }
 
 
+//Display the sound icon throughout the game
 function displaySound() {
   p5.image(visual.sound, 10, 10);
 }
@@ -403,9 +408,10 @@ function title() {
   visual.videoYuji.displayMouseAnim();//display the animation frame
 
   //Call functionalities of buttons
-  btn.start.display();
-  btn.about.display();
+  btn.start.display(); //go the profileSetting state
+  btn.about.display(); //go to about state
 }
+
 
 //State
 function about() {
@@ -426,7 +432,6 @@ function about() {
 
   //Go back to title page
   btn.game.display(); 
-
 
   p5.pop();
 }
@@ -478,20 +483,17 @@ function profileSetting() {
   p5.textSize(32);
   p5.text(btn.nameInput, p5.width*2/3, p5.height*2/5 +5); // Name input field
   
-
-  
-
   //Animation
   visual.bgX -= 10;
   if (visual.bgX <= -1280) {
     visual.bgX = -1280;
   }
   p5.image(visual.bg2, visual.bgX, visual.bgY);
-  p5.pop();
-
-  
+  p5.pop(); 
 }
 
+
+//AssignId state
 function assignID() {
   p5.push();
   p5.image(visual.bg1, 0, 0);
@@ -607,8 +609,7 @@ function game() {
       doors.objects[i].openDoor();
     } else if (q.questions[i].response === `no`) {
       doors.objects[i].closeDoor();
-    }
-    
+    }  
   }
 
     //If more than 6 questions have been asked, let the player choose a door to enter
@@ -618,10 +619,8 @@ function game() {
     }
     for (let i =0; i< doors.objects.length; i++) { //Loop through all doors
       doors.objects[i].choose(); //let the player click on them
-    }
-   
+    } 
   }
-  
 
   //header questions
   q.y +=1;
@@ -720,7 +719,6 @@ function ending() {
 
   //Go back to title page
   btn.game.display(); 
-
   p5.pop();
 }
 
@@ -798,7 +796,6 @@ function endingDancer() {
     //Go back to title page
     btn.game.display(); 
   }
-
   p5.pop();
 }
 
@@ -894,6 +891,8 @@ function endingActor() {
   p5.pop();
 }
 
+
+//game for endingActor state
 function actorGame() {
   p5.push();
   //Theater improvisation
@@ -1005,6 +1004,8 @@ function endingStudent() {
   p5.pop();
 }
 
+
+//Following endingStudent, a new state
 function studentMessage() {
   p5.push();
   p5.image(visual.bg1, 0, 0);
@@ -1130,7 +1131,7 @@ p5.mousePressed = function() {
   if (btn.messageBox.clicked) {
     btn.messageBoxInput = ``;
   }
-  //Next Button in the game state
+  //Next Button in different states
   if ((state === `ending` || state === `badEnding` || state === `about` || state === `endingDancer` || state === `endingOfficer` || state === `studentMessage`) && btn.game.clicked) {
     state = `title`;
     btn.game.clicked = false;

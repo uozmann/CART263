@@ -1,3 +1,4 @@
+//doors at the game state
 let p5Copy3;
 class Door {
   constructor(x,y, edge, fill, p5) {

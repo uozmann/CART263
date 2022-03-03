@@ -1,3 +1,4 @@
+// All the questions and relative properties in the game state
 let q = {
     x: undefined,
     y: undefined,

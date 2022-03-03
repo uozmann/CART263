@@ -1,3 +1,4 @@
+//text content for the Narration class
 let narratives = {
     endingDancer: [`Upon close examination from the director board, you have been given a special role.`, `You became the only dancer in the Paper World.`, `Today, you have been asked to perform a show for the director board.`, `You should score at least 90 points for them to be entertained.`, `To perform, say "Paper top" to go up and say "Paper down" to go down.`, `You can start whenever.`, `The director board seems to have enjoyed your performance very much.`, `As a reward, they have decided to let you keep your identity.`, `You did not understand at first.`, `But over the years, you see people around you changing and start to understand.`, `This world pushes its citizen to act a certain way.`, `You are indeed very lucky to be able to stay the way you were.`],
     currentDancerLine: 0,

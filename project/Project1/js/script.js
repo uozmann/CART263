@@ -8,6 +8,8 @@ import Animation from "./Animation.js";
 import ChoiceBtn from "./ChoiceBtn.js";
 import Door from "./Door.js";
 import q from "./questions.js"
+import Narration from "./Narrration.js";
+import narratives from "./narratives.js";
 //Annyang Library
 import "//cdnjs.cloudflare.com/ajax/libs/annyang/2.6.0/annyang.min.js"; 
 
@@ -15,7 +17,7 @@ import "//cdnjs.cloudflare.com/ajax/libs/annyang/2.6.0/annyang.min.js";
 
 //Initial State
 // let state = `title`;
-let state = `badEnding`;
+let state = `endingOfficer`;
 
 //Distances
 let courier = {
@@ -43,6 +45,8 @@ let btn = {
   assignIDInput: [`Yes`,`No`],
   messageBox: undefined,
   messageBoxInput: `Type Here`,
+  choiceActor: [],
+  choiceActorInput: [`a long sigh`, `a banana`, `the lamp`, `the horse`, `the past`, `the chocolate`, `next life`, `heaven`],
 }
 
 let doors = {
@@ -78,7 +82,12 @@ let visual = {
   videoDoorEnding: [undefined, undefined, undefined, undefined],
   animationDoorBadEnding: [],
   videoDoorBadEnding: [undefined, undefined, undefined, undefined],
-  
+  characterDancer: undefined,
+  characterActor: undefined,
+  characterOfficer: undefined,
+  characterStudent: undefined,
+  //texts associated with each character
+  texts: [undefined, undefined, undefined, undefined],
 }
 
 //colours
@@ -161,15 +170,20 @@ p5.preload = function() {
     visual.animationDoorEnding.push(loadedImageEnding);
     visual.animationDoorBadEnding.push(loadedImageBadEnding);
   }
+
+  //Character images in special endings
+  visual.characterDancer = p5.loadImage(`assets/images/chara0.png`); 
+  visual.characterActor = p5.loadImage(`assets/images/chara3.png`); 
+  visual.characterOfficer = p5.loadImage(`assets/images/chara2.png`); 
+  visual.characterStudent = p5.loadImage(`assets/images/chara1.png`); 
 }
 
 //Canvas, buttons, animation, annyang
 p5.setup = function() {
-  console.log(visual.videoDoorEnding.length);
   p5.createCanvas(1280, 720);
   //Buttons
   btn.start= new ChoiceBtn(p5.width*5/7 +70, p5.height*5/8, 200, 50, colours.black, courier.regular, `START`, p5);
-  btn.about= new ChoiceBtn(p5.width*5/7 +70, p5.height*5/8 + 100, 200, 50, colours.black, courier.regular, `ABOUT`, p5);
+  btn.about= new ChoiceBtn(p5.width*5/7 +70, p5.height*5/8 + 100, 200, 50, colours.black, courier.regular, `RECORD`, p5);
   btn.game= new ChoiceBtn(p5.width*7/8, p5.height/10, 100, 100, colours.black, courier.regular, `NEXT`, p5);
   btn.name= new ChoiceBtn(p5.width/2, p5.height*2/5 - 20, 400, 50, colours.black, courier.regular, ``, p5);
   for (let i = 0; i<2; i++) { //birth gender buttons
@@ -201,6 +215,22 @@ p5.setup = function() {
     btn.assignID.push(btnObject);
   }
   btn.messageBox= new ChoiceBtn(p5.width/8, p5.height/2 +100, p5.width*6/8, 200, colours.black, courier.regular, ``, p5); //text box input field
+
+  for (let i = 0; i< 8; i++) { //endingActor buttons
+    let y;
+    if (i <= 1) {
+      y = p5.height/2 + i*(50 + 25);
+    } else if (i <= 3) {
+      y = p5.height/2 + i*(50 + 25) - 150;
+    } else if (i <= 5) {
+      y = p5.height/2 + i*(50 + 25) - 300;
+    } else if (i <= 7) {
+      y = p5.height/2 + i*(50 + 25) - 450;
+    }
+    let btnObject= new ChoiceBtn(p5.width/8, y, 400, 50, colours.black, courier.regular, btn.choiceActorInput[i], p5);
+    btn.choiceActor.push(btnObject);
+  } 
+  console.log(btn.choiceActor.length);
 
   // Doors at the game state
   for (let i = 0; i<4; i++) { 
@@ -241,17 +271,31 @@ p5.setup = function() {
   visual.videoDoorBadEnding[1] = new Animation(visual.animationDoorBadEnding, doors.objects[7].x, doors.objects[7].y, 4, p5);
   visual.videoDoorBadEnding[2] = new Animation(visual.animationDoorBadEnding, doors.objects[10].x, doors.objects[10].y, 4, p5);
   visual.videoDoorBadEnding[3] = new Animation(visual.animationDoorBadEnding, doors.objects[11].x, doors.objects[11].y, 4, p5);
+
+  //Narrations for the special endings
+  visual.texts[0] = new Narration(p5); //endingDancer
+  visual.texts[1] = new Narration(p5); //endingActor
+  visual.texts[2] = new Narration(p5); //endingOfficer
+  visual.texts[3] = new Narration(p5); //endingStudent
+
+  //Game for endingDancer
+  for (let i = 0; i < narratives.endingDancerGame.num; i++) {
+    narratives.endingDancerGame.x.push(i);
+    narratives.endingDancerGame.y.push(i);
+  }
   
 
   //Annyang
     if (window.annyang) {
       // Create commands
       let commands = {
+        'Paper *answer': setDancerY,
+        'I want to *answer': setOfficerDesicion,
         'My answer is *answer': function(answer){
           if (q.current < 6) {
             setAnswer(answer);
           }
-      }
+      }    
     }
       // Add the commands and start annyang
       window.annyang.addCommands(commands);
@@ -346,7 +390,8 @@ function about() {
   p5.textAlign(p5.LEFT);
   p5.textFont(courier.regular);
   p5.textSize(24);
-  p5.text(btn.messageBoxInput, p5.width/8, p5.height*2/8, p5.width*6/8);
+  p5.text(`Here is a recording of the messages you left previously`, p5.width/8, p5.height*3/8 - 50);
+  p5.text(btn.messageBoxInput, p5.width/8, p5.height*3/8, p5.width*6/8 -50);
 
   //Go back to title page
   btn.game.display(); 
@@ -576,8 +621,30 @@ function game() {
 }
 
 
+// //Annyang functions that update the questions and sanity level depending on the answer.
+function setAnswer(answer) { //annyang.trigger("My answer is yes") or annyang.trigger("My answer is no")
+  let question = q.questions[q.current];
+  question.response = answer;
+  q.current++; //goes to next current question
+  window.responsiveVoice.speak(`Question${q.current}: ${q.questions[q.current].content}`); //Speak question
+  q.y = p5.height/8; //Move question's position
+
+  if (answer === question.sanityTest.answer) { //if they said yes
+    for (let i = 0; i < question.sanityTest.condition.value.length; i++){
+      if (btn[question.sanityTest.condition.property] === question.sanityTest.condition.value[i]) { //if their profile doesn't match with their response logic
+        q.sanityLevel.content += question.sanityTest.penalty; //take out sanity points
+        break;
+      }
+    }
+  }
+  if (q.current ===6) { //No more questions to be asked
+   q.finished = true;
+  }
+}
+
+
+//Open a path towards the ending
 function detectEnding() {
-  //Open a path towards the ending
   for (let i=0; i< doors.objects.length; i++) { // loop through all doors
     if (doors.objects[i].clicked === true && doors.objects[i].currentFill === 255) { //if that door is illuminated
       if (i === 1 || i ===3 || i ===5 || i ===6) { // Normal doors 
@@ -618,7 +685,7 @@ function ending() {
   p5.text(`You can leave a message for yourself below: `, p5.width/8, p5.height/2 +50);
   //Message box below
   btn.messageBox.display();
-  p5.text(btn.messageBoxInput, p5.width/8 +50, p5.height/2 +150);
+  p5.text(btn.messageBoxInput, p5.width/8 +50, p5.height/2 +150, p5.width*6/8 - 50);
 
   //Go back to title page
   btn.game.display(); 
@@ -647,63 +714,242 @@ function badEnding() {
 
   //Message box below
   btn.messageBox.display();
-  p5.text(btn.messageBoxInput, p5.width/8 +50, p5.height/2 +150);
+  p5.text(btn.messageBoxInput, p5.width/8 +50, p5.height/2 +150, p5.width*6/8 - 50);
 
   //Go back to title page
   btn.game.display(); 
-
-
   p5.pop();
 }
 
-function endingActor() {
-  p5.push();
-  p5.image(visual.bg1, 0, 0);
-  p5.pop();
-}
 
+//Dancer special ending
 function endingDancer() {
   p5.push();
   p5.image(visual.bg1, 0, 0);
+  p5.image(visual.characterDancer, p5.width/2 - 50, p5.height/4 );
+
+  //Bottom texts
+  p5.textFont(courier.regular);
+  visual.texts[0].display(narratives.endingDancer, narratives.currentDancerLine);
+  
+  //Start a game when the player reaches the 5th sentence
+  if (narratives.currentDancerLine === 5) {
+    dancerGame(p5.mouseX, p5.mouseY, p5.pmouseX, 300); //using the pmouseX from p5 to get previous mouse position and do some form changes
+    //Score Points
+    p5.textFont(courier.bold);
+    p5.textSize(24);
+    p5.text(`Score: ${narratives.score}`, q.sanityLevel.x, q.sanityLevel.y);
+  }
+
+  //End the game and go back to the narratives when reaches the score of 90
+  if (narratives.score >= 90) {
+    narratives.currentDancerLine = 6;
+    narratives.score =0;
+  }
+  
+  //When the narratives finish
+  if (narratives.currentDancerLine >= narratives.endingDancer.length) {
+    p5.textAlign(p5.CENTER, p5.CENTER);
+    //Header texts
+    p5.textFont(courier.bold);
+    p5.textSize(48);
+    p5.text(`Life of a Dancer`, p5.width/2, p5.height/8);
+
+    p5.textAlign(p5.LEFT);
+    p5.textFont(courier.regular);
+    p5.textSize(24);
+    p5.text(`There are definitely more to explore in the Paper World. After years and years of repeting performances, you start to go insane. Even if you were able to keep your identity, you still suffer from the restrictive rules. One day, you decided this is enough and you don't want no tomorrow anymore.`, p5.width/8, p5.height*2/8, p5.width*6/8 -50);
+    p5.text(`You can leave a message for yourself below: `, p5.width/8, p5.height/2 +50);
+    //Message box below
+    btn.messageBox.display();
+    p5.text(btn.messageBoxInput, p5.width/8 +50, p5.height/2 +150, p5.width*6/8 - 50);
+
+    //Go back to title page
+    btn.game.display(); 
+  }
+
   p5.pop();
 }
 
+
+//A little game to go up and down
+function dancerGame(x, y, pX, pY) {
+  p5.push();
+  //animate the stroke colour and circles
+  q.colour = 640 + 640 * p5.sin(p5.millis() / 1000);
+  // p5.stroke(q.colour);
+  let difference = p5.abs(x - pX) + p5.abs(y - pY);
+  p5.fill(q.colour);
+
+  //Input storage inspired from https://p5js.org/examples/input-storing-input.html
+  let current = p5.frameCount % narratives.endingDancerGame.num;
+  narratives.endingDancerGame.x[current] = q.colour;
+  narratives.endingDancerGame.y[current] = narratives.endingDancerGame.currentY;
+
+  //Draw the circle trail
+  for (let i = 0; i < narratives.endingDancerGame.num; i++) {
+    let index = (current + 1 + i) %  narratives.endingDancerGame.num;
+    p5.ellipse(narratives.endingDancerGame.x[index], narratives.endingDancerGame.y[index], difference%i, i);
+  }
+
+  //Game Target
+  p5.textFont(courier.bold);
+  p5.textSize(24);
+  p5.text(`Next Step Here`, p5.width/5, narratives.endingDancerGame.textY);
+
+  if(narratives.endingDancerGame.textY === narratives.endingDancerGame.currentY) {
+    narratives.score += 20;
+    narratives.endingDancerGame.textY += -100;
+  }
+  p5.pop();
+}
+
+
+//Set the position of the circle trail based on annyang
+function setDancerY(answer) {
+  if (answer === `up`) {
+    narratives.endingDancerGame.currentY += -100;
+  } else if (answer === `down`) {
+    narratives.endingDancerGame.currentY += 100;
+    narratives.score += 10;
+  }
+}
+
+
+//Actor special ending (Yuji)
+function endingActor() {
+  p5.push();
+  p5.image(visual.bg1, 0, 0);
+  p5.image(visual.characterActor, p5.width*2/3, 0);
+
+  //Bottom texts
+  p5.textFont(courier.regular);
+  visual.texts[0].display(narratives.endingActor, narratives.currentActorLine);
+
+  if (narratives.currentActorLine === 6) {
+    actorGame();
+    //Score Points
+    p5.textFont(courier.bold);
+    p5.textSize(24);
+    p5.text(`Score: ${narratives.score}`, q.sanityLevel.x, q.sanityLevel.y);
+  }
+  
+  //End the game and go back to the narratives when reaches the score of 90
+  if (narratives.endingActorGame.promptNum === 4 && narratives.score >= 90) {
+    narratives.currentActorLine = 7;
+    narratives.score = 0;
+    narratives.endingActorGame.promptNum = 0;
+  } else if (narratives.endingActorGame.promptNum === 4 && narratives.score < 90) {
+    state = `badEnding`;
+  }
+
+  //When the narratives finish
+  if (narratives.currentActorLine >= narratives.endingActor.length) {
+    p5.textAlign(p5.CENTER, p5.CENTER);
+    //Header texts
+    p5.textFont(courier.bold);
+    p5.textSize(48);
+    p5.text(`Life of an Actor`, p5.width/2, p5.height/8);
+
+    p5.textAlign(p5.LEFT);
+    p5.textFont(courier.regular);
+    p5.textSize(24);
+    p5.text(`After years and years of repeting performances, you start to go insane. Until one day, you played a role and the role has the exact same name as yours: ${btn.nameInput}. More intriguing is that the plot totally matches your life! You start to have questions and doubt around the world you live in.`, p5.width/8, p5.height*2/8, p5.width/2);
+    p5.text(`Congradulation! You have found a secret bug in the Paper World. If you click the "Next" button you will be orientated towards a new destiny.`, p5.width/8, p5.height*2/3, p5.width/2);
+
+    //Go back to game page
+    btn.game.display(); 
+  }
+  p5.pop();
+}
+
+function actorGame() {
+  p5.push();
+  //Theater improvisation
+  if (narratives.endingActorGame.promptNum === 0) {
+    btn.choiceActor[0].display(); //choice btn
+    btn.choiceActor[1].display();
+  } else if (narratives.endingActorGame.promptNum === 1) {
+    btn.choiceActor[2].display(); 
+    btn.choiceActor[3].display();
+  } else if (narratives.endingActorGame.promptNum === 2) {
+    btn.choiceActor[4].display(); 
+    btn.choiceActor[5].display();
+  } else if (narratives.endingActorGame.promptNum === 3) {
+    btn.choiceActor[6].display(); 
+    btn.choiceActor[7].display();
+  }
+  
+  //Prompt text
+  p5.textAlign(p5.LEFT);
+  p5.textFont(courier.regular);
+  p5.textSize(24);
+  p5.fill(colours.white);
+  p5.rect(p5.width/10, p5.height/8, p5.width/2, p5.height/3, 10);
+  p5.fill(colours.black);
+  p5.text(narratives.endingActorGame.prompt[narratives.endingActorGame.promptNum], p5.width/10 + 50, p5.height/8 +50, p5.width/2 - 50);
+  p5.fill(colours.white);
+
+  p5.pop();
+}
+
+
+//Officer special ending
 function endingOfficer() {
   p5.push();
   p5.image(visual.bg1, 0, 0);
+  p5.image(visual.characterOfficer, p5.width*2/3, p5.height/4 );
+
+  //Bottom texts
+  p5.textFont(courier.regular);
+  visual.texts[0].display(narratives.endingOfficer, narratives.currentOfficerLine);
+
+  if (narratives.currentOfficerLine >= narratives.endingOfficer.length) {
+    p5.textAlign(p5.CENTER, p5.CENTER);
+    //Header texts
+    p5.textFont(courier.bold);
+    p5.textSize(48);
+    p5.text(`Speak to the computer`, p5.width/2, p5.height/8);
+
+    p5.textAlign(p5.LEFT);
+    p5.textFont(courier.regular);
+    p5.textSize(24);
+    p5.text(`Choose an option by saying: "I want to suicide", "I want to cancel the director board" or "I want to quit my job".`, p5.width/8, p5.height*2/8, p5.width*6/8 -50);
+
+    p5.text(narratives.endingOfficerGame.playerInput, p5.width/8, p5.height/2, p5.width*6/8 -50);
+    p5.text(narratives.endingOfficerGame.choiceResponse, p5.width/8, p5.height/2 + 50, p5.width*5/8 -100);
+
+    btn.game.display(); 
+  }
   p5.pop();
 }
 
+
+function setOfficerDesicion(answer) {
+  if (answer === `suicide`) {
+    narratives.endingOfficerGame.choiceResponse = `You decided to commit suicide. At the edge of dying, you suddenly remembered everything as your life flashes in front of you.You remembered to be a ${btn.identifiedSpeciesInput}, living on Earth. You are not a paper man. Your name is ${btn.nameInput}. But then why are you in this world?`
+  } else if (answer === `cancel the director board`) {
+    narratives.endingOfficerGame.choiceResponse = `You decided to fight against the director board. However, everytime you destroy them, they appear again the next day. You think you are going insane, and you gradually forget who you are.`
+  } else if (answer === `quit my job`) {
+    narratives.endingOfficerGame.choiceResponse = `You decided to quit your job. A few years passed and you are getting used to life of a Paper Man in the Paper World.`
+  }
+
+  narratives.endingOfficerGame.playerInput = answer;
+}
+
+
+//Student special ending
 function endingStudent() {
   p5.push();
   p5.image(visual.bg1, 0, 0);
+  p5.image(visual.characterStudent, p5.width*2/3, p5.height/4 );
+
+  //Bottom texts
+  p5.textFont(courier.regular);
+  visual.texts[0].display(narratives.endingStudent, narratives.currentStudentLine);
   p5.pop();
 }
 
-//*595(content) 458(answer)
-// //Annyang functions that update the questions and sanity level depending on the answer.
-function setAnswer(answer) { //annyang.trigger("")
-  console.log(`HELLO`);
-  console.log(answer);
-
-  let question = q.questions[q.current];
-  question.response = answer;
-  q.current++; //goes to next current question
-  window.responsiveVoice.speak(`Question${q.current}: ${q.questions[q.current].content}`); //Speak question
-  q.y = p5.height/8; //Move question's position
-
-  if (answer === question.sanityTest.answer) { //if they said yes
-    for (let i = 0; i < question.sanityTest.condition.value.length; i++){
-      if (btn[question.sanityTest.condition.property] === question.sanityTest.condition.value[i]) { //if their profile doesn't match with their response logic
-        q.sanityLevel.content += question.sanityTest.penalty; //take out sanity points
-        break;
-      }
-    }
-  }
-  if (q.current ===6) { //No more questions to be asked
-   q.finished = true;
-  }
-}
 
 //Prompt question when the user mousepress
 p5.mousePressed = function() {
@@ -761,12 +1007,11 @@ p5.mousePressed = function() {
   //Yes Button in the assignID state
   if (btn.assignID[0].clicked) {
     q.sanityLevel.content -= 10;
-    btn.nameInput = `Paper Man`;
+    btn.nameInput = `Paper Man`; //update the player's profile
     btn.birthGenderInput = `Male`;
     btn.identifiedGenderInput = `Female`;
     btn.sexualOrientationInput = `Male (men)`;
     btn.identifiedSpeciesInput = `Human`;
-
   } else if (btn.assignID[1].clicked) { //No button in the assignID state
     btn.assignIDInput = `No`;
   }
@@ -791,10 +1036,33 @@ p5.mousePressed = function() {
     btn.messageBoxInput = ``;
   }
   //Next Button in the game state
-  if ((state === `ending` || state === `badEnding` || state === `about`) && btn.game.clicked) {
+  if ((state === `ending` || state === `badEnding` || state === `about` || state === `endingDancer` || state === `endingOfficer`) && btn.game.clicked) {
     state = `title`;
     btn.game.clicked = false;
-} 
+  } else if (state === `endingActor` &&  btn.game.clicked) {
+    state = `game`;
+  }
+
+  //Line switches in the special endings
+  if (state === `endingDancer` && (narratives.currentDancerLine <= 4 || narratives.currentDancerLine >= 6 )) {
+    narratives.currentDancerLine += 1;
+  } else if (state === `endingActor` && (narratives.currentActorLine <= 5 || narratives.currentActorLine >= 7 )) {
+    narratives.currentActorLine +=1;
+  } else if (state === `endingOfficer`) {
+    narratives.currentOfficerLine +=1;
+  }
+  
+
+  //Actor Game
+  for (let prop in btn.choiceActor) {
+    if (btn.choiceActor[prop].clicked) {
+      narratives.endingActorGame.promptNum += 1;
+      btn.choiceActor[prop].clicked = false;
+    }
+    if (btn.choiceActor[0].clicked || btn.choiceActor[2].clicked || btn.choiceActor[4].clicked || btn.choiceActor[6].clicked) {
+      narratives.score += 20;
+    }
+  }
   
 } //End of mousePressed
 

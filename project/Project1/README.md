@@ -11,8 +11,40 @@ https://drive.google.com/file/d/1nc3JoG0tqQ_AFhjsvQ39txDfQL9iyaK8/view -->
 
 ## Concept Overview
 
-The film I decided to go with is "Farewell my Concubine" by 
+The film I decided to go with is "Farewell my Concubine" by Chen Kaige. One very important theme in the film revolves around self-identity and the conflicting pressure from the society, which is what inspired my game. 
 
+The main character, Cheng Dieyi (meaning "Butterflie's Cloth"), is the son of a prostitute. At an early age, his mom entrusted him at an all-boy opera troupe. Growing up in the opera troupe, he was assigned to play dan (female roles), and more specifically, the character of Yuji (a concubine of the King of Chu). While practicing the play, Dieyi has to say "I am by nature a girl, not a boy", but he always accidentally substitute the line with "I am by nature a boy, not a girl." His master beats him to bleed until he said that line correctly. This is the one of the early signs of his conflicting self-identification and what is demanded from his part.  
+
+![alt text][douzi]
+
+[douzi]: https://1001movienights.files.wordpress.com/2014/12/farewellmyconcubine.jpg "1"
+
+Several incidents happened later in his life, where he witnessed suicides, death, betrayal, invasion from foreign countries and has been sexually assaulted. When Dieyi grew up, he fell in love with an actor of the troupe playing the King of Chu. However, as China experienced reforms, invasions, and civil revolutions, several cultural sectors have been destroyed, including Pekin Opera that gradually losts its place in society. People in the troupe ended leaving, and with the cultural revolution, the entire opera troupe is put on a struggle session by the Red Guards where, under pressure, Dieyi and his loved-one ended up accusing each other for counterrevolutionary acts (which none of them committed).
+In 1977, Dieyi and his loved-one re-united to perform again the same opera piece, as several traditional sectors re-gained importance. Dieyi made the same mistake again when saying "I am by nature a girl, not a boy". But this time, he did not correct himself. At the end of the opera, as Yuji, the concubine he was playing, suicides for the King of Chu, Dieyi cuts his throat with the sword, and this time, played the role for real.
+
+![alt text][dieyi]
+
+[dieyi]: https://miro.medium.com/max/1260/0*Mbv2MkqBIkRU1EPu.jpg "2"
+
+With my game, Paper Man, I want to reflect on this theme, to see how one choose to balance the values deeply rooted and the pressure to behave in a certain way that is imposed by external factors. 
+
+
+
+## Film Synopsis
+
+Taken from wikipedia: (https://en.wikipedia.org/wiki/Farewell_My_Concubine_(film))
+
+Farewell My Concubine is a 1993 Chinese historical drama film directed by Chen Kaige, starring Leslie Cheung, Gong Li, and Zhang Fengyi. Adapted for the screen by Lu Wei based on the novel by Lilian Lee, the film is set in a politically tumultuous 20th-century China, from the early days of the Republic to the aftermath of the Cultural Revolution. It chronicles the troubled relationships between two Peking opera actors and lifelong friends Cheng Dieyi (Cheung) and Duan Xiaolou (Zhang), and Xiaolou's wife Juxian (Gong).
+
+The movie is about confusion of identity and blurred lines between real life and the stage, portrayed by the revered opera actor Dieyi, whose unrequited love for Xiaolou persists through the movie. Scholar Ying notes that in order "[to] attract the international audience, Chinese history and Peking Opera are drawn close while homosexuality, individual perversities and moral dilemmas are transposed distant".[2] Commentators also noted themes of political and societal disturbances in 20th-century China, which is typical of the Chinese Fifth Generation cinema.
+
+Farewell My Concubine premiered on January 1, 1993, in Hong Kong. Upon release, the film received generally positive reviews from contemporary critics and won the Palme d'Or at the 1993 Cannes Film Festival,[note 1] becoming the first Chinese-language film to achieve the honour. It further won accolades including a Golden Globe for Best Foreign Language Film and a BAFTA for Best Film Not in the English Language, and received two nominations at the 66th Academy Awards for Best Cinematography and Best Foreign Language Film.
+
+A few weeks after its release in China the government abruptly banned the film. The Chinese government objected to the film’s representation of homosexuality and suicide[citation needed]. The film was allowed to resume public showings in September of 1993, less than a year after its original release. Upon its return to the public, it was revealed that the Chinese censors made numerous cuts, resulting in the film being shortened by 14 minutes.
+
+Chinese officials felt that a re-release of the film as opposed to maintaining a full ban would silence ever-growing international backlash and also help their bid to host the Olympic games in Beijing in 2000.[3][4]
+
+Farewell My Concubine is considered one of the landmark films of the Fifth Generation movement that brought Chinese film directors to world attention.[5][6] In 2005, the film was selected as one of the "100 Best Films in Global History" by Time magazine.
 
 
 ## Game State Structure
@@ -20,8 +52,6 @@ The film I decided to go with is "Farewell my Concubine" by
 1. Title Page:
     
     >>Start: begin game button
-
-    >>Behind the scenes: banckground intro button
 
 2. Basic Personal Info Page
 
@@ -45,8 +75,6 @@ The film I decided to go with is "Farewell my Concubine" by
 
 3. Basic Gameplay Setting Page
 
-    >>Preferred navigation method: voice input, hand sign input.
-
     >>Character of play assigned: random profiles.
 
     Rules explained: 
@@ -65,62 +93,11 @@ The film I decided to go with is "Farewell my Concubine" by
 
 5. Endings
 
-
-## Artistic Vision
-
-All the visual elements are made by myself. The style incorporates both traditional Chinese ink painting, and modern simplicity of the abstract. The scenes are all from Dali (my homeland), which is the self-governed territory of the Bai people which I am part of. Scenes such as the three pagodes, the lake (Erhai) and the bird view of the village (He qing, the village my grand-mother comes from and where I passed the happiest moments of my childhood) are all historically part of the Nan Zhao kingdom (738-902) where the legend happened.
-
-1. The Cave
-![alt text][cave]
-
-[cave]: https://github.com/uozmann/CART253/blob/main/projects/project2/assets/images/bgcave.jpg "1"
-
-2. The Palace Garden
-![alt text][palace]
-
-[palace]: https://github.com/uozmann/CART253/blob/main/projects/project2/assets/images/bgpalace.jpg "2"
-
-3. The Cangshan Mountain
-![alt text][Cangshan]
-
-[Cangshan]: https://github.com/uozmann/CART253/blob/main/projects/project2/assets/images/bgmountain.jpg "3"
-
-4. The Three Pagodes
-![alt text][temple]
-
-[temple]: https://github.com/uozmann/CART253/blob/main/projects/project2/assets/images/bgmonastere.jpg "4"
-
-5. The Cave
-![alt text][cave2]
-
-[cave2]: https://github.com/uozmann/CART253/blob/main/projects/project2/assets/images/bgcaveandsky.jpg "5"
-
-6. Erhai Lake
-![alt text][Erhai]
-
-[Erhai]: https://github.com/uozmann/CART253/blob/main/projects/project2/assets/images/bgerhai.jpg "6"
-
-7. Heqing 
-![alt text][Heqing]
-
-[Heqing]: https://github.com/uozmann/CART253/blob/main/projects/project2/assets/images/bgvillage.jpg "7"
-
-
-## Research on Clothing
-
-Here are some (not all) reference photos taken from old painting of the Nan Zhao kingdom that I based on for the characters:
-1. King
-![alt text][King]
-
-[King]: http://img.mp.itc.cn/upload/20170329/560a1d45dec54b2fb37cbf9c29b6d95d_th.jpg "8"
-http://img.mp.itc.cn/upload/20170329/560a1d45dec54b2fb37cbf9c29b6d95d_th.jpg
-
-2. Monk (Priest) at the left
-![alt text][Monk]
-
-[Monk]: http://img.mp.itc.cn/upload/20170329/bd39807bb0ed4e5c91ad5e7551395109_th.jpg "9"
-http://img.mp.itc.cn/upload/20170329/bd39807bb0ed4e5c91ad5e7551395109_th.jpg
+    By going to through all endings, the player will discover a huge secret pertaining to the Paper world.
 
 
 ## Codes requirements:
-I have incorporated all the concepts learnt in class: drawing instructions (yes), images (a lot), conditionals (a lot), loops (for the soul animation, image preloads, maze, the clues, the clue buttons, etc.), functions (yes), arrays (a lot), object-oriented programming (maze, clues, clue buttons), and the sound library (musics and sound effect when there is a collision with the maze).
+
+    Annyang and responsive voice
+
+    Js modules

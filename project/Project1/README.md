@@ -17,7 +17,7 @@ The main character, Cheng Dieyi (meaning "Butterflie's Cloth"), is the son of a 
 
 ![alt text][douzi]
 
-[douzi]: https://1001movienights.files.wordpress.com/2014/12/farewellmyconcubine.jpg "1"
+[douzi]: https://1001movienights.files.wordpress.com/2014/12/farewellmyconcubine.jpg "1" 
 
 Several incidents happened later in his life, where he witnessed suicides, death, betrayal, invasion from foreign countries and has been sexually assaulted. When Dieyi grew up, he fell in love with an actor of the troupe playing the King of Chu. However, as China experienced reforms, invasions, and civil revolutions, several cultural sectors have been destroyed, including Pekin Opera that gradually losts its place in society. People in the troupe ended leaving, and with the cultural revolution, the entire opera troupe is put on a struggle session by the Red Guards where, under pressure, Dieyi and his loved-one ended up accusing each other for counterrevolutionary acts (which none of them committed).
 In 1977, Dieyi and his loved-one re-united to perform again the same opera piece, as several traditional sectors re-gained importance. Dieyi made the same mistake again when saying "I am by nature a girl, not a boy". But this time, he did not correct himself. At the end of the opera, as Yuji, the concubine he was playing, suicides for the King of Chu, Dieyi cuts his throat with the sword, and this time, played the role for real.

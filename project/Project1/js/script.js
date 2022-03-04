@@ -1039,7 +1039,7 @@ function studentMessage() {
 //Prompt question when the user mousepress
 p5.mousePressed = function() {
   //Sound settings
-  if (state === `profileSetting` && !bgm.yuji.isPlaying()) {
+  if (state === `title` && !bgm.yuji.isPlaying()) {
     //Play bgm
     bgm.yuji.play();
   }

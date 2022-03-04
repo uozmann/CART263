@@ -122,7 +122,6 @@ p5.preload = function() {
   courier.bold = p5.loadFont(`assets/fonts/Courier/CourierPrime-Bold.ttf`);
   courier.italic = p5.loadFont(`assets/fonts/Courier/CourierPrime-Italic.ttf`);
   //sound
-  p5.soundFormats('mp3');
   bgm.yuji = p5.loadSound(`assets/sounds/bgm1.mp3`);
   //visuals
   visual.bg0 = p5.loadImage(`assets/images/bg0.jpg`);

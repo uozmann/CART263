@@ -118,30 +118,30 @@ new p5(function(p5){
 //Loading images and fonts
 p5.preload = function() {
   //fonts
-  courier.regular = p5.loadFont(`assets/fonts/Courier/CourierPrime-Regular.ttf`);
-  courier.bold = p5.loadFont(`assets/fonts/Courier/CourierPrime-Bold.ttf`);
-  courier.italic = p5.loadFont(`assets/fonts/Courier/CourierPrime-Italic.ttf`);
+  courier.regular = p5.loadFont(`../assets/fonts/Courier/CourierPrime-Regular.ttf`);
+  courier.bold = p5.loadFont(`../assets/fonts/Courier/CourierPrime-Bold.ttf`);
+  courier.italic = p5.loadFont(`../assets/fonts/Courier/CourierPrime-Italic.ttf`);
   //sound
   p5.soundFormats('mp3');
-  bgm.yuji = p5.loadSound(`assets/sounds/bgm1.mp3`);
+  bgm.yuji = p5.loadSound(`../assets/sounds/bgm1.mp3`);
   //visuals
-  visual.bg0 = p5.loadImage(`assets/images/bg0.jpg`);
-  visual.bg1 = p5.loadImage(`assets/images/bg1.jpg`);
-  visual.bg2 = p5.loadImage(`assets/images/bg2.png`);
-  visual.bg3 = p5.loadImage(`assets/images/bg3.png`);
-  visual.bg4 = p5.loadImage(`assets/images/bg4.png`);
-  visual.bg5 = p5.loadImage(`assets/images/bg5.jpg`);
+  visual.bg0 = p5.loadImage(`../assets/images/bg0.jpg`);
+  visual.bg1 = p5.loadImage(`../assets/images/bg1.jpg`);
+  visual.bg2 = p5.loadImage(`../assets/images/bg2.png`);
+  visual.bg3 = p5.loadImage(`../assets/images/bg3.png`);
+  visual.bg4 = p5.loadImage(`../assets/images/bg4.png`);
+  visual.bg5 = p5.loadImage(`../assets/images/bg5.jpg`);
   //images frame for the animation Yuji
   for (let i = 0; i < 300; i++) { 
     let loadedImage;
     if (i< 10) {
-      loadedImage = p5.loadImage(`assets/images/comp2/yujiAnim_0000${i}.png`);
+      loadedImage = p5.loadImage(`../assets/images/comp2/yujiAnim_0000${i}.png`);
     }
     else if (i>= 10 && i< 100) {
-      loadedImage = p5.loadImage(`assets/images/comp2/yujiAnim_000${i}.png`);
+      loadedImage = p5.loadImage(`../assets/images/comp2/yujiAnim_000${i}.png`);
     }
     else {
-      loadedImage = p5.loadImage(`assets/images/comp2/yujiAnim_00${i}.png`);
+      loadedImage = p5.loadImage(`../assets/images/comp2/yujiAnim_00${i}.png`);
     }
     visual.animationYuji.push(loadedImage);
   }
@@ -149,10 +149,10 @@ p5.preload = function() {
   for (let i = 0; i < 60; i++) { 
     let loadedImage;
     if (i< 10) {
-      loadedImage = p5.loadImage(`assets/images/comp3/paperAnim_0000${i}.png`); 
+      loadedImage = p5.loadImage(`../assets/images/comp3/paperAnim_0000${i}.png`); 
     }
     else {
-      loadedImage = p5.loadImage(`assets/images/comp3/paperAnim_000${i}.png`);
+      loadedImage = p5.loadImage(`../assets/images/comp3/paperAnim_000${i}.png`);
     }
     visual.animationPaper.push(loadedImage);
   }
@@ -163,16 +163,16 @@ p5.preload = function() {
     let loadedImage2;
     let loadedImage3;
     if (i< 10) {
-      loadedImage0 = p5.loadImage(`assets/images/comp4/doorAnim1_0000${i}.png`); 
-      loadedImage1 = p5.loadImage(`assets/images/comp5/doorAnim2_0000${i}.png`); 
-      loadedImage2 = p5.loadImage(`assets/images/comp6/doorAnim3_0000${i}.png`); 
-      loadedImage3 = p5.loadImage(`assets/images/comp7/doorAnim4_0000${i}.png`); 
+      loadedImage0 = p5.loadImage(`../assets/images/comp4/doorAnim1_0000${i}.png`); 
+      loadedImage1 = p5.loadImage(`../assets/images/comp5/doorAnim2_0000${i}.png`); 
+      loadedImage2 = p5.loadImage(`../assets/images/comp6/doorAnim3_0000${i}.png`); 
+      loadedImage3 = p5.loadImage(`../assets/images/comp7/doorAnim4_0000${i}.png`); 
     }
     else {
-      loadedImage0 = p5.loadImage(`assets/images/comp4/doorAnim1_000${i}.png`);
-      loadedImage1 = p5.loadImage(`assets/images/comp5/doorAnim2_000${i}.png`);
-      loadedImage2 = p5.loadImage(`assets/images/comp6/doorAnim3_000${i}.png`);
-      loadedImage3 = p5.loadImage(`assets/images/comp7/doorAnim4_000${i}.png`);
+      loadedImage0 = p5.loadImage(`../assets/images/comp4/doorAnim1_000${i}.png`);
+      loadedImage1 = p5.loadImage(`../assets/images/comp5/doorAnim2_000${i}.png`);
+      loadedImage2 = p5.loadImage(`../assets/images/comp6/doorAnim3_000${i}.png`);
+      loadedImage3 = p5.loadImage(`../assets/images/comp7/doorAnim4_000${i}.png`);
     }
     visual.animationDoor0.push(loadedImage0);
     visual.animationDoor1.push(loadedImage1);
@@ -183,21 +183,21 @@ p5.preload = function() {
   for (let i = 0; i< 5; i++) {
     let loadedImageEnding;
     let loadedImageBadEnding;
-    loadedImageEnding = p5.loadImage(`assets/images/comp8/doorAnimEnding_0000${i}.png`); 
-    loadedImageBadEnding = p5.loadImage(`assets/images/comp9/doorAnimBadEnding_0000${i}.png`); 
+    loadedImageEnding = p5.loadImage(`../assets/images/comp8/doorAnimEnding_0000${i}.png`); 
+    loadedImageBadEnding = p5.loadImage(`../assets/images/comp9/doorAnimBadEnding_0000${i}.png`); 
     visual.animationDoorEnding.push(loadedImageEnding);
     visual.animationDoorBadEnding.push(loadedImageBadEnding);
   }
 
   //Character images in special endings
-  visual.characterDancer = p5.loadImage(`assets/images/chara0.png`); 
-  visual.characterActor = p5.loadImage(`assets/images/chara3.png`); 
-  visual.characterOfficer = p5.loadImage(`assets/images/chara2.png`); 
-  visual.characterStudent = p5.loadImage(`assets/images/chara1.png`); 
+  visual.characterDancer = p5.loadImage(`../assets/images/chara0.png`); 
+  visual.characterActor = p5.loadImage(`../assets/images/chara3.png`); 
+  visual.characterOfficer = p5.loadImage(`../assets/images/chara2.png`); 
+  visual.characterStudent = p5.loadImage(`../assets/images/chara1.png`); 
 
   //Sound Icons
-  visual.soundOn = p5.loadImage(`assets/images/sound0.png`);
-  visual.soundOff = p5.loadImage(`assets/images/sound1.png`);
+  visual.soundOn = p5.loadImage(`../assets/images/sound0.png`);
+  visual.soundOff = p5.loadImage(`../assets/images/sound1.png`);
 }
 
 //Canvas, buttons, animation, annyang
@@ -1052,10 +1052,10 @@ p5.mousePressed = function() {
     visual.sound = visual.soundOn;
   }
   //Title page start button
-  if (btn.start.clicked) {
+  if (btn.start.clicked && state === `title`) {
     state = `profileSetting`;
     btn.start.clicked = false;
-  } else if (btn.about.clicked ) { //about button
+  } else if (btn.about.clicked && state === `title`) { //about button
     state = `about`;
     btn.about.clicked = false;
   } 

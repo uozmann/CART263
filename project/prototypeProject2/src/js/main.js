@@ -5,43 +5,58 @@ import { OrbitControls } from '../../threeJS/examples/jsm/controls/OrbitControls
 import { GLTFLoader } from '../../threeJS/examples/jsm/loaders/GLTFLoader.js';
 import Stat from '../../threeJS/examples/jsm/libs/stats.module.js';
 
-//basic settings
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//OBJECTS SECTION
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+camera.position.z = 5;
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 const controls = new OrbitControls( camera, renderer.domElement );
 
-//background and light
-// scene.background = new THREE.Color( 0xFFC107);
-const lightAmbient = new THREE.AmbientLight( 0x404040 ); // soft white light
-scene.add( lightAmbient );
-const light = new THREE.DirectionalLight( 0xffffff, 1 );
-light.position.set( 1, 1, 1 ).normalize();
-scene.add( light );
+//assets
+const materials = [
+	//   new THREE.MeshBasicMaterial({map: loader.load('resources/images/flower-1.jpg')}),
+	//   new THREE.MeshBasicMaterial({map: loader.load('resources/images/flower-2.jpg')}),
+	//   new THREE.MeshBasicMaterial({map: loader.load('resources/images/flower-3.jpg')}),
+	//   new THREE.MeshBasicMaterial({map: loader.load('resources/images/flower-4.jpg')}),
+	//   new THREE.MeshBasicMaterial({map: loader.load('resources/images/flower-5.jpg')}),
+	//   new THREE.MeshBasicMaterial({map: loader.load('resources/images/flower-6.jpg')}),
+	];
+const modelsSettings = {
+	cube: {
+		geometry: new THREE.BoxGeometry(),
+		material: new THREE.MeshPhongMaterial( { color: 0x00ff00 } ),
+	},
+	sphere: {
+		geometry: new THREE.SphereGeometry( 15, 32, 16 ),
+		material: new THREE.MeshPhongMaterial( { color: 0x00ff00 } ),
+	}
+};
+const models = {
+	cube:  new THREE.Mesh( modelsSettings.cube.geometry, modelsSettings.cube.material),
+	sphere: new THREE.Mesh( modelsSettings.sphere.geometry, modelsSettings.sphere.material )
+};
 
-//cube
-const geometry = new THREE.BoxGeometry();
-const material = new THREE.MeshPhongMaterial( { color: 0x00ff00 } );
-const cube = new THREE.Mesh( geometry, material );
-scene.add( cube );
+//Encironment
+scene.background = new THREE.Color( 0xFFC107);
+const lights = {
+	ambient: new THREE.AmbientLight( 0x404040 ),
+	directional: new THREE.DirectionalLight( 0xffffff, 1 )
+};
+lights.directional.position.set( 1, 1, 1 ).normalize();
+//END OF OBJECTS SECTION
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//point
-const materialLine = new THREE.LineBasicMaterial( { color: 0x901F07 } );
-const points = [];
-points.push( new THREE.Vector3( - 10, 0, 0 ) );
-points.push( new THREE.Vector3( 0, 10, 0 ) );
-points.push( new THREE.Vector3( 10, 0, 0 ) );
 
-const geometryLine = new THREE.BufferGeometry().setFromPoints( points );
-const line = new THREE.Line( geometryLine, materialLine );
-scene.add( line );
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//PRELOAD SECTION
+const loadManager = new THREE.LoadingManager();
+const loaderTexture = new THREE.TextureLoader(loadManager);
+const loaderGLTF = new GLTFLoader(loadManager);
 
-//head sculpture
-const loader = new GLTFLoader();
-
-loader.load( './assets/visuals/headonly.glb', function ( gltf ) { 
+loaderGLTF.load( './assets/visuals/headonly.glb', function ( gltf ) { 
 
 	scene.add( gltf.scene );
 
@@ -51,14 +66,47 @@ loader.load( './assets/visuals/headonly.glb', function ( gltf ) {
 
 } );
 
-camera.position.z = 5;
+//Preload GUI
+const loadingElem = document.querySelector('#loading');
+const progressBarElem = loadingElem.querySelector('.progressbar');
+loadManager.onProgress = (urlOfLastItemLoaded, itemsLoaded, itemsTotal) => {
+	const progress = itemsLoaded / itemsTotal;
+	progressBarElem.style.transform = `scaleX(${progress})`;
+  };
+//END OF PRELOAD SECTION
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function animate() {
-	requestAnimationFrame( animate );
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//SETUP(ON LOAD) SECTION
+loadManager.onLoad = () => {
+	//Disable UI For preload
+	loadingElem.style.display = 'none';
+	progressBarElem.style.display = 'none';
+
+	//Add objects to the scene
+	scene.add(...[lights.ambient, lights.directional]);
+	scene.add(models.cube);
+	
+};
+//END OF ON LOAD SECTION
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//DRAW SECTION
+function draw() {
+	requestAnimationFrame( draw );
 	renderer.render( scene, camera );
 }
-animate();
+draw();
+//END OF ON DRAW SECTION
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//EVENT HANDLERS SECTION
 
+//END OF EVENT HANDLERS SECTION
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

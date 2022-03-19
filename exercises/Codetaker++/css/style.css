@@ -24,3 +24,31 @@ body {
   font-family: 'Inspiration', cursive;
   height: 100vh; /* Body is the height of the viewport */
 }
+
+/* Some Very Basic Styling */
+
+#message {
+  margin: 2em;
+  width: 40vw;
+  font-size: 2rem;
+  background: rgb(218, 182, 182);
+  border: 5px solid rgb(255, 189, 47);
+}
+
+#answer {
+  background: rgb(8, 18, 73);
+  margin: 2em;
+  width: 40%;
+  font-size: 3rem;
+  margin-top: 2rem;
+  height: 10rem;
+  border: 5px solid rgb(255, 189, 47);
+  color: rgb(255, 255, 255);
+}
+
+.found {
+  font-size: 3rem;
+  font-weight: bold;
+  color: rgb(255, 189, 47);
+}
+

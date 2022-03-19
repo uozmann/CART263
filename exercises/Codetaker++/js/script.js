@@ -62,7 +62,7 @@ $(`#answer`).droppable({
     // Disable mouseovers on this letter
     ui.draggable.off(`mouseover`);
     // Check if they got the answer right yet...
-    if ($(`#answer`).text() === secret) {
+    if ($(`#answer`).text() === secretMessage) {
       // If they did, display the dialog!
       $(`#solved-dialog`).dialog(`open`);
     }

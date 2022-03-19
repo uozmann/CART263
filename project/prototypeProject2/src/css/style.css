@@ -4,6 +4,13 @@
     box-sizing: border-box;
 }
 
+canvas {
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: -100;
+}
+
 #info {
 	position: absolute;
 	top: 10px;
@@ -12,6 +19,20 @@
 	z-index: 100;
 	display:block;
     color: aliceblue;
+}
+
+header {
+	padding: 2em;
+	width: 100vw;
+	color: rgb(255, 255, 255);
+}
+header h1 {
+	font-size: 72px;
+	
+}
+
+header h2 {
+	font-size: 48px;
 }
 
 #loading {
@@ -35,4 +56,22 @@
     height: 1em;
     transform-origin: top left;
     transform: scaleX(0);
+}
+
+section {
+    padding-left: 5%;
+    width: 10%;
+    display: flex;
+    flex-flow: column;
+}
+
+section button {
+    margin-top: 5%;
+    padding: 1%;
+    background: rgba(255, 255, 255, 0.418);
+    border: none;
+}
+
+section button:hover {
+    background: white;
 }

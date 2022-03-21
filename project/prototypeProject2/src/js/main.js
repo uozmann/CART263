@@ -5,7 +5,7 @@ import { OrbitControls } from '../../threeJS/examples/jsm/controls/OrbitControls
 import { GLTFLoader } from '../../threeJS/examples/jsm/loaders/GLTFLoader.js';
 import stats from '../../threeJS/examples/jsm/libs/stats.module.js';
 import { GUI } from '../../threeJS/examples/jsm/libs/lil-gui.module.min.js';
-import TWEEN from 'https://cdn.jsdelivr.net/npm/@tweenjs/tween.js@18.5.0/dist/tween.esm.js';
+import { TWEEN } from '../../threeJS/examples/jsm/libs/tween.module.min.js'; 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //OBJECTS SECTION
@@ -16,29 +16,47 @@ camera.position.z = 5;
 let cameraTweening = {
 	x: camera.position.x,
 	y: camera.position.y,
+	z: camera.position.z,
 }
 const tweening = new TWEEN.Tween(cameraTweening);
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 const controls = new OrbitControls( camera, renderer.domElement );
+controls.enableDamping = true;
+controls.listenToKeyEvents( window );
+
 
 //assets
-const modelsToLoad = [
-	{body: './assets/visuals/headonly.glb'},
-	{head: './assets/visuals/body.glb'}
-	];
+let modelsParameters = {
+	cube: {
+		x: 0,
+		y: 0,
+		z: 0
+	},
+	sphere: {
+		radius: 0.5
+	},
+	cylinder: {
+		radius: 5,
+		height: 0.1,
+		x: 0,
+		y: -0.5,
+		z: 0
+	}
+}
 const modelsSettings = { //basic settings before creating the object
 	cube: {
 		geometry: new THREE.BoxGeometry(),
 		material: new THREE.MeshPhongMaterial( { color: 0xff00ff } ),
 	},
 	sphere: {
-		geometry: new THREE.SphereGeometry( .5, 16, 8 ),
+		geometry: new THREE.SphereGeometry( modelsParameters.sphere.radius, 16, 8 ),
 		material: undefined,
 	},
 	cylinder: {
-		geometry: new THREE.CylinderGeometry( 5, 5, .1, 32 ),
+		radius: 5,
+		geometry: new THREE.CylinderGeometry( modelsParameters.cylinder.radius, modelsParameters.cylinder.radius, modelsParameters.cylinder.height, 32 ),
 		material: new THREE.MeshPhongMaterial( {color: 0xffff00} ),
 	}
 };
@@ -49,24 +67,18 @@ const models = { //creating the object
 	clockHours: [],
 	currentClockHour: 0,
 };
-models.cylinder.rotateX(1.571); //Transformation applied to the models
-models.cylinder.position.set(0,0,-1);
-models.cube.position.set(-1,4,0);
-for (let i = 0; i < 12; i++) {
-	let angle = i/2 + 2;
-	let x = Math.cos(angle) * 4;
-	let y = Math.sin(angle) * 4;
+// models.cylinder.rotateX(1.571); //Transformation applied to the models
+models.cylinder.position.set(modelsParameters.cylinder.x, modelsParameters.cylinder.y, modelsParameters.cylinder.z);
+models.cube.position.set(modelsParameters.cube.x, modelsParameters.cube.y, modelsParameters.cube.z);
+for (let i = 0; i < 4; i++) {
+	let angle = i;
+	let x = Math.cos(angle) * modelsParameters.cylinder.radius;
+	let z = Math.sin(angle) * modelsParameters.cylinder.radius;
 	// let z = Math.sin(angle+= 1);
 	models.sphere = new THREE.Mesh( modelsSettings.sphere.geometry,  new THREE.MeshPhongMaterial( { color: 0x00ffff } ));
-	models.sphere.position.set(x, y, 0);
+	models.sphere.position.set(x, 0, z);
 	models.sphere.name = i;
 	models.clockHours.push(models.sphere);
-	// prepare the tweening for the camera
-	tweening.to({ x: models.clockHours[models.currentClockHour].position.x, y: models.clockHours[models.currentClockHour].position.y }, 1000);
-	tweening.onUpdate(() =>
-	camera.position.set(cameraTweening.x, cameraTweening.y, camera.position.z)
-  	);
-	tweening.start();
 }
 
 //Environment
@@ -80,8 +92,10 @@ lights.directional.position.set( 1, 1, 1 ).normalize();
 
 //Mouse Interractions
 const mouse = new THREE.Vector2();
-let INTERSECTED;
+let INTERSECTED = false;
 let raycaster = new THREE.Raycaster();
+//Key Interactions
+controls.target.set(models.cube.position.x, models.cube.position.y, models.cube.position.z);
 //END OF OBJECTS SECTION
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -91,7 +105,7 @@ let raycaster = new THREE.Raycaster();
 const loadManager = new THREE.LoadingManager();
 const loaderTexture = new THREE.TextureLoader(loadManager);
 const loaderGLTF = new GLTFLoader(loadManager);
-
+//Using promise to load models
 const loadAsync = url => {
 	return new Promise(resolve => {
 	 loaderGLTF.load(url, gltf => {
@@ -102,7 +116,7 @@ const loadAsync = url => {
 Promise.all([loadAsync('./assets/visuals/body.glb'), loadAsync('./assets/visuals/body.glb')]).then(models => {
 	for(let j =0; j<models.length; j++){
 		// myModels.push(new TestModel( models[j].scene,0,j,0))
-		scene.add( models[j].scene );
+		scene.add( models[j].scene );//add the models to the scene
 	}
 });
 
@@ -141,7 +155,6 @@ loadManager.onLoad = () => {
 function draw() {
 	render();
 	requestAnimationFrame( draw );
-	console.log(camera.position.x, camera.position.y, camera.position.z);
 }
 draw();
 
@@ -177,40 +190,49 @@ function onDocumentMouseMove( event ) {
 
 	raycaster.setFromCamera( mouse, camera );
 	const intersects = raycaster.intersectObjects( scene.children, false );
-	// console.log(intersects.length);
+	console.log(intersects.length);
 	if ( intersects.length > 0 ) { //if there is at least one intersected object
 		//The following code comes from the three.js documentation at: https://github.com/mrdoob/three.js/blob/master/examples/webgl_camera_cinematic.html
-		if ( INTERSECTED != intersects[ 0 ].object ) {
-			if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
-			INTERSECTED = intersects[ 0 ].object;
-			INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
+		if ( INTERSECTED != intersects[ 0 ].object ) { //re-assign INTERSECTED to the first layer of material intersected
+			if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex ); //record the current colour
+			INTERSECTED = intersects[ 0 ].object; //assign it to the pointed object
+			INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex(); ////record the current colour
 			INTERSECTED.material.emissive.setHex( 0xff0000 ); //red emmissive
 			//Move the camera angle
 			models.currentClockHour = intersects[0].object.name;
 		}
 	} else {
-		if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
+		if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex ); //when not hovered anyore, set the colour back to the initial one
 		INTERSECTED = null;
 	}
-	// // Another easier way to calculate the intersection
-	// const intersects = raycaster.intersectObjects( scene.children );
-
-	// for ( let i = 0; i < intersects.length; i ++ ) {
-	// 	console.log(intersects.length);
-	// 	intersects[ i ].object.material.color.set( 0xffffff );
-
-	// }
-	moveCamera();
 }
 
 function onDocumentMouseClick(event) {
 	event.preventDefault();
-	tweening.to({x: models.clockHours[models.currentClockHour].position.x, y: models.clockHours[models.currentClockHour].position.y}, 1000);
+	tweening.to({x: models.clockHours[models.currentClockHour].position.x, y: models.clockHours[models.currentClockHour].position.y, z: models.clockHours[models.currentClockHour].position.z +5}, 1000);
+	// prepare the tweening for the camera
+	tweening.onUpdate(() =>
+	camera.position.set(cameraTweening.x, cameraTweening.y, cameraTweening.z)
+  	);
+	camera.updateMatrixWorld();
 	tweening.start();
+}
+
+function onDocumentKeyDown(event) {
+	if (event.keyCode === 38 || event.keyCode === 87) { //if arrow up or "w" is pressed
+		modelsParameters.cube.z += -0.5;
+	} else if (event.keyCode === 40 || event.keyCode === 83) { //if arrow down or "s" is pressed
+		modelsParameters.cube.z += 0.5;
+	} else if (event.keyCode === 37 || event.keyCode === 65) { //if arrow left or "a" is pressed
+		modelsParameters.cube.x += -0.5;
+	} else if (event.keyCode === 39 || event.keyCode === 68) { //if arrow right or "d" is pressed
+		modelsParameters.cube.x += 0.5;
+	}
+	models.cube.position.set(modelsParameters.cube.x, modelsParameters.cube.y, modelsParameters.cube.z);
 }
 
 document.addEventListener( 'mousemove', onDocumentMouseMove );
 document.addEventListener( 'click', onDocumentMouseClick );
+document.addEventListener( 'keydown', onDocumentKeyDown);
 //END OF EVENT HANDLERS SECTION
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-

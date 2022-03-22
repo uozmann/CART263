@@ -59,6 +59,10 @@ const modelsSettings = { //basic settings before creating the object
 		radius: 5,
 		geometry: new THREE.CylinderGeometry( modelsParameters.cylinder.radius, modelsParameters.cylinder.radius, modelsParameters.cylinder.height, 32 ),
 		material: new THREE.MeshPhongMaterial( {color: 0xffff00} ),
+	},
+	plane: {
+		geometry: new THREE.PlaneGeometry( 1, 1 ),
+		material: new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide} ),
 	}
 };
 const models = { //creating the object
@@ -67,6 +71,7 @@ const models = { //creating the object
 	cylinder: new THREE.Mesh( modelsSettings.cylinder.geometry, modelsSettings.cylinder.material ),
 	clockHours: [],
 	currentClockHour: 0,
+	plane: new THREE.Mesh( modelsSettings.plane.geometry, modelsSettings.plane.material ),
 };
 // models.cylinder.rotateX(1.571); //Transformation applied to the models
 models.cylinder.position.set(modelsParameters.cylinder.x, modelsParameters.cylinder.y, modelsParameters.cylinder.z);
@@ -91,8 +96,18 @@ const lights = {
 };
 lights.directional.position.set( 1, 1, 1 ).normalize();
 
+//Player
+const player = {
+	velocity: new THREE.Vector3(0.01,0,1),
+	direction: new THREE.Vector3(),
+	previousTime: performance.now(),
+	currentTime: undefined,
+	timeDelta: undefined,
+}
+
 //Mouse Interractions
 const mouse = new THREE.Vector2();
+let mouseAllowed = true;
 let INTERSECTED = false;
 let raycaster = new THREE.Raycaster();
 //Key Interactions
@@ -136,24 +151,19 @@ loadManager.onProgress = (urlOfLastItemLoaded, itemsLoaded, itemsTotal) => {
 //SETUP(ON LOAD) SECTION
 //Instruction UI
 const instructions = document.getElementById( 'instructions' );
+const captureZone = document.getElementById('captureZone');
 instructions.addEventListener( 'click', function () {
-
 	controls.lock();
-
 } );
 
 controls.addEventListener( 'lock', function () {
-
 	instructions.style.display = 'none';
-	blocker.style.display = 'none';
-
+	mouseAllowed = false;
 } );
 
 controls.addEventListener( 'unlock', function () {
-
-	blocker.style.display = 'block';
-	instructions.style.display = '';
-
+	instructions.style.display = 'flex';
+	mouseAllowed = true;
 } );
 
 //On Load section
@@ -164,7 +174,7 @@ loadManager.onLoad = () => {
 
 	//Add objects to the scene
 	scene.add(...[lights.ambient, lights.directional, lights.hemisphere]);
-	scene.add(...[models.sphere, models.cylinder, models.cube]);
+	scene.add(...[models.sphere, models.cylinder, models.cube, models.plane]);
 	scene.add(...models.clockHours);
 	scene.add( controls.getObject() );
 };
@@ -181,7 +191,7 @@ function draw() {
 draw();
 
 function render() {
-	TWEEN.update()
+	// TWEEN.update()
 	renderer.render( scene, camera );
 }
 
@@ -200,38 +210,39 @@ function findIntersection() {
 function moveCamera() {
 	// camera.lookAt( models.clockHours[models.currentClockHour].position ); //look at current clock position
 	// camera.position.set(models.clockHours[models.currentClockHour].position.x, models.clockHours[models.currentClockHour].position.y, camera.position.z);
-	// console.log(models.clockHours[models.currentClockHour].position.x, models.clockHours[models.currentClockHour].position.y);
 	camera.updateMatrixWorld();
 }
 
 function onDocumentMouseMove( event ) {
-	event.preventDefault();
-	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-	
-
-	raycaster.setFromCamera( mouse, camera );
-	const intersects = raycaster.intersectObjects( scene.children, false );
-	console.log(intersects.length);
-	if ( intersects.length > 0 ) { //if there is at least one intersected object
-		//The following code comes from the three.js documentation at: https://github.com/mrdoob/three.js/blob/master/examples/webgl_camera_cinematic.html
-		if ( INTERSECTED != intersects[ 0 ].object ) { //re-assign INTERSECTED to the first layer of material intersected
-			if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex ); //record the current colour
-			INTERSECTED = intersects[ 0 ].object; //assign it to the pointed object
-			INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex(); ////record the current colour
-			INTERSECTED.material.emissive.setHex( 0xff0000 ); //red emmissive
-			//Move the camera angle
-			models.currentClockHour = intersects[0].object.name;
+	if (mouseAllowed) {
+		event.preventDefault();
+		mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+		mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+		captureZone.style.top = `${mouse.y}px`;
+		captureZone.style.left = `${mouse.x}px`;
+		console.log(mouse.x, mouse.y);
+		raycaster.setFromCamera( mouse, camera );
+		const intersects = raycaster.intersectObjects( scene.children, false );
+		if ( intersects.length > 0 ) { //if there is at least one intersected object
+			//The following code comes from the three.js documentation at: https://github.com/mrdoob/three.js/blob/master/examples/webgl_camera_cinematic.html
+			if ( INTERSECTED != intersects[ 0 ].object ) { //re-assign INTERSECTED to the first layer of material intersected
+				if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex ); //record the current colour
+				INTERSECTED = intersects[ 0 ].object; //assign it to the pointed object
+				INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex(); ////record the current colour
+				INTERSECTED.material.emissive.setHex( 0xff0000 ); //red emmissive
+				//Move the camera angle
+				models.currentClockHour = intersects[0].object.name;
+			}
+		} else {
+			if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex ); //when not hovered anyore, set the colour back to the initial one
+			INTERSECTED = null;
 		}
-	} else {
-		if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex ); //when not hovered anyore, set the colour back to the initial one
-		INTERSECTED = null;
 	}
 }
 
 function onDocumentMouseClick(event) {
 	event.preventDefault();
-	tweening.to({x: models.clockHours[models.currentClockHour].position.x, y: models.clockHours[models.currentClockHour].position.y, z: models.clockHours[models.currentClockHour].position.z +5}, 1000);
+	// tweening.to({x: models.clockHours[models.currentClockHour].position.x, y: models.clockHours[models.currentClockHour].position.y, z: models.clockHours[models.currentClockHour].position.z +5}, 1000);
 	// // prepare the tweening for the camera
 	// tweening.onUpdate(() =>
 	// camera.position.set(cameraTweening.x, cameraTweening.y, cameraTweening.z)
@@ -242,19 +253,28 @@ function onDocumentMouseClick(event) {
 
 function onDocumentKeyDown(event) {
 	if (event.keyCode === 38 || event.keyCode === 87) { //if arrow up or "w" is pressed
-		modelsParameters.cube.z += -0.5;
+		// modelsParameters.cube.z += -0.5;
+		controls.moveForward(0.1);
 	} else if (event.keyCode === 40 || event.keyCode === 83) { //if arrow down or "s" is pressed
-		modelsParameters.cube.z += 0.5;
+		// modelsParameters.cube.z += 0.5;
+		controls.moveForward(-0.1);
 	} else if (event.keyCode === 37 || event.keyCode === 65) { //if arrow left or "a" is pressed
-		modelsParameters.cube.x += -0.5;
+		// modelsParameters.cube.x += -0.5;
+		controls.moveRight(-0.1);
 	} else if (event.keyCode === 39 || event.keyCode === 68) { //if arrow right or "d" is pressed
-		modelsParameters.cube.x += 0.5;
+		// modelsParameters.cube.x += 0.5;
+		controls.moveRight(0.1);
 	}
-	models.cube.position.set(modelsParameters.cube.x, modelsParameters.cube.y, modelsParameters.cube.z);
+	// models.cube.position.set(modelsParameters.cube.x, modelsParameters.cube.y, modelsParameters.cube.z);
+}
+
+function onDocumentKeyUp() {
+
 }
 
 document.addEventListener( 'mousemove', onDocumentMouseMove );
 document.addEventListener( 'click', onDocumentMouseClick );
 document.addEventListener( 'keydown', onDocumentKeyDown);
+document.addEventListener( 'keyup', onDocumentKeyUp);
 //END OF EVENT HANDLERS SECTION
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

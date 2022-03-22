@@ -76,20 +76,10 @@ header p {
     transform: scaleX(0);
 }
 
-section {
-    padding-left: 5%;
-    width: 10%;
-    display: flex;
-    flex-flow: column;
-}
-
-section button {
-    margin-top: 5%;
-    padding: 1%;
-    background: rgba(255, 255, 255, 0.418);
-    border: none;
-}
-
-section button:hover {
-    background: white;
+#captureZone {
+    display: none;
+    position: fixed;
+    width: 2em;
+    height: 2em;
+    border: 2px solid rgb(255, 255, 255) !important;
 }

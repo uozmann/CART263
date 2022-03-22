@@ -1,7 +1,8 @@
 //https://threejs.org/docs/#manual/en/introduction/Installation
 
 import * as THREE from '../../threeJS/src/Three.js';
-import { OrbitControls } from '../../threeJS/examples/jsm/controls/OrbitControls.js';
+// import { OrbitControls } from '../../threeJS/examples/jsm/controls/OrbitControls.js';
+import { PointerLockControls } from '../../threeJS/examples/jsm/controls/PointerLockControls.js';
 import { GLTFLoader } from '../../threeJS/examples/jsm/loaders/GLTFLoader.js';
 import stats from '../../threeJS/examples/jsm/libs/stats.module.js';
 import { GUI } from '../../threeJS/examples/jsm/libs/lil-gui.module.min.js';
@@ -13,18 +14,18 @@ import { TWEEN } from '../../threeJS/examples/jsm/libs/tween.module.min.js';
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 camera.position.z = 5;
-let cameraTweening = {
-	x: camera.position.x,
-	y: camera.position.y,
-	z: camera.position.z,
-}
-const tweening = new TWEEN.Tween(cameraTweening);
+// let cameraTweening = {
+// 	x: camera.position.x,
+// 	y: camera.position.y,
+// 	z: camera.position.z,
+// }
+// const tweening = new TWEEN.Tween(cameraTweening);
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
-const controls = new OrbitControls( camera, renderer.domElement );
+const controls = new PointerLockControls( camera, document.body );
 controls.enableDamping = true;
-controls.listenToKeyEvents( window );
+// controls.listenToKeyEvents( window );
 
 
 //assets
@@ -95,7 +96,7 @@ const mouse = new THREE.Vector2();
 let INTERSECTED = false;
 let raycaster = new THREE.Raycaster();
 //Key Interactions
-controls.target.set(models.cube.position.x, models.cube.position.y, models.cube.position.z);
+// controls.target.set(models.cube.position.x, models.cube.position.y, models.cube.position.z);
 //END OF OBJECTS SECTION
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -120,8 +121,6 @@ Promise.all([loadAsync('./assets/visuals/body.glb'), loadAsync('./assets/visuals
 	}
 });
 
-
-
 //Preload GUI
 const loadingElem = document.querySelector('#loading');
 const progressBarElem = loadingElem.querySelector('.progressbar');
@@ -135,6 +134,29 @@ loadManager.onProgress = (urlOfLastItemLoaded, itemsLoaded, itemsTotal) => {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //SETUP(ON LOAD) SECTION
+//Instruction UI
+const instructions = document.getElementById( 'instructions' );
+instructions.addEventListener( 'click', function () {
+
+	controls.lock();
+
+} );
+
+controls.addEventListener( 'lock', function () {
+
+	instructions.style.display = 'none';
+	blocker.style.display = 'none';
+
+} );
+
+controls.addEventListener( 'unlock', function () {
+
+	blocker.style.display = 'block';
+	instructions.style.display = '';
+
+} );
+
+//On Load section
 loadManager.onLoad = () => {
 	//Disable UI For preload
 	loadingElem.style.display = 'none';
@@ -144,7 +166,7 @@ loadManager.onLoad = () => {
 	scene.add(...[lights.ambient, lights.directional, lights.hemisphere]);
 	scene.add(...[models.sphere, models.cylinder, models.cube]);
 	scene.add(...models.clockHours);
-	
+	scene.add( controls.getObject() );
 };
 //END OF ON LOAD SECTION
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -210,12 +232,12 @@ function onDocumentMouseMove( event ) {
 function onDocumentMouseClick(event) {
 	event.preventDefault();
 	tweening.to({x: models.clockHours[models.currentClockHour].position.x, y: models.clockHours[models.currentClockHour].position.y, z: models.clockHours[models.currentClockHour].position.z +5}, 1000);
-	// prepare the tweening for the camera
-	tweening.onUpdate(() =>
-	camera.position.set(cameraTweening.x, cameraTweening.y, cameraTweening.z)
-  	);
-	camera.updateMatrixWorld();
-	tweening.start();
+	// // prepare the tweening for the camera
+	// tweening.onUpdate(() =>
+	// camera.position.set(cameraTweening.x, cameraTweening.y, cameraTweening.z)
+  	// );
+	// camera.updateMatrixWorld();
+	// tweening.start();
 }
 
 function onDocumentKeyDown(event) {

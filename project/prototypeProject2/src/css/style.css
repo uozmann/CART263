@@ -1,3 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Inspiration&family=Palette+Mosaic&family=Quicksand:wght@400;700&display=swap');
+/* font-family: 'Inspiration', cursive;
+font-family: 'Palette Mosaic', cursive;
+font-family: 'Quicksand', sans-serif; */
 * {
     padding: 0;
     margin: 0;
@@ -22,17 +26,31 @@ canvas {
 }
 
 header {
+    margin-top: 10vh;
 	padding: 2em;
-	width: 100vw;
-	color: rgb(255, 255, 255);
+    display: flex;
+    flex-flow: column;
+	color: rgb(0, 0, 0);
+    text-align: center;
 }
 header h1 {
 	font-size: 72px;
-	
+	font-family: 'Palette Mosaic', cursive;
 }
 
 header h2 {
+    background: rgb(255, 255, 255);
+    border: 2px black;
+    border-radius: 10px;
+    /* width: 10em; */
 	font-size: 48px;
+    font-family: 'Quicksand', sans-serif;
+    margin-bottom: 5vh;
+}
+
+header p {
+    font-size: 24px;
+    font-family: 'Quicksand', sans-serif;
 }
 
 #loading {

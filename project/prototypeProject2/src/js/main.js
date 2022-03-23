@@ -129,10 +129,10 @@ const loadAsync = url => {
 	 })
 	})
 }
-Promise.all([loadAsync('./assets/visuals/body.glb'), loadAsync('./assets/visuals/body.glb')]).then(models => {
+Promise.all([loadAsync('./assets/visuals/body.glb'), loadAsync('./assets/visuals/headonly.glb')]).then(models => {
 	for(let j =0; j<models.length; j++){
-		// myModels.push(new TestModel( models[j].scene,0,j,0))
 		scene.add( models[j].scene );//add the models to the scene
+		models[j].name = `Human ${j}`;
 	}
 });
 
@@ -193,6 +193,7 @@ draw();
 function render() {
 	// TWEEN.update()
 	renderer.render( scene, camera );
+	
 }
 
 // find intersections
@@ -214,28 +215,54 @@ function moveCamera() {
 }
 
 function onDocumentMouseMove( event ) {
-	if (mouseAllowed) {
+	// if (mouseAllowed) {
+	// 	event.preventDefault();
+	// 	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+	// 	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+	// 	captureZone.style.top = `${mouse.y}px`;
+	// 	captureZone.style.left = `${mouse.x}px`;
+	// 	raycaster.setFromCamera( mouse, camera );
+	// 	const intersects = raycaster.intersectObjects( scene.children, true );
+	// 	if ( intersects.length > 0 ) { //if there is at least one intersected object
+	// 		//The following code comes from the three.js documentation at: https://github.com/mrdoob/three.js/blob/master/examples/webgl_camera_cinematic.html
+	// 		console.log(intersects.length);
+	// 		if ( INTERSECTED != intersects[ 0 ].object ) { 
+	// 			if ( INTERSECTED ) {INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );} //record the current colour
+	// 			INTERSECTED = intersects[ 0 ].object; //assign it to the pointed object
+	// 			INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex(); ////record the current colour
+	// 			INTERSECTED.material.emissive.setHex( 0xffffff ); //red emmissive
+	// 			//Move the camera angle
+	// 			models.currentClockHour = intersects[0].object.name;
+				
+	// 		}
+	// 	} else {
+	// 		if ( INTERSECTED ) {INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );} //when not hovered anyore, set the colour back to the initial one
+	// 		INTERSECTED = null;
+	// 	}
+		
+	// }
+
+	if (mouseAllowed) { //To prevent errors when pointer locked
 		event.preventDefault();
 		mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 		mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 		captureZone.style.top = `${mouse.y}px`;
 		captureZone.style.left = `${mouse.x}px`;
-		console.log(mouse.x, mouse.y);
 		raycaster.setFromCamera( mouse, camera );
-		const intersects = raycaster.intersectObjects( scene.children, false );
-		if ( intersects.length > 0 ) { //if there is at least one intersected object
-			//The following code comes from the three.js documentation at: https://github.com/mrdoob/three.js/blob/master/examples/webgl_camera_cinematic.html
-			if ( INTERSECTED != intersects[ 0 ].object ) { //re-assign INTERSECTED to the first layer of material intersected
-				if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex ); //record the current colour
-				INTERSECTED = intersects[ 0 ].object; //assign it to the pointed object
-				INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex(); ////record the current colour
-				INTERSECTED.material.emissive.setHex( 0xff0000 ); //red emmissive
-				//Move the camera angle
-				models.currentClockHour = intersects[0].object.name;
+		const intersects = raycaster.intersectObjects( scene.children, true );
+		let firstIntersectedObj = intersects[0].object;
+		if (intersects.length > 0) {
+			// firstIntersectedObj = intersects[ 0 ].object;
+			firstIntersectedObj.currentHex = firstIntersectedObj.material.emissive.getHex();
+			console.log(firstIntersectedObj.currentHex);
+			if (firstIntersectedObj.currentHex !== 0xffffff) {
+				firstIntersectedObj.material.emissive.setHex( 0xffffff ); //white emissive
 			}
 		} else {
-			if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex ); //when not hovered anyore, set the colour back to the initial one
-			INTERSECTED = null;
+			if (firstIntersectedObj) {
+				firstIntersectedObj.material.emissive.setHex(firstIntersectedObj.currentHex);
+			}
+			// firstIntersectedObj = undefined;
 		}
 	}
 }

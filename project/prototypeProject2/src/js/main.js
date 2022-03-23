@@ -1,4 +1,5 @@
 //https://threejs.org/docs/#manual/en/introduction/Installation
+"use strict"
 
 import * as THREE from '../../threeJS/src/Three.js';
 // import { OrbitControls } from '../../threeJS/examples/jsm/controls/OrbitControls.js';
@@ -215,57 +216,65 @@ function moveCamera() {
 }
 
 function onDocumentMouseMove( event ) {
-	// if (mouseAllowed) {
-	// 	event.preventDefault();
-	// 	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-	// 	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-	// 	captureZone.style.top = `${mouse.y}px`;
-	// 	captureZone.style.left = `${mouse.x}px`;
-	// 	raycaster.setFromCamera( mouse, camera );
-	// 	const intersects = raycaster.intersectObjects( scene.children, true );
-	// 	if ( intersects.length > 0 ) { //if there is at least one intersected object
-	// 		//The following code comes from the three.js documentation at: https://github.com/mrdoob/three.js/blob/master/examples/webgl_camera_cinematic.html
-	// 		console.log(intersects.length);
-	// 		if ( INTERSECTED != intersects[ 0 ].object ) { 
-	// 			if ( INTERSECTED ) {INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );} //record the current colour
-	// 			INTERSECTED = intersects[ 0 ].object; //assign it to the pointed object
-	// 			INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex(); ////record the current colour
-	// 			INTERSECTED.material.emissive.setHex( 0xffffff ); //red emmissive
-	// 			//Move the camera angle
-	// 			models.currentClockHour = intersects[0].object.name;
-				
-	// 		}
-	// 	} else {
-	// 		if ( INTERSECTED ) {INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );} //when not hovered anyore, set the colour back to the initial one
-	// 		INTERSECTED = null;
-	// 	}
-		
-	// }
-	
-	//NEW CODE by myself derived from the example code of THREE.JS at line 227-241
-	if (mouseAllowed) { //To prevent errors when pointer locked
+	if (mouseAllowed) {
 		event.preventDefault();
 		mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 		mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-
-		captureZone.style.top = `${mouse.y}px`; //currently nothing. Capture zome is an html div element that I want to display when the mouse is locked.
+		captureZone.style.top = `${mouse.y}px`;
 		captureZone.style.left = `${mouse.x}px`;
-
 		raycaster.setFromCamera( mouse, camera );
 		const intersects = raycaster.intersectObjects( scene.children, true );
-		let firstIntersectedObj = intersects[0].object;
-		if (intersects.length > 0) {
-			firstIntersectedObj.currentHex = firstIntersectedObj.material.emissive.getHex();
-			if (firstIntersectedObj.currentHex !== 0xffffff) {
-				firstIntersectedObj.material.emissive.setHex( 0xffffff ); //white emissive
+		if ( intersects.length > 0 ) { //if there is at least one intersected object
+			//The following code comes from the three.js documentation at: https://github.com/mrdoob/three.js/blob/master/examples/webgl_camera_cinematic.html
+			console.log(intersects.length);
+			if ( INTERSECTED != intersects[ 0 ].object ) { 
+				if ( INTERSECTED ) {INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );} //record the current colour
+				INTERSECTED = intersects[ 0 ].object; //assign it to the pointed object
+				INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex(); ////record the current colour
+				INTERSECTED.material.emissive.setHex( 0xffffff ); //red emmissive
+				//Move the camera angle
+				models.currentClockHour = intersects[0].object.name;
+				
 			}
 		} else {
-			if (firstIntersectedObj) {
-				firstIntersectedObj.material.emissive.setHex(firstIntersectedObj.currentHex);
-			}
+			if ( INTERSECTED ) {INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );} //when not hovered anyore, set the colour back to the initial one
+			INTERSECTED = null;
 		}
+		
 	}
+	// //NEW CODE to see if this can be done another way
+	// if (mouseAllowed) { //To prevent errors when pointer locked
+	// 	event.preventDefault();
+	// 	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+	// 	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+	// 	captureZone.style.top = `${mouse.y}px`; //currently nothing. Capture zome is an html div element that I want to display when the mouse is locked.
+	// 	captureZone.style.left = `${mouse.x}px`;
+
+	// 	raycaster.setFromCamera( mouse, camera );
+	// 	const intersects = raycaster.intersectObjects( scene.children, true );
+	// 	let firstIntersectedObj;
+	// 	let intersectedColour;
+	// 	let lastIntersectedObj
+		
+		
+	// 	 //white emissive
+	// 	if (intersects.length > 0) {
+	// 		firstIntersectedObj = intersects[0].object.name;
+	// 		intersectedColour = 0xffffff;
+			
+	// 	} else {
+	// 		intersectedColour = 0;
+	// 		// firstIntersectedObj = null;
+	// 	}
+	// 	for (let i=0; i < scene.children.length; i++) {
+	// 		lastIntersectedObj = scene.children[i].getObjectByName(firstIntersectedObj);
+	// 	}
+	// 	console.log(lastIntersectedObj);
+	// 	lastIntersectedObj.material.emissive.setHex( intersectedColour );
+	// }
 }
+
 
 function onDocumentMouseClick(event) {
 	event.preventDefault();

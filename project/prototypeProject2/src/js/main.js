@@ -241,20 +241,21 @@ function onDocumentMouseMove( event ) {
 	// 	}
 		
 	// }
-
+	
+	//NEW CODE by myself derived from the example code of THREE.JS at line 227-241
 	if (mouseAllowed) { //To prevent errors when pointer locked
 		event.preventDefault();
 		mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 		mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-		captureZone.style.top = `${mouse.y}px`;
+
+		captureZone.style.top = `${mouse.y}px`; //currently nothing. Capture zome is an html div element that I want to display when the mouse is locked.
 		captureZone.style.left = `${mouse.x}px`;
+
 		raycaster.setFromCamera( mouse, camera );
 		const intersects = raycaster.intersectObjects( scene.children, true );
 		let firstIntersectedObj = intersects[0].object;
 		if (intersects.length > 0) {
-			// firstIntersectedObj = intersects[ 0 ].object;
 			firstIntersectedObj.currentHex = firstIntersectedObj.material.emissive.getHex();
-			console.log(firstIntersectedObj.currentHex);
 			if (firstIntersectedObj.currentHex !== 0xffffff) {
 				firstIntersectedObj.material.emissive.setHex( 0xffffff ); //white emissive
 			}
@@ -262,7 +263,6 @@ function onDocumentMouseMove( event ) {
 			if (firstIntersectedObj) {
 				firstIntersectedObj.material.emissive.setHex(firstIntersectedObj.currentHex);
 			}
-			// firstIntersectedObj = undefined;
 		}
 	}
 }

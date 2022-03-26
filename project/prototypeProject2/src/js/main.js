@@ -8,6 +8,7 @@ import { GLTFLoader } from '../../threeJS/examples/jsm/loaders/GLTFLoader.js';
 import stats from '../../threeJS/examples/jsm/libs/stats.module.js';
 import { GUI } from '../../threeJS/examples/jsm/libs/lil-gui.module.min.js';
 import { TWEEN } from '../../threeJS/examples/jsm/libs/tween.module.min.js'; 
+import { mapLinear } from '../../threeJS/src/math/MathUtils.js';
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //OBJECTS SECTION
@@ -194,13 +195,29 @@ draw();
 function render() {
 	// TWEEN.update()
 	renderer.render( scene, camera );
-	
+	triggerNarrative();
 }
 
+
+//Detect Scene distance based on the camera (player) location
+function detectNarrative(x, y, z) {
+	let placeB = new THREE.Vector3( x, y, z );
+	return camera.position.distanceTo(placeB);
+}
+
+function triggerNarrative() {
+	let dScene0 = detectNarrative(models.clockHours[0].position.x, models.clockHours[0].position.y, models.clockHours[0].position.z);
+	let dScene1 = detectNarrative(models.clockHours[1].position.x, models.clockHours[1].position.y, models.clockHours[1].position.z);
+	let dScene2 = detectNarrative(models.clockHours[2].position.x, models.clockHours[2].position.y, models.clockHours[2].position.z);
+	if (dScene0 <= 2) {
+		alert(`Scene 0`);
+	} else if (dScene1 <= 2) {
+		alert(`Scene 1`);
+	}
+}
 // find intersections
 function findIntersection() {
 	
-
 }
 //END OF ON DRAW SECTION
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -226,7 +243,6 @@ function onDocumentMouseMove( event ) {
 		const intersects = raycaster.intersectObjects( scene.children, true );
 		if ( intersects.length > 0 ) { //if there is at least one intersected object
 			//The following code comes from the three.js documentation at: https://github.com/mrdoob/three.js/blob/master/examples/webgl_camera_cinematic.html
-			console.log(intersects.length);
 			if ( INTERSECTED != intersects[ 0 ].object ) { 
 				if ( INTERSECTED ) {INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );} //record the current colour
 				INTERSECTED = intersects[ 0 ].object; //assign it to the pointed object
@@ -314,3 +330,4 @@ document.addEventListener( 'keydown', onDocumentKeyDown);
 document.addEventListener( 'keyup', onDocumentKeyUp);
 //END OF EVENT HANDLERS SECTION
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+

@@ -27,14 +27,4 @@ let game = new Phaser.Game(config);
 
 
 // Dom manipulation
-let points = 0;
-const score = document.getElementById(`score`);
-let audioGetSadness =  new Audio(`assets/sounds/bark.wav`); 
 
-//Called by the getSadness() at Play.js
-function updatePoints() {
-   /* the audio is now playable; play it if permissions allow */
-  audioGetSadness.play();
-  score.textContent = `${points}`;
-    
-}

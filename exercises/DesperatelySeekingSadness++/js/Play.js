@@ -65,23 +65,6 @@ class Play extends Phaser.Scene {
       this.cursors = this.input.keyboard.createCursorKeys();
     }
   
-    /**
-    Called when the avatar overlaps the sadness, moves the sadness to a new random position.
-    */
-    getSad(avatar, sadness) {
-    points++;
-    updatePoints();
-    this.avatar.setTint(`0xdd${points}3${points}3`);
-      // Note how we can use RandomRectangle() again here if we put the object we want
-      // to reposition randomly in an array!
-      Phaser.Actions.RandomRectangle([sadness], this.physics.world.bounds);
-      //add one point
-    }
-
-    //called when the avatar overlaps the happiness
-    getHappy(avatar, happiness) {
-        this.happiness.setVelocityY(-10);
-    }
   
     /**
     Listens for user input
@@ -94,7 +77,25 @@ class Play extends Phaser.Scene {
     Moves the avatar based on the arrow keys for rotation and thrust
     */
     handleInput() {
-      
+      // If either left or right is pressed, rotate appropriately
+      if (this.cursors.left.isDown) {
+        this.avatar.setAngularVelocity(-150);
+        this.sadness.setVelocityX(-50);
+      }
+      else if (this.cursors.right.isDown) {
+        this.avatar.setAngularVelocity(150);
+        this.sadness.setVelocityX(50);
+      }
+      // Otherwise stop rotating
+      else {
+        this.avatar.setAngularVelocity(0);
+      }
+  
+      // If the up key is pressed, accelerate in the current rotation direction
+      if (this.cursors.up.isDown) {
+        this.physics.velocityFromRotation(this.avatar.rotation, 200, this.avatar.body.acceleration);
+        this.sadness.setVelocityY(100);
+      }
       // Otherwise, zero the acceleration
       else {
         this.avatar.setAcceleration(0);

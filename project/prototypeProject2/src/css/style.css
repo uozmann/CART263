@@ -83,3 +83,12 @@ header p {
     height: 2em;
     border: 2px solid rgb(255, 255, 255) !important;
 }
+
+.container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 1200px;
+    flex-wrap: wrap;
+}

@@ -24,6 +24,7 @@ camera.position.z = 5;
 // const tweening = new TWEEN.Tween(cameraTweening);
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize( window.innerWidth, window.innerHeight );
+renderer.outputEncoding = THREE.sRGBEncoding;
 document.body.appendChild( renderer.domElement );
 const controls = new PointerLockControls( camera, document.body );
 controls.enableDamping = true;
@@ -46,6 +47,13 @@ let modelsParameters = {
 		x: 0,
 		y: -0.5,
 		z: 0
+	},
+	floor: {
+		width: 2000,
+		height: 2000,
+		x: 0,
+		y: -3,
+		z: 0
 	}
 }
 const modelsSettings = { //basic settings before creating the object
@@ -62,9 +70,9 @@ const modelsSettings = { //basic settings before creating the object
 		geometry: new THREE.CylinderGeometry( modelsParameters.cylinder.radius, modelsParameters.cylinder.radius, modelsParameters.cylinder.height, 32 ),
 		material: new THREE.MeshPhongMaterial( {color: 0xffff00} ),
 	},
-	plane: {
-		geometry: new THREE.PlaneGeometry( 1, 1 ),
-		material: new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide} ),
+	floor: {
+		geometry: new THREE.PlaneGeometry( modelsParameters.floor.width, modelsParameters.floor.height ),
+		material: new THREE.MeshPhongMaterial( {color: 0xffffff, side: THREE.DoubleSide} ),
 	}
 };
 const models = { //creating the object
@@ -73,11 +81,16 @@ const models = { //creating the object
 	cylinder: new THREE.Mesh( modelsSettings.cylinder.geometry, modelsSettings.cylinder.material ),
 	clockHours: [],
 	currentClockHour: 0,
-	plane: new THREE.Mesh( modelsSettings.plane.geometry, modelsSettings.plane.material ),
+	floor: new THREE.Mesh( modelsSettings.floor.geometry, modelsSettings.floor.material ),
 };
 // models.cylinder.rotateX(1.571); //Transformation applied to the models
 models.cylinder.position.set(modelsParameters.cylinder.x, modelsParameters.cylinder.y, modelsParameters.cylinder.z);
 models.cube.position.set(modelsParameters.cube.x, modelsParameters.cube.y, modelsParameters.cube.z);
+models.floor.rotateX( - Math.PI / 2 );
+models.floor.position.set(modelsParameters.floor.x, modelsParameters.floor.y, modelsParameters.floor.z)
+console.log(models.floor.position);
+console.log(models.cylinder.position);
+
 for (let i = 0; i < 4; i++) {
 	let angle = i;
 	let x = Math.cos(angle) * modelsParameters.cylinder.radius;
@@ -90,7 +103,7 @@ for (let i = 0; i < 4; i++) {
 }
 
 //Environment
-scene.background = new THREE.Color( 0xFFC107);
+scene.background = new THREE.Color( 0xffffff);
 const lights = {
 	ambient: new THREE.AmbientLight( 0x404040 ),
 	directional: new THREE.DirectionalLight( 0xffffff, 1 ),
@@ -131,10 +144,9 @@ const loadAsync = url => {
 	 })
 	})
 }
-Promise.all([loadAsync('./assets/visuals/body.glb'), loadAsync('./assets/visuals/headonly.glb')]).then(models => {
+Promise.all([loadAsync('./assets/visuals/wall.glb'), loadAsync('./assets/visuals/headonly.glb')]).then(models => {
 	for(let j =0; j<models.length; j++){
 		scene.add( models[j].scene );//add the models to the scene
-		models[j].name = `Human ${j}`;
 	}
 });
 
@@ -176,7 +188,7 @@ loadManager.onLoad = () => {
 
 	//Add objects to the scene
 	scene.add(...[lights.ambient, lights.directional, lights.hemisphere]);
-	scene.add(...[models.sphere, models.cylinder, models.cube, models.plane]);
+	scene.add(...[models.sphere, models.cylinder, models.cube, models.floor]);
 	scene.add(...models.clockHours);
 	scene.add( controls.getObject() );
 };
@@ -240,7 +252,7 @@ function onDocumentMouseMove( event ) {
 		captureZone.style.top = `${mouse.y}px`;
 		captureZone.style.left = `${mouse.x}px`;
 		raycaster.setFromCamera( mouse, camera );
-		const intersects = raycaster.intersectObjects( scene.children, true );
+		const intersects = raycaster.intersectObjects( scene.children, false );
 		if ( intersects.length > 0 ) { //if there is at least one intersected object
 			//The following code comes from the three.js documentation at: https://github.com/mrdoob/three.js/blob/master/examples/webgl_camera_cinematic.html
 			if ( INTERSECTED != intersects[ 0 ].object ) { 

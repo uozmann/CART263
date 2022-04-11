@@ -8,26 +8,47 @@
 	<body>	
 		<!-- Progress bar -->
 		<div id="loading">
-			<div class="progress"><div class="progressbar"></div></div>
+			<div class="progress"><div class="progressbar">LOADING</div></div>
 		</div>
-		<header id="instructions">
-			<h1>A lifetime in 24 hours</h1>
-			<h2>A prototype of the Three.js scene</h2>
-			<p>Click to Look Around</p>
+		<section id="toolbar">
+			<div id="menuLogo">🙋‍♀️</div>
+			<div id="menuLogoClose">🙅‍♀️</div>
+			<div id="playLogo">👀</div>
+			<article id="version0Container">
+				<h2 id="version0Name"></h2>
+				<!-- Text Content filled by js -->
+				<p id="version0Speech"></p>
+				<button id="version0Button"></button>
+				<button id="version0Button1"></button>
+			</article>
+		</section>
+		
+		<header id="instructions"> 
+			<h1>A lifetime in circle</h1>
+			<h2></h2>
+			<p>Click 👀 to Look Around</p>
 			<p>AWSD or Arrow Keys to move</p>
+			<p>Approach figures to trigger new content</p>
 		</header>
 
-		<section id="phase1Web">
-			<!-- The following code comes from the tutorial at https://www.youtube.com/watch?v=hv0rNxr1XXk&list=PL_LOKzj7XRAERsCsGwPUY72Y79ppKiv98&index=63 -->
-			<div class="container">
-				<div class="card">
-					<h1>Hello Title</h1>
-					<h2>Hello Subtitle</h2>
-					<p>Paragraphs and texts and paragraphs and texts</p>
-					<a href="#">Read More</a>
-				</div>
-			</div>
+		<section>
+			<article id="realityContainer">
+				<h2 id="realityTitle">Early Childhood</h2>
+				<h3 id="realitySubtitle">Effects of parenting on children</h3>
+				<p id="realityP0">Lorem Ipsum</p>
+				<p id="realityP1">Lorem Ipsum</p>
+				<p id="realityP2">Lorem Ipsum</p>
+				<button id="realityButton"></button>
+			</article>
+			<article id="simulationContainer">
+				<h2>Early Childhood</h2>
+				<h3>Effects of parenting on children</h3>
+				<p>q1</p>
+				<p>q2</p>
+				<p>q3</p>
+			</article>
 		</section>
+
 
 		<div id="captureZone"></div>
 

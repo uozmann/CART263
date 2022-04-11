@@ -2,7 +2,7 @@
 "use strict"
 
 import * as THREE from '../../threeJS/src/Three.js';
-// import { OrbitControls } from '../../threeJS/examples/jsm/controls/OrbitControls.js';
+import { CSS3DRenderer, CSS3DObject, CSS3DSprite } from '../../threeJS/examples/jsm/renderers/CSS3DRenderer.js';
 import { PointerLockControls } from '../../threeJS/examples/jsm/controls/PointerLockControls.js';
 import { GLTFLoader } from '../../threeJS/examples/jsm/loaders/GLTFLoader.js';
 import stats from '../../threeJS/examples/jsm/libs/stats.module.js';
@@ -10,22 +10,25 @@ import { GUI } from '../../threeJS/examples/jsm/libs/lil-gui.module.min.js';
 import { TWEEN } from '../../threeJS/examples/jsm/libs/tween.module.min.js'; 
 import { mapLinear } from '../../threeJS/src/math/MathUtils.js';
 
+//class
+import Version0 from './Version0.js';
+import Reality from './RealityContent.js';
+import UploadedModels from './UploadedModels.js';
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //OBJECTS SECTION
 //General settings
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 camera.position.z = 5;
-// let cameraTweening = {
-// 	x: camera.position.x,
-// 	y: camera.position.y,
-// 	z: camera.position.z,
-// }
-// const tweening = new TWEEN.Tween(cameraTweening);
+//Default webgl renderer
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize( window.innerWidth, window.innerHeight );
 renderer.outputEncoding = THREE.sRGBEncoding;
 document.body.appendChild( renderer.domElement );
+//Special renderer for css elements
+
+//Controls
 const controls = new PointerLockControls( camera, document.body );
 controls.enableDamping = true;
 // controls.listenToKeyEvents( window );
@@ -34,12 +37,16 @@ controls.enableDamping = true;
 //assets
 let modelsParameters = {
 	cube: {
-		x: 0,
-		y: 0,
-		z: 0
+		x: -15,
+		y: -1,
+		z: 5
 	},
 	sphere: {
-		radius: 0.5
+		radius: 0.5,
+		x: -15,
+		y: -1,
+		z: -25
+
 	},
 	cylinder: {
 		radius: 5,
@@ -63,7 +70,7 @@ const modelsSettings = { //basic settings before creating the object
 	},
 	sphere: {
 		geometry: new THREE.SphereGeometry( modelsParameters.sphere.radius, 16, 8 ),
-		material: undefined,
+		material: new THREE.MeshPhongMaterial( { color: 0xffffff } ),
 	},
 	cylinder: {
 		radius: 5,
@@ -72,38 +79,28 @@ const modelsSettings = { //basic settings before creating the object
 	},
 	floor: {
 		geometry: new THREE.PlaneGeometry( modelsParameters.floor.width, modelsParameters.floor.height ),
-		material: new THREE.MeshPhongMaterial( {color: 0xffffff, side: THREE.DoubleSide} ),
+		material: new THREE.MeshPhongMaterial( {color: 0xB97A20} ),
 	}
 };
 const models = { //creating the object
 	cube:  new THREE.Mesh( modelsSettings.cube.geometry, modelsSettings.cube.material),
-	sphere: undefined,
+	sphere:  new THREE.Mesh( modelsSettings.sphere.geometry, modelsSettings.sphere.material),
 	cylinder: new THREE.Mesh( modelsSettings.cylinder.geometry, modelsSettings.cylinder.material ),
 	clockHours: [],
 	currentClockHour: 0,
 	floor: new THREE.Mesh( modelsSettings.floor.geometry, modelsSettings.floor.material ),
+	wall: undefined,
+	uploaded: [],
 };
-// models.cylinder.rotateX(1.571); //Transformation applied to the models
+//Transformation applied to the models
 models.cylinder.position.set(modelsParameters.cylinder.x, modelsParameters.cylinder.y, modelsParameters.cylinder.z);
 models.cube.position.set(modelsParameters.cube.x, modelsParameters.cube.y, modelsParameters.cube.z);
+models.sphere.position.set(modelsParameters.sphere.x, modelsParameters.sphere.y, modelsParameters.sphere.z);
 models.floor.rotateX( - Math.PI / 2 );
 models.floor.position.set(modelsParameters.floor.x, modelsParameters.floor.y, modelsParameters.floor.z)
-console.log(models.floor.position);
-console.log(models.cylinder.position);
-
-for (let i = 0; i < 4; i++) {
-	let angle = i;
-	let x = Math.cos(angle) * modelsParameters.cylinder.radius;
-	let z = Math.sin(angle) * modelsParameters.cylinder.radius;
-	// let z = Math.sin(angle+= 1);
-	models.sphere = new THREE.Mesh( modelsSettings.sphere.geometry,  new THREE.MeshPhongMaterial( { color: 0x00ffff } ));
-	models.sphere.position.set(x, 0, z);
-	models.sphere.name = i;
-	models.clockHours.push(models.sphere);
-}
 
 //Environment
-scene.background = new THREE.Color( 0xffffff);
+scene.background = new THREE.Color(0xffffff);
 const lights = {
 	ambient: new THREE.AmbientLight( 0x404040 ),
 	directional: new THREE.DirectionalLight( 0xffffff, 1 ),
@@ -111,15 +108,38 @@ const lights = {
 };
 lights.directional.position.set( 1, 1, 1 ).normalize();
 
-//Player
+//Player interractions and triggered scenes
 const player = {
-	velocity: new THREE.Vector3(0.01,0,1),
-	direction: new THREE.Vector3(),
-	previousTime: performance.now(),
-	currentTime: undefined,
-	timeDelta: undefined,
+	ready: false
 }
 
+const blenderModels = [];
+const version0Settings = {
+	model: {
+		x: -7,
+		y: -2,
+		z: -7
+	},
+	text: {
+		x: 30,
+		y: 50,
+		z: 0
+	}
+}
+const version0 = {
+	text: new Version0(version0Settings.text.x, version0Settings.text.y, version0Settings.model.z),
+	model: models.uploaded[1],
+}
+
+const narrativeSettings = {
+	reality: {
+		x: 500,
+		y: 0,
+	}
+}
+const reality = {
+	text: new Reality(narrativeSettings.reality.x, narrativeSettings.reality.y),
+}
 //Mouse Interractions
 const mouse = new THREE.Vector2();
 let mouseAllowed = true;
@@ -144,12 +164,25 @@ const loadAsync = url => {
 	 })
 	})
 }
-Promise.all([loadAsync('./assets/visuals/wall.glb'), loadAsync('./assets/visuals/headonly.glb')]).then(models => {
+Promise.all([loadAsync('./assets/visuals/exteriorwalls.glb'), loadAsync('./assets/visuals/version0.glb')]).then(models => {
 	for(let j =0; j<models.length; j++){
-		scene.add( models[j].scene );//add the models to the scene
+		blenderModels.push(models[j].scene);
+        scene.add( blenderModels[j] ); //add the models to the scene
+		// camera.add(blenderModels[1]);
+		// scene.add(models[j].scene);
+		// 
 	}
+	// models.wall = models[0].scene;
+    // version0.model = models[1].scene;
+    // scene.add(models.wall, version0.model);
+    // camera.add(version0.model);
+    // version0.model.position.set(version0Settings.model.x, version0Settings.model.y, version0Settings.model.z);
+    // version0.model.rotateY(  Math.PI / 4 ); 
 });
-
+models.wall = models.uploaded[0];
+version0.model = models.uploaded[1];
+// version0.model.position.set(version0Settings.model.x, version0Settings.model.y, version0Settings.model.z);
+// version0.model.rotateY(  Math.PI / 4 );
 //Preload GUI
 const loadingElem = document.querySelector('#loading');
 const progressBarElem = loadingElem.querySelector('.progressbar');
@@ -164,19 +197,19 @@ loadManager.onProgress = (urlOfLastItemLoaded, itemsLoaded, itemsTotal) => {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //SETUP(ON LOAD) SECTION
 //Instruction UI
-const instructions = document.getElementById( 'instructions' );
+const play = document.getElementById( 'playLogo' );
 const captureZone = document.getElementById('captureZone');
-instructions.addEventListener( 'click', function () {
+play.addEventListener( 'click', function () {
 	controls.lock();
 } );
 
 controls.addEventListener( 'lock', function () {
-	instructions.style.display = 'none';
+	play.style.display = 'none';
 	mouseAllowed = false;
 } );
 
 controls.addEventListener( 'unlock', function () {
-	instructions.style.display = 'flex';
+	play.style.display = 'flex';
 	mouseAllowed = true;
 } );
 
@@ -186,11 +219,17 @@ loadManager.onLoad = () => {
 	loadingElem.style.display = 'none';
 	progressBarElem.style.display = 'none';
 
+	//Set the boolean for text display true
+	player.ready = true;
 	//Add objects to the scene
 	scene.add(...[lights.ambient, lights.directional, lights.hemisphere]);
-	scene.add(...[models.sphere, models.cylinder, models.cube, models.floor]);
-	scene.add(...models.clockHours);
+	// scene.add(...[models.floor]);
+	scene.add(...[models.sphere, models.cube, models.floor]);
+	// scene.add(...models.clockHours);
 	scene.add( controls.getObject() );
+	// camera.add(version0.model);
+	// version0.model.position.set(version0Settings.model.x, version0Settings.model.y, version0Settings.model.z);
+
 };
 //END OF ON LOAD SECTION
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -208,8 +247,21 @@ function render() {
 	// TWEEN.update()
 	renderer.render( scene, camera );
 	triggerNarrative();
+	displayVersion0Text();
+	displayRealityText();
 }
 
+function displayVersion0Text() {
+	if (player.ready === true) {
+		version0.text.display();
+	}
+}
+
+function displayRealityText() {
+	if (reality.text.ready === true) {
+		reality.text.display();
+	}
+}
 
 //Detect Scene distance based on the camera (player) location
 function detectNarrative(x, y, z) {
@@ -218,11 +270,11 @@ function detectNarrative(x, y, z) {
 }
 
 function triggerNarrative() {
-	let dScene0 = detectNarrative(models.clockHours[0].position.x, models.clockHours[0].position.y, models.clockHours[0].position.z);
-	let dScene1 = detectNarrative(models.clockHours[1].position.x, models.clockHours[1].position.y, models.clockHours[1].position.z);
-	let dScene2 = detectNarrative(models.clockHours[2].position.x, models.clockHours[2].position.y, models.clockHours[2].position.z);
-	if (dScene0 <= 2) {
-		alert(`Scene 0`);
+	let dScene0 = detectNarrative(models.cube.position.x, models.cube.position.y, models.cube.position.z);
+	let dScene1 = detectNarrative(models.sphere.position.x, models.sphere.position.y, models.sphere.position.z);
+	if (dScene0 <= 2 && version0.text.speechState !==2) {
+		player.ready = true;
+		controls.unlock();
 	} else if (dScene1 <= 2) {
 		alert(`Scene 1`);
 	}
@@ -252,7 +304,7 @@ function onDocumentMouseMove( event ) {
 		captureZone.style.top = `${mouse.y}px`;
 		captureZone.style.left = `${mouse.x}px`;
 		raycaster.setFromCamera( mouse, camera );
-		const intersects = raycaster.intersectObjects( scene.children, false );
+		const intersects = raycaster.intersectObjects( scene.children, true);
 		if ( intersects.length > 0 ) { //if there is at least one intersected object
 			//The following code comes from the three.js documentation at: https://github.com/mrdoob/three.js/blob/master/examples/webgl_camera_cinematic.html
 			if ( INTERSECTED != intersects[ 0 ].object ) { 
@@ -270,39 +322,7 @@ function onDocumentMouseMove( event ) {
 		}
 		
 	}
-	// //NEW CODE to see if this can be done another way
-	// if (mouseAllowed) { //To prevent errors when pointer locked
-	// 	event.preventDefault();
-	// 	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-	// 	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-
-	// 	captureZone.style.top = `${mouse.y}px`; //currently nothing. Capture zome is an html div element that I want to display when the mouse is locked.
-	// 	captureZone.style.left = `${mouse.x}px`;
-
-	// 	raycaster.setFromCamera( mouse, camera );
-	// 	const intersects = raycaster.intersectObjects( scene.children, true );
-	// 	let firstIntersectedObj;
-	// 	let intersectedColour;
-	// 	let lastIntersectedObj
-		
-		
-	// 	 //white emissive
-	// 	if (intersects.length > 0) {
-	// 		firstIntersectedObj = intersects[0].object.name;
-	// 		intersectedColour = 0xffffff;
-			
-	// 	} else {
-	// 		intersectedColour = 0;
-	// 		// firstIntersectedObj = null;
-	// 	}
-	// 	for (let i=0; i < scene.children.length; i++) {
-	// 		lastIntersectedObj = scene.children[i].getObjectByName(firstIntersectedObj);
-	// 	}
-	// 	console.log(lastIntersectedObj);
-	// 	lastIntersectedObj.material.emissive.setHex( intersectedColour );
-	// }
 }
-
 
 function onDocumentMouseClick(event) {
 	event.preventDefault();
@@ -336,10 +356,63 @@ function onDocumentKeyUp() {
 
 }
 
+function onWindowResize() {
+	camera.aspect = window.innerWidth / window.innerHeight;
+	camera.updateProjectionMatrix();
+
+	renderer.setSize( window.innerWidth, window.innerHeight );
+}
+
+function onVersion0ButtonClick() {
+	player.ready = false;
+	version0.text.container.style.display = 'none';
+	if (version0.text.speechState === 0) {
+		version0.text.speechState +=1;
+	} else if (version0.text.speechState === 1) {
+		version0.text.speechState =2;
+	}
+}
+
+function onVersion0Button1Click() {
+	player.ready = false;
+	version0.text.container.style.display = 'none';
+	if (version0.text.speechState === 1) {
+		version0.text.speechState =2;
+	}
+	reality.text.ready = true;
+}
+
+function onMenuMouseClick(element) {
+	this.style.display = 'none';
+	document.getElementById('instructions').style.display = 'flex';
+	document.getElementById('menuLogoClose').style.display = 'flex';
+}
+
+function onMenuCloseMouseClick(element) {
+	this.style.display = 'none';
+	document.getElementById('instructions').style.display = 'none';
+	document.getElementById('menuLogo').style.display = 'flex';
+}
+
+function onRealityMouseClick() {
+	reality.text.ready = false;
+	reality.text.container.style.display = 'none';
+	if (reality.text.speechState === 0) {
+		reality.text.speechState = 1;
+	}
+}
+
 document.addEventListener( 'mousemove', onDocumentMouseMove );
 document.addEventListener( 'click', onDocumentMouseClick );
 document.addEventListener( 'keydown', onDocumentKeyDown);
 document.addEventListener( 'keyup', onDocumentKeyUp);
+window.addEventListener( 'resize', onWindowResize, false );
+//Interractive narratives
+document.getElementById('version0Button').addEventListener('click', onVersion0ButtonClick);
+document.getElementById('version0Button1').addEventListener('click', onVersion0Button1Click);
+document.getElementById('menuLogo').addEventListener('click', onMenuMouseClick);
+document.getElementById('menuLogoClose').addEventListener('click', onMenuCloseMouseClick);
+document.getElementById('realityButton').addEventListener('click', onRealityMouseClick);
 //END OF EVENT HANDLERS SECTION
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

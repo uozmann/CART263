@@ -4,7 +4,7 @@ class Version0 {
         this.container = undefined;
         this.nameTag = undefined;
         this.speech = undefined;
-        this.speechContent = [`Welcome to A Lifetime in Circle, I am your virtual assistant. Let's begin with a quick tour. On the top is the toolbar you will need for naviguation. The 🙋‍♀️ is the menu where you will find the instructions. The 👀 is the view control where you can control your view and move around with arrow keys.`, `Welcome to the first life stage. Bob is a triangle child raised by momma Square. Select "Simulation" to start the game. Select "Reality" to learn about the effects of parenting in early childhood.`, ];
+        this.speechContent = [`Welcome to A Lifetime in Circle, I am your virtual assistant. Let's begin with a quick tour. On the top is the toolbar you will need for naviguation. The 🙋‍♀️ is the menu where you will find the instructions. The 👀 is the view control where you can control your view and move around with arrow keys.`, `Welcome to the first life stage. Bob is a triangle child raised by momma Square. Select "Simulation" to start the game. Select "Reality" to learn about the effects of parenting in early childhood.`, `Welcome to the second life stage. Bob is now a square adolescent. Select "Simulation" to start the game. Select "Reality" to learn about the effects of parenting in adolescence.`, `Welcome to the third life stage. Bob is now a sphere young parent. Select "Simulation" to start the game. Select "Reality" to learn about the effects of children on parents.`, `Welcome to the last life stage. Bob is now a sphere old parent. Select "Simulation" to start the game. Select "Reality" to learn about the effects of grown children on parents.`];
         this.speechState = 0;
         this.button = undefined;
         this.button1 = undefined;
@@ -33,7 +33,7 @@ class Version0 {
         if (this.speechState === 0) {
             this.button.textContent = this.buttonText[0];
             this.button1.style.display = 'none';
-        }  else if (this.speechState === 1) {
+        }  else if (this.speechState === 1 || this.speechState === 2) {
             this.button.textContent = this.buttonText[1]; 
             this.button1.style.display = 'inline';
             this.button1.textContent = this.buttonText[2];

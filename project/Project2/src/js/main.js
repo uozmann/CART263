@@ -49,11 +49,16 @@ let modelsParameters = {
 
 	},
 	cylinder: {
-		radius: 5,
-		height: 0.1,
-		x: 0,
-		y: -0.5,
-		z: 0
+		radius: 0.5,
+		height: 1,
+		x: 15,
+		y: -1,
+		z: -25
+	},
+	torusKnot : {
+		x: 15,
+		y: -1,
+		z: 5
 	},
 	floor: {
 		width: 2000,
@@ -77,15 +82,20 @@ const modelsSettings = { //basic settings before creating the object
 		geometry: new THREE.CylinderGeometry( modelsParameters.cylinder.radius, modelsParameters.cylinder.radius, modelsParameters.cylinder.height, 32 ),
 		material: new THREE.MeshPhongMaterial( {color: 0xffff00} ),
 	},
+	torusKnot: {
+		geometry: new THREE.TorusKnotGeometry( 0.5, 0.25, 100, 16 ),
+		material: new THREE.MeshPhongMaterial( {color: 0x00ff00} )
+	},
 	floor: {
 		geometry: new THREE.PlaneGeometry( modelsParameters.floor.width, modelsParameters.floor.height ),
-		material: new THREE.MeshPhongMaterial( {color: 0xB97A20} ),
+		material: new THREE.MeshPhongMaterial( {color: 0xB97A20} ), 
 	}
 };
 const models = { //creating the object
 	cube:  new THREE.Mesh( modelsSettings.cube.geometry, modelsSettings.cube.material),
 	sphere:  new THREE.Mesh( modelsSettings.sphere.geometry, modelsSettings.sphere.material),
 	cylinder: new THREE.Mesh( modelsSettings.cylinder.geometry, modelsSettings.cylinder.material ),
+	torusKnot: new THREE.Mesh( modelsSettings.torusKnot.geometry, modelsSettings.torusKnot.material),
 	clockHours: [],
 	currentClockHour: 0,
 	floor: new THREE.Mesh( modelsSettings.floor.geometry, modelsSettings.floor.material ),
@@ -95,7 +105,10 @@ const models = { //creating the object
 //Transformation applied to the models
 models.cylinder.position.set(modelsParameters.cylinder.x, modelsParameters.cylinder.y, modelsParameters.cylinder.z);
 models.cube.position.set(modelsParameters.cube.x, modelsParameters.cube.y, modelsParameters.cube.z);
+models.cube.name =`SCENE1`;
 models.sphere.position.set(modelsParameters.sphere.x, modelsParameters.sphere.y, modelsParameters.sphere.z);
+models.cylinder.position.set(modelsParameters.cylinder.x, modelsParameters.cylinder.y, modelsParameters.cylinder.z);
+models.torusKnot.position.set(modelsParameters.torusKnot.x, modelsParameters.torusKnot.y, modelsParameters.torusKnot.z);
 models.floor.rotateX( - Math.PI / 2 );
 models.floor.position.set(modelsParameters.floor.x, modelsParameters.floor.y, modelsParameters.floor.z)
 
@@ -114,11 +127,21 @@ const player = {
 }
 
 const blenderModels = [];
+const blenderModelsParameters = {
+	version0: {
+		x: 0,
+		y: 0,
+		z: 0
+	}
+}
+
+let blenderMixer = [];
+const blenderActions = [];
 const version0Settings = {
 	model: {
-		x: -7,
-		y: -2,
-		z: -7
+		x: camera.position.x, 
+		y: camera.position.y,
+		z: camera.position.z -5
 	},
 	text: {
 		x: 30,
@@ -126,6 +149,7 @@ const version0Settings = {
 		z: 0
 	}
 }
+let version0Tweening = new TWEEN.Tween(version0Settings.model);
 const version0 = {
 	text: new Version0(version0Settings.text.x, version0Settings.text.y, version0Settings.model.z),
 	model: models.uploaded[1],
@@ -164,24 +188,16 @@ const loadAsync = url => {
 	 })
 	})
 }
-Promise.all([loadAsync('./assets/visuals/exteriorwalls.glb'), loadAsync('./assets/visuals/version0.glb')]).then(models => {
+Promise.all([loadAsync('./assets/visuals/exteriorwalls.glb'), loadAsync('./assets/visuals/version0.glb'), loadAsync('./assets/visuals/scene1.glb'),]).then(models => {
 	for(let j =0; j<models.length; j++){
 		blenderModels.push(models[j].scene);
+		// blenderMixer.push(new THREE.AnimationMixer( blenderModels[j].scene ));
+		// let action = blenderMixer[j].clipAction( blenderModels[j].animations[j] );
+		// action.play();
         scene.add( blenderModels[j] ); //add the models to the scene
-		// camera.add(blenderModels[1]);
-		// scene.add(models[j].scene);
-		// 
+		// camera.add( blenderModels[1]);
 	}
-	// models.wall = models[0].scene;
-    // version0.model = models[1].scene;
-    // scene.add(models.wall, version0.model);
-    // camera.add(version0.model);
-    // version0.model.position.set(version0Settings.model.x, version0Settings.model.y, version0Settings.model.z);
-    // version0.model.rotateY(  Math.PI / 4 ); 
 });
-models.wall = models.uploaded[0];
-version0.model = models.uploaded[1];
-// version0.model.position.set(version0Settings.model.x, version0Settings.model.y, version0Settings.model.z);
 // version0.model.rotateY(  Math.PI / 4 );
 //Preload GUI
 const loadingElem = document.querySelector('#loading');
@@ -224,7 +240,7 @@ loadManager.onLoad = () => {
 	//Add objects to the scene
 	scene.add(...[lights.ambient, lights.directional, lights.hemisphere]);
 	// scene.add(...[models.floor]);
-	scene.add(...[models.sphere, models.cube, models.floor]);
+	scene.add(...[models.sphere, models.cube, models.cylinder, models.torusKnot, models.floor]);
 	// scene.add(...models.clockHours);
 	scene.add( controls.getObject() );
 	// camera.add(version0.model);
@@ -240,11 +256,13 @@ loadManager.onLoad = () => {
 function draw() {
 	render();
 	requestAnimationFrame( draw );
+	console.log(version0.text.speechState);
+	console.log(reality.text.speechState);
 }
 draw();
 
 function render() {
-	// TWEEN.update()
+	TWEEN.update();
 	renderer.render( scene, camera );
 	triggerNarrative();
 	displayVersion0Text();
@@ -254,12 +272,16 @@ function render() {
 function displayVersion0Text() {
 	if (player.ready === true) {
 		version0.text.display();
+		renderer.domElement.style.filter = `blur(10px)`;
+	} else if (player.ready === false && reality.text.ready === false){
+		renderer.domElement.style.filter = `none`;
 	}
 }
 
 function displayRealityText() {
 	if (reality.text.ready === true) {
 		reality.text.display();
+		renderer.domElement.style.filter = `blur(10px)`;
 	}
 }
 
@@ -272,15 +294,34 @@ function detectNarrative(x, y, z) {
 function triggerNarrative() {
 	let dScene0 = detectNarrative(models.cube.position.x, models.cube.position.y, models.cube.position.z);
 	let dScene1 = detectNarrative(models.sphere.position.x, models.sphere.position.y, models.sphere.position.z);
+	let dScene2 = detectNarrative(models.cylinder.position.x, models.cylinder.position.y, models.cylinder.position.z);
+	let dScene3 = detectNarrative(models.torusKnot.position.x, models.torusKnot.position.y, models.torusKnot.position.z);
 	if (dScene0 <= 2 && version0.text.speechState !==2) {
 		player.ready = true;
 		controls.unlock();
-	} else if (dScene1 <= 2) {
-		alert(`Scene 1`);
+		// version0Tweening.to({x: models.cube.position.x, y: models.cube.position.y, z: models.cube.position.z +5}, 1000);
+		// // prepare the tweening for the camera
+		// version0Tweening.onUpdate(function() {
+		// 	blenderModels[1].position.x = version0Tweening.x; 
+		// 	blenderModels[1].position.y = version0Tweening.y;
+		// 	blenderModels[1].position.z = version0Tweening.z; 
+		// }
+		// );
+	camera.updateMatrixWorld();
+	version0Tweening.start();
+	} else if (dScene1 <= 2 && version0.text.speechState !==3) {
+		player.ready = true;
+		controls.unlock();
+	} else if (dScene2 <= 2 && version0.text.speechState !==4) {
+		player.ready = true;
+		controls.unlock();
+	} else if (dScene3 <= 2 && version0.text.speechState !==5) {
+		player.ready = true;
+		controls.unlock();
 	}
 }
 // find intersections
-function findIntersection() {
+function moveMascot() {
 	
 }
 //END OF ON DRAW SECTION
@@ -310,10 +351,13 @@ function onDocumentMouseMove( event ) {
 			if ( INTERSECTED != intersects[ 0 ].object ) { 
 				if ( INTERSECTED ) {INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );} //record the current colour
 				INTERSECTED = intersects[ 0 ].object; //assign it to the pointed object
-				INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex(); ////record the current colour
-				INTERSECTED.material.emissive.setHex( 0xffffff ); //red emmissive
-				//Move the camera angle
-				models.currentClockHour = intersects[0].object.name;
+				if(INTERSECTED.name === models.cube.name) {
+					INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex(); ////record the current colour
+					INTERSECTED.material.emissive.setHex( 0xffffff ); //red emmissive
+					//Move the camera angle
+					models.currentClockHour = intersects[0].object.name;
+				}
+				
 				
 			}
 		} else {
@@ -349,7 +393,7 @@ function onDocumentKeyDown(event) {
 		// modelsParameters.cube.x += 0.5;
 		controls.moveRight(0.1);
 	}
-	// models.cube.position.set(modelsParameters.cube.x, modelsParameters.cube.y, modelsParameters.cube.z);
+	blenderModels[1].position.set(camera.position.x + 5, camera.position.y, camera.position.z -5);
 }
 
 function onDocumentKeyUp() {
@@ -370,6 +414,12 @@ function onVersion0ButtonClick() {
 		version0.text.speechState +=1;
 	} else if (version0.text.speechState === 1) {
 		version0.text.speechState =2;
+	} else if (version0.text.speechState === 2) {
+		version0.text.speechState =3;
+	} else if (version0.text.speechState === 3) {
+		version0.text.speechState =4;
+	} else if (version0.text.speechState === 4) {
+		version0.text.speechState =5;
 	}
 }
 
@@ -378,6 +428,12 @@ function onVersion0Button1Click() {
 	version0.text.container.style.display = 'none';
 	if (version0.text.speechState === 1) {
 		version0.text.speechState =2;
+	} else if (version0.text.speechState === 2) {
+		version0.text.speechState =3;
+	} else if (version0.text.speechState === 3) {
+		version0.text.speechState =4;
+	} else if (version0.text.speechState === 4) {
+		version0.text.speechState =5;
 	}
 	reality.text.ready = true;
 }
@@ -399,6 +455,14 @@ function onRealityMouseClick() {
 	reality.text.container.style.display = 'none';
 	if (reality.text.speechState === 0) {
 		reality.text.speechState = 1;
+	} else if (reality.text.speechState === 1) {
+		reality.text.speechState = 2;
+	} else if (reality.text.speechState === 2) {
+		reality.text.speechState = 3;
+	} else if (reality.text.speechState === 3) {
+		reality.text.speechState = 4;
+	} else if (reality.text.speechState === 4) {
+		reality.text.speechState = 5;
 	}
 }
 

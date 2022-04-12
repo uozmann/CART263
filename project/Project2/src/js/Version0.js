@@ -9,7 +9,6 @@ class Version0 {
         this.button = undefined;
         this.button1 = undefined;
         this.buttonText = [`I understand`, `Simulation`, `Reality`];
-        this.ready = true;
         this.x = x;
         this.y = y;
         this.z = z; 

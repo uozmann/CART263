@@ -48,13 +48,11 @@ class Reality {
         this.p2.textContent = this.p2Content[this.speechState];
         //Button
         this.button = document.getElementById('realityButton');
-        if (this.speechState === 0) {
-            this.button.textContent = this.buttonText[0];
+        this.button.textContent = this.buttonText[0];
         // }  else if (this.speechState === 1) {
         //     this.button.textContent = this.buttonText[1]; 
         //     this.button1.style.display = 'inline';
         //     this.button1.textContent = this.buttonText[2];
-        }
     }
 }
         

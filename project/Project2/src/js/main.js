@@ -295,7 +295,9 @@ function triggerNarrative() {
 	let dScene1 = detectNarrative(models.sphere.position.x, models.sphere.position.y, models.sphere.position.z);
 	let dScene2 = detectNarrative(models.cylinder.position.x, models.cylinder.position.y, models.cylinder.position.z);
 	let dScene3 = detectNarrative(models.torusKnot.position.x, models.torusKnot.position.y, models.torusKnot.position.z);
-	if (dScene0 <= 2 && version0.text.speechState !==2) {
+	if (dScene0 <= 5 && version0.text.speechState !== 2) {
+		version0.text.speechState = 1;
+		reality.text.speechState = 0;
 		player.ready = true;
 		controls.unlock();
 		// version0Tweening.to({x: models.cube.position.x, y: models.cube.position.y, z: models.cube.position.z +5}, 1000);
@@ -308,13 +310,20 @@ function triggerNarrative() {
 		// );
 	camera.updateMatrixWorld();
 	version0Tweening.start();
-	} else if (dScene1 <= 2 && version0.text.speechState !==3) {
+	} else if (dScene1 <= 5 && version0.text.speechState !== 3) {
+		version0.text.speechState = 2;
+		reality.text.speechState = 1;
 		player.ready = true;
 		controls.unlock();
-	} else if (dScene2 <= 2 && version0.text.speechState !==4) {
+		
+	} else if (dScene2 <= 5 && version0.text.speechState !== 4) {
+		version0.text.speechState = 3;
+		reality.text.speechState = 2;
 		player.ready = true;
 		controls.unlock();
-	} else if (dScene3 <= 2 && version0.text.speechState !==5) {
+	} else if (dScene3 <= 5 && version0.text.speechState !== 5) {
+		version0.text.speechState = 4;
+		reality.text.speechState = 3;
 		player.ready = true;
 		controls.unlock();
 	}
@@ -409,32 +418,14 @@ function onWindowResize() {
 function onVersion0ButtonClick() {
 	player.ready = false;
 	version0.text.container.style.display = 'none';
-	if (version0.text.speechState === 0) {
-		version0.text.speechState +=1;
-	} else if (version0.text.speechState === 1) {
-		version0.text.speechState =2;
-	} else if (version0.text.speechState === 2) {
-		version0.text.speechState =3;
-	} else if (version0.text.speechState === 3) {
-		version0.text.speechState =4;
-	} else if (version0.text.speechState === 4) {
-		version0.text.speechState =5;
-	}
+	version0.text.speechState +=1;
 }
 
 function onVersion0Button1Click() {
 	player.ready = false;
 	version0.text.container.style.display = 'none';
-	if (version0.text.speechState === 1) {
-		version0.text.speechState =2;
-	} else if (version0.text.speechState === 2) {
-		version0.text.speechState =3;
-	} else if (version0.text.speechState === 3) {
-		version0.text.speechState =4;
-	} else if (version0.text.speechState === 4) {
-		version0.text.speechState =5;
-	}
 	reality.text.ready = true;
+	version0.text.speechState +=1;
 }
 
 function onMenuMouseClick(element) {
@@ -452,17 +443,6 @@ function onMenuCloseMouseClick(element) {
 function onRealityMouseClick() {
 	reality.text.ready = false;
 	reality.text.container.style.display = 'none';
-	if (reality.text.speechState === 0) {
-		reality.text.speechState = 1;
-	} else if (reality.text.speechState === 1) {
-		reality.text.speechState = 2;
-	} else if (reality.text.speechState === 2) {
-		reality.text.speechState = 3;
-	} else if (reality.text.speechState === 3) {
-		reality.text.speechState = 4;
-	} else if (reality.text.speechState === 4) {
-		reality.text.speechState = 5;
-	}
 }
 
 document.addEventListener( 'mousemove', onDocumentMouseMove );

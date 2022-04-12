@@ -178,7 +178,6 @@ let raycaster = new THREE.Raycaster();
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //PRELOAD SECTION
 const loadManager = new THREE.LoadingManager();
-const loaderTexture = new THREE.TextureLoader(loadManager);
 const loaderGLTF = new GLTFLoader(loadManager);
 //Using promise to load models
 const loadAsync = url => {
@@ -188,7 +187,7 @@ const loadAsync = url => {
 	 })
 	})
 }
-Promise.all([loadAsync('./assets/visuals/exteriorwalls.glb'), loadAsync('./assets/visuals/version0.glb'), loadAsync('./assets/visuals/scene1.glb'),]).then(models => {
+Promise.all([loadAsync('./assets/visuals/exteriorwalls.glb'), loadAsync('./assets/visuals/version0.glb'), loadAsync('./assets/visuals/scene1.glb'), loadAsync('./assets/visuals/scene2.glb'), loadAsync('./assets/visuals/scene3.glb'), loadAsync('./assets/visuals/scene4.glb'), loadAsync('./assets/visuals/diaries.glb')]).then(models => {
 	for(let j =0; j<models.length; j++){
 		blenderModels.push(models[j].scene);
 		// blenderMixer.push(new THREE.AnimationMixer( blenderModels[j].scene ));
@@ -243,6 +242,8 @@ loadManager.onLoad = () => {
 	scene.add(...[models.sphere, models.cube, models.cylinder, models.torusKnot, models.floor]);
 	// scene.add(...models.clockHours);
 	scene.add( controls.getObject() );
+	console.log(blenderModels);
+	
 	// camera.add(version0.model);
 	// version0.model.position.set(version0Settings.model.x, version0Settings.model.y, version0Settings.model.z);
 
@@ -256,8 +257,6 @@ loadManager.onLoad = () => {
 function draw() {
 	render();
 	requestAnimationFrame( draw );
-	console.log(version0.text.speechState);
-	console.log(reality.text.speechState);
 }
 draw();
 

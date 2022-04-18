@@ -221,7 +221,7 @@ article#realityContainer {
     position: absolute;
     background: rgba(240, 240, 240, 0.5);
     padding: 5em;
-    border: 0.2em solid rgb(255, 191, 80);
+    border: 0.2em solid rgb(255, 162, 0);
     /* border: rgb(52, 7, 103);
     border-width: 1em; */
 }
@@ -241,11 +241,17 @@ article#realityContainer h3{
     font-size: 28px;
     font-family: 'Quicksand', sans-serif;
     padding-top: 1em;
+    margin: 1em 0;
 }
 
 article#realityContainer p{
     background: rgb(255, 255, 255);
     font-size: 24px;
+    font-family: 'Quicksand', sans-serif;
+    padding: 1em;
+}
+
+article#realityContainer figcaption{
     font-family: 'Quicksand', sans-serif;
     padding: 1em;
 }

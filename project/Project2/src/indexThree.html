@@ -11,24 +11,49 @@
 			<div class="progress"><div class="progressbar">LOADING</div></div>
 		</div>
 		<section id="toolbar">
-			<div id="menuLogo">🙋‍♀️</div>
-			<div id="menuLogoClose">🙅‍♀️</div>
+			<div id="menuLogo">🧐</div>
 			<div id="playLogo">👀</div>
+			<!-- <div id="soundLogo">🔊</div>
+			<div id="soundLogoClose">🔇</div> -->
+			<div id="attributionLogo">📑</div>
+			<div id="aboutLogo">👨‍👩‍👧‍👧</div> 
+			<div id="closeLogo">❌</div>
+
 			<article id="version0Container">
-				<h2 id="version0Name"></h2>
-				<!-- Text Content filled by js -->
-				<p id="version0Speech"></p>
-				<button id="version0Button"></button>
-				<button id="version0Button1"></button>
+				<!-- <img src="./assets/visuals/version0.png" alt="version0"> -->
+				<article>
+					<h2 id="version0Name"></h2>
+					<!-- Text Content filled by js -->
+					<p id="version0Speech"></p>
+					<button id="version0Button"></button>
+					<button id="version0Button1"></button>
+				</article>
+				
 			</article>
 		</section>
 		
 		<header id="instructions"> 
-			<h1>A lifetime in circle</h1>
+			<h1>A Lifetime in Circle</h1>
 			<h2></h2>
 			<p>Click 👀 to Look Around</p>
 			<p>AWSD or Arrow Keys to move</p>
 			<p>Approach figures to trigger new content</p>
+		</header>
+		
+		<header id="attributions"> 
+			<h1>A Lifetime in Circle</h1>
+			<h2>Attributions</h2>
+			<p>Text Content: all text content come from the attached document: <a href="https://docs.google.com/document/d/1vOH0DZ2QYAIb8eM-UuywXjEeP5oIJjE9iqBKP2bJ3SY/edit?usp=sharing" download>Us and our Parents📩</a></p>
+			<p>Visual Content: special symbols are taken from <a href="https://coolsymbol.com/">coolsymbol.com</a>. All 3D elements are modeled by myself with Blender.</p>
+			<p>Programming: Three.js used to program the website's 3D environment.</p>
+		</header>
+
+		<header id="about"> 
+			<h1>A Lifetime in Circle</h1>
+			<h2>Insider notes about the website's creation</h2>
+			<p>I created this website to balance the mass preconception of parenting in hope to lead some less heard voices into this conversation.</p>
+			<p>In 2022, I came across an article in Zhihu, an App where questions are created, answered, edited and organized by the community of Zhihu users. The article asks if the kids who committed suicide are worthy of the care given by their parents. My first reaction when seeing the post was like, oh true, their parents must have been so sad and deceived to learn the news, the kids did break some hearts. I expected the answers for this question to be somehow on the side of the parents, something in-line with "before killing yourself think about your parents and all they have given to you." However, to my surprise, among the 2623 response posts, the majority of the voices is in favor to the kids. The general idea is, the main reason of people committing suicide at such a young age comes from the parents' abusive, toxic, negligeant behaviour towards their children.</p>
+			<p>After reading quite some answers, I realized I have so many pre-conceptions on the topic of parenting that I don't necessarily agree with, but that I never really questionned. This was the start of the website, as I want to know about the reality out there, and re-picture the idea of parent-child relationship aside from the bubbly and happy images I have always been taught. However, during my researches, I noticed that even if I can find some more objective/diversified information, they still can't represent the global situation, so I decided to approach this topic by creating a virtual reality that gathers those information and that is representated by those information. I adopted this fiction-orientated aesthetic in order to hint at this new approach.</p>
 		</header>
 
 		<section>
@@ -41,9 +66,9 @@
 				<button id="realityButton"></button>
 			</article>
 			<article id="simulationContainer">
-				<h2>Early Childhood</h2>
-				<h3>Effects of parenting on children</h3>
-				<p>q1</p>
+				<h2 id="simulationTitle">Early Childhood</h2>
+				<h3 id="simulationDescription">Effects of parenting on children</h3>
+				<p id="simulationDescription">q1</p>
 				<p>q2</p>
 				<p>q3</p>
 			</article>

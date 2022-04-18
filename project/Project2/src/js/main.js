@@ -22,8 +22,10 @@ const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 camera.position.z = 5;
 //Default webgl renderer
-const renderer = new THREE.WebGLRenderer({ antialias: true });
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
 renderer.setSize( window.innerWidth, window.innerHeight );
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1;
 renderer.outputEncoding = THREE.sRGBEncoding;
 document.body.appendChild( renderer.domElement );
 //Special renderer for css elements
@@ -123,7 +125,12 @@ lights.directional.position.set( 1, 1, 1 ).normalize();
 
 //Player interractions and triggered scenes
 const player = {
-	ready: false
+	ready: false,
+	diaryHovered: false,
+	diaryClicked: false,
+	manualVisited: false, //to keep track of the instructions for new players
+	version0ReadyToMove: false,
+	version0FinishMove: false
 }
 
 const blenderModels = [];
@@ -136,15 +143,21 @@ const blenderModelsParameters = {
 }
 
 let blenderMixer = [];
+let clock = new THREE.Clock();
 const blenderActions = [];
 const version0Settings = {
 	model: {
-		x: camera.position.x, 
-		y: camera.position.y,
-		z: camera.position.z -5
+		x: -3, 
+		y: -2,
+		z: -5
+	},
+	modelTweenTo: {
+		x: 5,
+		y: 0,
+		z: -5
 	},
 	text: {
-		x: 30,
+		x: 40,
 		y: 50,
 		z: 0
 	}
@@ -188,14 +201,19 @@ const loadAsync = url => {
 	})
 }
 Promise.all([loadAsync('./assets/visuals/exteriorwalls.glb'), loadAsync('./assets/visuals/version0.glb'), loadAsync('./assets/visuals/scene1.glb'), loadAsync('./assets/visuals/scene2.glb'), loadAsync('./assets/visuals/scene3.glb'), loadAsync('./assets/visuals/scene4.glb'), loadAsync('./assets/visuals/diaries.glb')]).then(models => {
+	let blenderMixerIndex = 0;
 	for(let j =0; j<models.length; j++){
 		blenderModels.push(models[j].scene);
-		// blenderMixer.push(new THREE.AnimationMixer( blenderModels[j].scene ));
-		// let action = blenderMixer[j].clipAction( blenderModels[j].animations[j] );
-		// action.play();
+		if (models[j].animations.length > 0) {
+		blenderMixer.push(new THREE.AnimationMixer( models[j].scene ));
+		blenderMixer[blenderMixerIndex].clipAction( models[j].animations[0]).play();
+		blenderMixerIndex ++;
+		}
         scene.add( blenderModels[j] ); //add the models to the scene
-		// camera.add( blenderModels[1]);
 	}
+	camera.add( blenderModels[1]);
+	blenderModels[1].position.set(version0Settings.model.x,version0Settings.model.y,version0Settings.model.z);
+	blenderModels[1].rotateY( Math.PI/4);
 });
 // version0.model.rotateY(  Math.PI / 4 );
 //Preload GUI
@@ -239,7 +257,7 @@ loadManager.onLoad = () => {
 	//Add objects to the scene
 	scene.add(...[lights.ambient, lights.directional, lights.hemisphere]);
 	// scene.add(...[models.floor]);
-	scene.add(...[models.sphere, models.cube, models.cylinder, models.torusKnot, models.floor]);
+	// scene.add(...[models.sphere, models.cube, models.cylinder, models.torusKnot, models.floor]);
 	// scene.add(...models.clockHours);
 	scene.add( controls.getObject() );
 	console.log(blenderModels);
@@ -266,12 +284,16 @@ function render() {
 	triggerNarrative();
 	displayVersion0Text();
 	displayRealityText();
+	let delta = clock.getDelta();
+  	for(let i=0; i<blenderMixer.length; i++){
+    blenderMixer[i].update( delta );
+  }
 }
 
 function displayVersion0Text() {
 	if (player.ready === true) {
 		version0.text.display();
-		renderer.domElement.style.filter = `blur(10px)`;
+		// renderer.domElement.style.filter = `blur(10px)`;
 	} else if (player.ready === false && reality.text.ready === false){
 		renderer.domElement.style.filter = `none`;
 	}
@@ -295,36 +317,34 @@ function triggerNarrative() {
 	let dScene1 = detectNarrative(models.sphere.position.x, models.sphere.position.y, models.sphere.position.z);
 	let dScene2 = detectNarrative(models.cylinder.position.x, models.cylinder.position.y, models.cylinder.position.z);
 	let dScene3 = detectNarrative(models.torusKnot.position.x, models.torusKnot.position.y, models.torusKnot.position.z);
-	if (dScene0 <= 5 && version0.text.speechState !== 2) {
+	if ((dScene0 <= 7 || dScene1 <= 7 || dScene2 <= 7 || dScene3 <= 7) && player.manualVisited === false) {
+		version0.text.speechState = 6;
+		player.ready = true;
+		player.version0ReadyToMove = true;
+		controls.unlock();
+	} else if (dScene0 <= 10 && player.manualVisited === true && player.diaryClicked === true && version0.text.speechState !== 2) {
 		version0.text.speechState = 1;
 		reality.text.speechState = 0;
 		player.ready = true;
+		player.version0ReadyToMove = true;
 		controls.unlock();
-		// version0Tweening.to({x: models.cube.position.x, y: models.cube.position.y, z: models.cube.position.z +5}, 1000);
-		// // prepare the tweening for the camera
-		// version0Tweening.onUpdate(function() {
-		// 	blenderModels[1].position.x = version0Tweening.x; 
-		// 	blenderModels[1].position.y = version0Tweening.y;
-		// 	blenderModels[1].position.z = version0Tweening.z; 
-		// }
-		// );
-	camera.updateMatrixWorld();
-	version0Tweening.start();
-	} else if (dScene1 <= 5 && version0.text.speechState !== 3) {
+	} else if (dScene1 <= 10 && player.manualVisited === true && player.diaryClicked === true && version0.text.speechState !== 3) {
 		version0.text.speechState = 2;
 		reality.text.speechState = 1;
 		player.ready = true;
+		player.version0ReadyToMove = true;
 		controls.unlock();
-		
-	} else if (dScene2 <= 5 && version0.text.speechState !== 4) {
+	} else if (dScene2 <= 10 && player.manualVisited === true && player.diaryClicked === true && version0.text.speechState !== 4) {
 		version0.text.speechState = 3;
 		reality.text.speechState = 2;
 		player.ready = true;
+		player.version0ReadyToMove = true;
 		controls.unlock();
-	} else if (dScene3 <= 5 && version0.text.speechState !== 5) {
+	} else if (dScene3 <= 10 && player.manualVisited === true && player.diaryClicked === true && version0.text.speechState !== 5) {
 		version0.text.speechState = 4;
 		reality.text.speechState = 3;
 		player.ready = true;
+		player.version0ReadyToMove = true;
 		controls.unlock();
 	}
 }
@@ -338,11 +358,23 @@ function moveMascot() {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //EVENT HANDLERS SECTION
-//Check mouse actions
-function moveCamera() {
-	// camera.lookAt( models.clockHours[models.currentClockHour].position ); //look at current clock position
-	// camera.position.set(models.clockHours[models.currentClockHour].position.x, models.clockHours[models.currentClockHour].position.y, camera.position.z);
-	camera.updateMatrixWorld();
+//Tweenning for Version0
+function moveVersion0(xpos=5, ypos=0, zpos=-5, rpos=-Math.PI/2) {
+	console.log("MOVING");
+	//Update target position if needs to be changed
+	version0Settings.modelTweenTo.x = xpos;
+	version0Settings.modelTweenTo.y = ypos;
+	version0Settings.modelTweenTo.z = zpos;
+	//Change the position of the version0 model
+	version0Tweening.to(version0Settings.modelTweenTo, 2000);
+	version0Tweening.onUpdate(function(){
+		blenderModels[1].position.set(version0Settings.model.x, version0Settings.model.y, version0Settings.model.z); 
+	});
+	//Choose the easing
+	version0Tweening.easing(TWEEN.Easing.Back.InOut);
+	version0Tweening.start();
+	//Rotate the model to face the front
+	blenderModels[1].rotateY(rpos);
 }
 
 function onDocumentMouseMove( event ) {
@@ -359,32 +391,40 @@ function onDocumentMouseMove( event ) {
 			if ( INTERSECTED != intersects[ 0 ].object ) { 
 				if ( INTERSECTED ) {INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );} //record the current colour
 				INTERSECTED = intersects[ 0 ].object; //assign it to the pointed object
-				if(INTERSECTED.name === models.cube.name) {
+				//Check if the diary was hovered
+				if(INTERSECTED.name === 'Cube148' || INTERSECTED.name === 'Cube147' || INTERSECTED.name === 'Cube146' || INTERSECTED.name === 'Cube145') {
 					INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex(); ////record the current colour
-					INTERSECTED.material.emissive.setHex( 0xffffff ); //red emmissive
-					//Move the camera angle
-					models.currentClockHour = intersects[0].object.name;
-				}
-				
-				
+					INTERSECTED.material.emissive.setHex( 0x0f0fff ); //blue emmissive
+					//change cursor to pointer when hovered on the diary
+					document.body.style.cursor = 'pointer';
+					player.diaryHovered = true;
+				} else {
+					document.body.style.cursor = 'context-menu';
+					player.diaryHovered = false;
+				}	
 			}
 		} else {
 			if ( INTERSECTED ) {INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );} //when not hovered anyore, set the colour back to the initial one
 			INTERSECTED = null;
 		}
-		
+	}
+	console.log(player.version0FinishMove);
+	//Move Version0 when new dialog boxes are triggered
+	if (player.version0ReadyToMove === true && player.version0FinishMove === false) {
+		moveVersion0(5, -1, -5, 0);
+		player.version0FinishMove = true; //need this to stop the tweening from repeating due to mouse moves
+	} else if (player.version0ReadyToMove === false && player.version0FinishMove === true) {
+		player.version0FinishMove = false; //reset boolean to allow new tweening
 	}
 }
 
 function onDocumentMouseClick(event) {
 	event.preventDefault();
-	// tweening.to({x: models.clockHours[models.currentClockHour].position.x, y: models.clockHours[models.currentClockHour].position.y, z: models.clockHours[models.currentClockHour].position.z +5}, 1000);
-	// // prepare the tweening for the camera
-	// tweening.onUpdate(() =>
-	// camera.position.set(cameraTweening.x, cameraTweening.y, cameraTweening.z)
-  	// );
-	// camera.updateMatrixWorld();
-	// tweening.start();
+	if (player.diaryHovered === true) {
+		player.diaryClicked = true;
+	} else if (player.diaryHovered === false) { //to prevent errors and bugs
+		player.diaryClicked = false;
+	}
 }
 
 function onDocumentKeyDown(event) {
@@ -401,7 +441,6 @@ function onDocumentKeyDown(event) {
 		// modelsParameters.cube.x += 0.5;
 		controls.moveRight(0.1);
 	}
-	blenderModels[1].position.set(camera.position.x + 5, camera.position.y, camera.position.z -5);
 }
 
 function onDocumentKeyUp() {
@@ -417,27 +456,56 @@ function onWindowResize() {
 
 function onVersion0ButtonClick() {
 	player.ready = false;
+	player.version0ReadyToMove = false;
 	version0.text.container.style.display = 'none';
-	version0.text.speechState +=1;
+	if (version0.text.speechState !== 6) {
+		version0.text.speechState +=1;
+	} else if (version0.text.speechState === 6) {
+		player.manualVisited = true;
+		version0.text.speechState = 1;
+	}
+	moveVersion0();
+	
 }
 
 function onVersion0Button1Click() {
 	player.ready = false;
+	player.version0ReadyToMove = false;
 	version0.text.container.style.display = 'none';
 	reality.text.ready = true;
 	version0.text.speechState +=1;
+	moveVersion0();
 }
 
 function onMenuMouseClick(element) {
 	this.style.display = 'none';
 	document.getElementById('instructions').style.display = 'flex';
-	document.getElementById('menuLogoClose').style.display = 'flex';
+	document.getElementById('closeLogo').style.display = 'flex';
+	document.getElementById('closeLogo').style.right = '0em';
 }
 
 function onMenuCloseMouseClick(element) {
 	this.style.display = 'none';
 	document.getElementById('instructions').style.display = 'none';
+	document.getElementById('attributions').style.display = 'none';
+	document.getElementById('about').style.display = 'none';
 	document.getElementById('menuLogo').style.display = 'flex';
+	document.getElementById('attributionLogo').style.display = 'flex';
+	document.getElementById('aboutLogo').style.display = 'flex';
+}
+
+function onAttributionMouseClick(element) {
+	this.style.display = 'none';
+	document.getElementById('attributions').style.display = 'block';
+	document.getElementById('closeLogo').style.display = 'flex';
+	document.getElementById('closeLogo').style.right = '4em';
+}
+
+function onAboutMouseClick(element) {
+	this.style.display = 'none';
+	document.getElementById('about').style.display = 'flex';
+	document.getElementById('closeLogo').style.display = 'flex';
+	document.getElementById('closeLogo').style.right = '6em';
 }
 
 function onRealityMouseClick() {
@@ -454,7 +522,9 @@ window.addEventListener( 'resize', onWindowResize, false );
 document.getElementById('version0Button').addEventListener('click', onVersion0ButtonClick);
 document.getElementById('version0Button1').addEventListener('click', onVersion0Button1Click);
 document.getElementById('menuLogo').addEventListener('click', onMenuMouseClick);
-document.getElementById('menuLogoClose').addEventListener('click', onMenuCloseMouseClick);
+document.getElementById('closeLogo').addEventListener('click', onMenuCloseMouseClick);
+document.getElementById('attributionLogo').addEventListener('click', onAttributionMouseClick);
+document.getElementById('aboutLogo').addEventListener('click', onAboutMouseClick);
 document.getElementById('realityButton').addEventListener('click', onRealityMouseClick);
 //END OF EVENT HANDLERS SECTION
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

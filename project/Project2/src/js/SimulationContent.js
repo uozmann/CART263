@@ -1,5 +1,5 @@
-//The text explaining challenges and issues to deal with each state
-class Reality {
+//The text for the simulation questions
+class Simulation {
     constructor(x, y) {
         this.container = undefined;
         this.title = undefined;
@@ -57,4 +57,4 @@ class Reality {
 }
         
   
-  export default Reality;
+  export default Simulation;

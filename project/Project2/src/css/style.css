@@ -42,12 +42,12 @@ button:hover{
 section#toolbar {
     position: absolute;
     width: 100%;
-    height: 100vh;
+    /* height: 100vh; */
     /* background: rgba(255, 255, 255, 1); */
     display: flex;
 }
 
-section#toolbar #version0Container {
+article#version0Container {
     background: rgba(255, 255, 255, 0.5);
     position: absolute;
     max-width: 40em;
@@ -57,18 +57,18 @@ section#toolbar #version0Container {
     font-family: 'Quicksand', sans-serif;
 }
 
-section#toolbar #version0Container img{
+article#version0Container img{
     width: 30%;
     margin: 0 5%;
     height: fit-content;
 }
 
-section#toolbar #version0Container article h2{
+article#version0Container article h2{
     font-family: 'Palette Mosaic', cursive;
     font-size: 28px;
 }
 
-section#toolbar #version0Container article p{
+article#version0Container article p{
     font-size: 24px;
 }
 
@@ -151,7 +151,6 @@ header {
     flex-flow: column;
 	color: rgb(0, 0, 0);
     text-align: right;
-    z-index: 900;
 }
 header h1 {
     margin-top: 5em;

@@ -2,18 +2,16 @@
 "use strict"
 
 import * as THREE from '../../threeJS/src/Three.js';
-import { CSS3DRenderer, CSS3DObject, CSS3DSprite } from '../../threeJS/examples/jsm/renderers/CSS3DRenderer.js';
 import { PointerLockControls } from '../../threeJS/examples/jsm/controls/PointerLockControls.js';
 import { GLTFLoader } from '../../threeJS/examples/jsm/loaders/GLTFLoader.js';
-import stats from '../../threeJS/examples/jsm/libs/stats.module.js';
-import { GUI } from '../../threeJS/examples/jsm/libs/lil-gui.module.min.js';
 import { TWEEN } from '../../threeJS/examples/jsm/libs/tween.module.min.js'; 
 import { mapLinear } from '../../threeJS/src/math/MathUtils.js';
 
 //class
 import Version0 from './Version0.js';
 import Reality from './RealityContent.js';
-import UploadedModels from './UploadedModels.js';
+import Simulation from './SimulationContent.js';
+//other js files
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //OBJECTS SECTION
@@ -38,29 +36,29 @@ controls.enableDamping = true;
 
 //assets
 let modelsParameters = {
-	cube: {
-		x: -15,
-		y: -1,
-		z: 5
+	cube: { //placeholder for young childhood scene
+		x: -12,
+		y: 0,
+		z: 0
 	},
-	sphere: {
+	sphere: { //placeholder for teenage scene
 		radius: 0.5,
-		x: -15,
+		x: -18,
 		y: -1,
 		z: -25
 
 	},
-	cylinder: {
+	cylinder: { //placeholder for young parenthood scene
 		radius: 0.5,
 		height: 1,
-		x: 15,
+		x: 10,
 		y: -1,
-		z: -25
+		z: -28
 	},
-	torusKnot : {
+	torusKnot : { //placeholder for elderly scene
 		x: 15,
 		y: -1,
-		z: 5
+		z: 2
 	},
 	floor: {
 		width: 2000,
@@ -118,7 +116,7 @@ models.floor.position.set(modelsParameters.floor.x, modelsParameters.floor.y, mo
 scene.background = new THREE.Color(0xffffff);
 const lights = {
 	ambient: new THREE.AmbientLight( 0x404040 ),
-	directional: new THREE.DirectionalLight( 0xffffff, 1 ),
+	directional: new THREE.DirectionalLight( 0xffffff, 0.8 ),
 	hemisphere: new THREE.HemisphereLight(0xB1E1FF, 0xB97A20, 1),
 };
 lights.directional.position.set( 1, 1, 1 ).normalize();
@@ -130,7 +128,9 @@ const player = {
 	diaryClicked: false,
 	manualVisited: false, //to keep track of the instructions for new players
 	version0ReadyToMove: false,
-	version0FinishMove: false
+	version0FinishMove: false,
+	version0Hovered: false,
+	version0Clicked: false
 }
 
 const blenderModels = [];
@@ -149,12 +149,12 @@ const version0Settings = {
 	model: {
 		x: -3, 
 		y: -2,
-		z: -5
+		z: 0
 	},
 	modelTweenTo: {
 		x: 5,
 		y: 0,
-		z: -5
+		z: 0
 	},
 	text: {
 		x: 40,
@@ -171,11 +171,20 @@ const version0 = {
 const narrativeSettings = {
 	reality: {
 		x: 500,
-		y: 0,
+		y: 0
+	},
+	simulation: {
+		x: 500,
+		y: 100
 	}
 }
 const reality = {
 	text: new Reality(narrativeSettings.reality.x, narrativeSettings.reality.y),
+}
+
+const simulation = {
+	text: new Simulation(narrativeSettings.simulation.x, narrativeSettings.simulation.y),
+	subtitleRandomText: undefined
 }
 //Mouse Interractions
 const mouse = new THREE.Vector2();
@@ -211,7 +220,7 @@ Promise.all([loadAsync('./assets/visuals/exteriorwalls.glb'), loadAsync('./asset
 		}
         scene.add( blenderModels[j] ); //add the models to the scene
 	}
-	camera.add( blenderModels[1]);
+	// camera.add( blenderModels[1]);
 	blenderModels[1].position.set(version0Settings.model.x,version0Settings.model.y,version0Settings.model.z);
 	blenderModels[1].rotateY( Math.PI/4);
 });
@@ -256,15 +265,8 @@ loadManager.onLoad = () => {
 	player.ready = true;
 	//Add objects to the scene
 	scene.add(...[lights.ambient, lights.directional, lights.hemisphere]);
-	// scene.add(...[models.floor]);
-	// scene.add(...[models.sphere, models.cube, models.cylinder, models.torusKnot, models.floor]);
-	// scene.add(...models.clockHours);
+	// scene.add(...[models.sphere, models.cube, models.cylinder, models.torusKnot]);
 	scene.add( controls.getObject() );
-	console.log(blenderModels);
-	
-	// camera.add(version0.model);
-	// version0.model.position.set(version0Settings.model.x, version0Settings.model.y, version0Settings.model.z);
-
 };
 //END OF ON LOAD SECTION
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -275,6 +277,7 @@ loadManager.onLoad = () => {
 function draw() {
 	render();
 	requestAnimationFrame( draw );
+	console.log(`Version0 speechstate: ${version0.text.speechState}; Reality speechstate: ${reality.text.speechState}; Simulation random number: ${simulation.text.randomNumber}`);
 }
 draw();
 
@@ -283,7 +286,7 @@ function render() {
 	renderer.render( scene, camera );
 	triggerNarrative();
 	displayVersion0Text();
-	displayRealityText();
+	displayRealitySimulationText();
 	let delta = clock.getDelta();
   	for(let i=0; i<blenderMixer.length; i++){
     blenderMixer[i].update( delta );
@@ -293,15 +296,17 @@ function render() {
 function displayVersion0Text() {
 	if (player.ready === true) {
 		version0.text.display();
-		// renderer.domElement.style.filter = `blur(10px)`;
-	} else if (player.ready === false && reality.text.ready === false){
+	} else if (player.ready === false && reality.text.ready === false && simulation.text.ready === false){
 		renderer.domElement.style.filter = `none`;
 	}
 }
 
-function displayRealityText() {
+function displayRealitySimulationText() {
 	if (reality.text.ready === true) {
 		reality.text.display();
+		renderer.domElement.style.filter = `blur(10px)`;
+	} else if (simulation.text.ready === true) {
+		simulation.text.display();
 		renderer.domElement.style.filter = `blur(10px)`;
 	}
 }
@@ -325,32 +330,32 @@ function triggerNarrative() {
 	} else if (dScene0 <= 10 && player.manualVisited === true && player.diaryClicked === true && version0.text.speechState !== 2) {
 		version0.text.speechState = 1;
 		reality.text.speechState = 0;
+		simulation.text.speechState = 0;
 		player.ready = true;
 		player.version0ReadyToMove = true;
 		controls.unlock();
 	} else if (dScene1 <= 10 && player.manualVisited === true && player.diaryClicked === true && version0.text.speechState !== 3) {
 		version0.text.speechState = 2;
 		reality.text.speechState = 1;
+		simulation.text.speechState = 1;
 		player.ready = true;
 		player.version0ReadyToMove = true;
 		controls.unlock();
 	} else if (dScene2 <= 10 && player.manualVisited === true && player.diaryClicked === true && version0.text.speechState !== 4) {
 		version0.text.speechState = 3;
 		reality.text.speechState = 2;
+		simulation.text.speechState = 2;
 		player.ready = true;
 		player.version0ReadyToMove = true;
 		controls.unlock();
 	} else if (dScene3 <= 10 && player.manualVisited === true && player.diaryClicked === true && version0.text.speechState !== 5) {
 		version0.text.speechState = 4;
 		reality.text.speechState = 3;
+		simulation.text.speechState = 3;
 		player.ready = true;
 		player.version0ReadyToMove = true;
 		controls.unlock();
 	}
-}
-// find intersections
-function moveMascot() {
-	
 }
 //END OF ON DRAW SECTION
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -359,8 +364,7 @@ function moveMascot() {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //EVENT HANDLERS SECTION
 //Tweenning for Version0
-function moveVersion0(xpos=5, ypos=0, zpos=-5, rpos=-Math.PI/2) {
-	console.log("MOVING");
+function moveVersion0(xpos=5, ypos=0, zpos=0, rpos=-Math.PI/2) {
 	//Update target position if needs to be changed
 	version0Settings.modelTweenTo.x = xpos;
 	version0Settings.modelTweenTo.y = ypos;
@@ -375,6 +379,21 @@ function moveVersion0(xpos=5, ypos=0, zpos=-5, rpos=-Math.PI/2) {
 	version0Tweening.start();
 	//Rotate the model to face the front
 	blenderModels[1].rotateY(rpos);
+}
+
+function activateVersion0Guidance() {
+	if (version0.text.speechState === 1) { //go to childhood scene
+		moveVersion0(modelsParameters.cube.x, modelsParameters.cube.y, modelsParameters.cube.z, 0);
+	} else if (version0.text.speechState === 2) { //go to teenage scene
+		moveVersion0(modelsParameters.sphere.x, 0, modelsParameters.sphere.z +5, 0);
+	} else if (version0.text.speechState === 3) { //go to young parent scene
+		moveVersion0(modelsParameters.cylinder.x, 0, modelsParameters.cylinder.z +5, Math.PI*3/4);
+	} else if (version0.text.speechState === 4) { //go to elderly scene
+		moveVersion0(modelsParameters.torusKnot.x, 0, modelsParameters.torusKnot.z - 5, 0);
+	} else if (version0.text.speechState === 5) {
+		player.ready = true;
+		controls.unlock();
+	}
 }
 
 function onDocumentMouseMove( event ) {
@@ -398,20 +417,24 @@ function onDocumentMouseMove( event ) {
 					//change cursor to pointer when hovered on the diary
 					document.body.style.cursor = 'pointer';
 					player.diaryHovered = true;
-				} else {
+				} else if(INTERSECTED.name === 'Version0') { //Check if version 0 is hovered
+					document.body.style.cursor = 'pointer';
+					player.version0Hovered = true;
+				}
+				else { //when mouse leaves the diary object
 					document.body.style.cursor = 'context-menu';
 					player.diaryHovered = false;
-				}	
+					player.version0Hovered = false;
+				}
 			}
 		} else {
 			if ( INTERSECTED ) {INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );} //when not hovered anyore, set the colour back to the initial one
 			INTERSECTED = null;
 		}
 	}
-	console.log(player.version0FinishMove);
 	//Move Version0 when new dialog boxes are triggered
 	if (player.version0ReadyToMove === true && player.version0FinishMove === false) {
-		moveVersion0(5, -1, -5, 0);
+		moveVersion0(blenderModels[1].position.x, -1, blenderModels[1].position.z, 0);
 		player.version0FinishMove = true; //need this to stop the tweening from repeating due to mouse moves
 	} else if (player.version0ReadyToMove === false && player.version0FinishMove === true) {
 		player.version0FinishMove = false; //reset boolean to allow new tweening
@@ -420,10 +443,18 @@ function onDocumentMouseMove( event ) {
 
 function onDocumentMouseClick(event) {
 	event.preventDefault();
+	//check if diary is clicked on
 	if (player.diaryHovered === true) {
 		player.diaryClicked = true;
 	} else if (player.diaryHovered === false) { //to prevent errors and bugs
 		player.diaryClicked = false;
+	}
+	//check if Version 0 is clicked on
+	if (player.version0Hovered === true) {
+		player.version0Clicked = true;
+		activateVersion0Guidance();
+	} else if (player.version0Hovered === false) { 
+		player.version0Clicked = false;
 	}
 }
 
@@ -458,14 +489,20 @@ function onVersion0ButtonClick() {
 	player.ready = false;
 	player.version0ReadyToMove = false;
 	version0.text.container.style.display = 'none';
+	//Set a random number for simulation texts
+	simulation.text.getRandomContent();
+	//Switch between states of version 0
 	if (version0.text.speechState !== 6) {
 		version0.text.speechState +=1;
 	} else if (version0.text.speechState === 6) {
 		player.manualVisited = true;
 		version0.text.speechState = 1;
+	} 
+	//Trigger simulation if the button is clicked
+	if (version0.text.speechState >= 2 && player.manualVisited === true && simulation.text.finished === false) {
+		simulation.text.ready = true;
 	}
-	moveVersion0();
-	
+	moveVersion0(blenderModels[1].position.x, 0, blenderModels[1].position.z, 0);
 }
 
 function onVersion0Button1Click() {
@@ -474,7 +511,7 @@ function onVersion0Button1Click() {
 	version0.text.container.style.display = 'none';
 	reality.text.ready = true;
 	version0.text.speechState +=1;
-	moveVersion0();
+	moveVersion0(blenderModels[1].position.x, 0, blenderModels[1].position.z, 0);
 }
 
 function onMenuMouseClick(element) {
@@ -511,8 +548,28 @@ function onAboutMouseClick(element) {
 function onRealityMouseClick() {
 	reality.text.ready = false;
 	reality.text.container.style.display = 'none';
+	if (reality.text.speechState === 3) {
+		reality.text.finished = true;
+	}
 }
 
+function onSimulationChoice0MouseClick() {
+	simulation.text.decision0Made = true;
+}
+
+function onSimulationChoice1MouseClick() {
+	simulation.text.decision1Made = true;
+}
+
+function onSimulationEndMouseClick() {
+	simulation.text.ready = false;
+	simulation.text.decision0Made = false;
+	simulation.text.decision1Made = false;
+	simulation.text.container.style.display = 'none';
+	if (simulation.text.speechState === 3) {
+		simulation.text.finished = true;
+	}
+}
 document.addEventListener( 'mousemove', onDocumentMouseMove );
 document.addEventListener( 'click', onDocumentMouseClick );
 document.addEventListener( 'keydown', onDocumentKeyDown);
@@ -526,6 +583,10 @@ document.getElementById('closeLogo').addEventListener('click', onMenuCloseMouseC
 document.getElementById('attributionLogo').addEventListener('click', onAttributionMouseClick);
 document.getElementById('aboutLogo').addEventListener('click', onAboutMouseClick);
 document.getElementById('realityButton').addEventListener('click', onRealityMouseClick);
+document.getElementById('simulationP0Button').addEventListener('click', onSimulationChoice0MouseClick);
+document.getElementById('simulationP1Button').addEventListener('click', onSimulationChoice1MouseClick);
+document.getElementById('simulationEndingButton').addEventListener('click', onSimulationEndMouseClick);
 //END OF EVENT HANDLERS SECTION
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+// export default main;

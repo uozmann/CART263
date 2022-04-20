@@ -1,60 +1,98 @@
+import randomContent from "./simulationRandomContent.js";
 //The text for the simulation questions
 class Simulation {
     constructor(x, y) {
         this.container = undefined;
         this.title = undefined;
         this.titleContent = [`Early Childhood`, `Adolescence`, `Young Parenthood`, `Elderly Ages`];
-        this.titleColour = [`rgb(255, 191, 80)`, `rgb(32, 103, 7)`, `rgb(7, 52, 103)`, `rgb(52, 7, 103)`]
+        this.titleColour = [`rgb(255, 191, 80)`, `rgb(32, 103, 7)`, `rgb(7, 52, 103)`, `rgb(52, 7, 103)`];
         this.subtitle = undefined;
-        this.subtitleContent = [`Effects of parenting on children`, `Dynamics between grown-up children and parents`, `Effects of children in early Parenthood`, `Dynamics between grown-up children and parents`]
+        this.subtitleContent = [`Hi Bob, you are raised in a ${randomContent.subtitleContentChildhood[ Math.floor(Math.random() * 10)]}   family.`, `In your teenage years, your family experienced ${randomContent.subtitleContentTeenager[ Math.floor(Math.random() * 8)]}.`, `Time flies and now you became a parent. Your social and mental condition is ${randomContent.subtitleContentParenthood[ Math.floor(Math.random() * 5)]}.`, `Hi Bob for one last time, now you become an elderly.`];
+        this.subtitleContentRandomText = undefined;
+        // this.subtitleContentChildhood = [`single mother and wealthy`, `single mother and poor`, `single dad and wealthy`, `single dad and poor`, `double parents and wealthy`, `double parents and poor`, `re-constructed wealthy`, `re-constructed poor`, `poor host`, `wealthy host`];
+        // this.subtitleContentTeenager = [``];
+        // this.subtitleContentParenthood = [``];
+        // this.subtitleContentElderly = [``];
         this.p0 = undefined;
         this.p1 = undefined;
         this.p2 = undefined;
-        this.p0Content = [`Across several stages of the life cycle, the infant stage is crucial and determinant for a person’s formation of the self. This period characterized by vulnerability, transformability, and learnability has life-long impacts that are hard to be erased. One of the strongest external influences on the psychological well-being of the child is parenting, and interestingly, many empirical analyses also demonstrated a modest relationship between the impact of parenthood and the psychological well-being of the parents. While clearly, the factor of parenting affects the child heavier than the parent, the duality of this relationship suggests that parenthood issues and trauma are significant to both parties.`, `When a person undergoes chronic stress during their stages of psychological development (mainly childhood), C-PTSD (Complex Post-Traumatic Stress Disorders) and ACES ( Adverse Childhood Experiences) could develop. Those chronic stresses include but are not limited to “being maltreated, being raised in a financially insecure home, being raised by people prone to violence, or having a parent who is incarcerated.” C-PTSD could engender emotional dysregulation that prompts parents to regenerate abuse on their children. In fact, correlations show that parents maltreated in childhood are more likely to lack in certain parenting aspects. However, in the counterpart, those parents are also more likely to search for positive changes when parenting and to seek healing through parenthood. The idea of “I will give my child what I never had” is recurrent. In fact, generally during the early stage of parentlng, parenthood can break through the vicious cycle by introducing new values to the parent. This is a period of self-rediscovery and a healing process for many. In fact, a study by Nomaguchi K. M., the experience done with several parents with children of diverse ages shows that parents whose children are under the age of 5 experienced a higher level of happiness, self-esteem, bond with their child, and a lower level of depression.`, `In Canada, strategies to address ACEs (adverse childhood experiences) are very varied and implemented across diverse spectrums. In a study done by Public Health Ontario with 1071 references focusing on 26 in Ontario, Québec, Alberta, British Columbia, Manitoba, and Saskatchewan, it is observed that the majority of the programs are aiming primarily to prevent "child exposure to " intimate partner violence"`,
-        `The significance of parenting arises from its protective roles and damage mediation for the child. According to the article “The importance of parenting in child health” by Masud Hoghughi, parenting has three essential components: care, control, and development. Care “protects children from harm. Care also encompasses promoting emotional as well as physical health…control involves setting and enforcing boundaries to ensure children’s and others’ safety, in ever widening areas of activity… development involves optimizing children’s potential and maximizing the opportunities for using it.” Factors such as severe poverty and maternal depression could contribute to distorting the parenting process. This is why parental qualities and skills are crucial to protect children against abuse or exposure to intrafamilial and external stresses in adversarial contexts. The project “Healing the Past by Nurturing the Future” in Australia has done a meta-analysis on how Australian Aboriginal and Torres Strait Islander parents undo cycles of trauma as they begin to parent their own children. The research touches upon 18329 articles, from which a healing model has been drawn for different life stages such as pregnancy and early childhood parenting. The researchers also interviewed 350 parents who experienced maltreatment in their own childhood. While those parents described “positive experiences and strategies to help them achieve their hopes and dreams of providing safe, loving and nurturing care for their children”, many experienced several challenges in the meantime. Some findings on the themes that do support those trauma survivors are: “New beginnings; Changing roles and identities; Feeling connected; Compassionate care; Empowerment; Creating safety; and Reweaving a future”.`, `In 2008, the Canadian Incidence Study of Reported Child Abuse and Neglect (CIS) reported the rate of maltreatment related of 40%. Among the children experiencing maltreatment, 34% are experiencing neglect, 34% are experiencing intimate partner violence, 20% are physically abused, 9% are emotionally abused and finally, 3% are sexually abused. Because that data stored in the study only documents cases that have been reported to the child welfare services, the true number of abused and neglected children is likely to be higher.`];
-        this.p1Content = [`As massive cases of parenting are reported and gaining attention in the sector of public health issues, the stigma wrapping the definition of parents in the lovely pink bubbles starts to fade away. The idea around parenthood received fair discussion and studies, contributing to including all parts of the spectrum into its redefinition. In the series “Mother” directed in 2010 by Mizuta Nobuo and Naganuma Makoto, the topic of motherhood is displayed from another angle, showcasing several forms of child abuse including negligence, physical and emotional violence, raising awareness on the immaturity of child protection measures, and laws at the time. “Mother” is not the only example. In society, issues pertaining to parenting, such as childhood illnesses and accidents; teenage pregnancy and substance misuse; truancy, school disruption, and underachievement; child abuse; unemployability; juvenile crime; and mental illness, could become the precursors of problems in adulthood and the next generation.`, `On the other side of the spectrum, kids are often affected when they have parents who experienced childhood trauma. In one of the first studies on childhood experiences done in 1995, 17000 people are evaluated in the survey, and about two-thirds reported to have experienced one or more adverse childhood experiences. The adverse childhood experience includes abuse (emotional, physical, and sexual), neglect, parental separation, incarcerated household, severe financial instability, and domestic violence. Subjects who faced more adverse experiences have higher risks to develop impaired cognitive and social skills. In some special cases, however, some children will develop abilities to defend themselves against those negative experiences, such as handling mood swings and stress. The result of the survey clearly demonstrates that parenting issues are not uncommon, instead, those negative experiences are more than common in households.`, `Exposure to ACEs during childhood produces toxic stress that negatively affects brain architecture (e.g., impaired neural circuits) while compromising immune response and increasing vulnerabilities in health conditions. According to the paper “ Child abuse and mental disorders in Canada”, adults who experienced ACEs are more prone to mental health conditions, while developing cardiovascular disease, diabetes, and many other chronic conditions due to the physiological impact of negative stress emotions.`];
-        this.p2Content = [`The significance of parenting arises from its protective roles and damage mediation for the child. According to the article “The importance of parenting in child health” by Masud Hoghughi, parenting has three essential components: care, control, and development. Care “protects children from harm. Care also encompasses promoting emotional as well as physical health…control involves setting and enforcing boundaries to ensure children’s and others’ safety, in ever widening areas of activity… development involves optimizing children’s potential and maximizing the opportunities for using it.” Factors such as severe poverty and maternal depression could contribute to distorting the parenting process. This is why parental qualities and skills are crucial to protect children against abuse or exposure to intrafamilial and external stresses in adversarial contexts. The project “Healing the Past by Nurturing the Future” in Australia has done a meta-analysis on how Australian Aboriginal and Torres Strait Islander parents undo cycles of trauma as they begin to parent their own children. The research touches upon 18329 articles, from which a healing model has been drawn for different life stages such as pregnancy and early childhood parenting. The researchers also interviewed 350 parents who experienced maltreatment in their own childhood. While those parents described “positive experiences and strategies to help them achieve their hopes and dreams of providing safe, loving and nurturing care for their children”, many experienced several challenges in the meantime. Some findings on the themes that do support those trauma survivors are: “New beginnings; Changing roles and identities; Feeling connected; Compassionate care; Empowerment; Creating safety; and Reweaving a future”.`, `In 2008, the Canadian Incidence Study of Reported Child Abuse and Neglect (CIS) reported the rate of maltreatment related of 40%. Among the children experiencing maltreatment, 34% are experiencing neglect, 34% are experiencing intimate partner violence, 20% are physically abused, 9% are emotionally abused and finally, 3% are sexually abused. Because that data stored in the study only documents cases that have been reported to the child welfare services, the true number of abused and neglected children is likely to be higher.`];
+        this.p0Content = [`In your young age, your family suffered from severe financial bankrupt; so buying you any toy is literally impossible.`, `Due to some family circumstances, your parents split up. Your alcoholic mom wants charge of you. What would you do?`, `In your childhood, your family moved to a couple of new places. You have never been able to make any long-lasting friendship.`, //end childhood
+        `You encountered forms of intimidation at school. However, whenever you tell to your parent(s) about this, they always tell you to search the problem in yourself because you cannot change other people.`, `In your teenager years, you have the choice to either stay with your parent(s) who, at this time, have good financial stability to offer you quality living resources but make you suffer through their manipulative behaviour; or you can also move out to enjoy freedom but your parents will not fund you. Will you stay with your parents?`, `In your teenager years, you have not been able to get very good grades. Your parent(s) always comfort you by saying grades are not important because they are very subjective.`, //end teenager
+        `You have observed that your child does not like to engage with people, they have later been diagnosed with autism.`,`Your other partner is not very reliable. You have the option to live on government loans but spend most of your time for your child; or to work on most of your time but not being able to care a lot for your child. are you willing stay home?`, `Due to a lack of experience with raising a child, you find that you often get in conflict with your own child and they don't listen to what you tell them to do.`];
+        this.p1Content = [`Unfortunately, your reaction does not change anything`, `You are able to stay with your mom, who loves you but often throw her negative emotions at you.`, `You are able to stay with your dad, who unfortunately doesn't care a lot about you.`, 
+        `You have listened and remembered their words, even if you don't know if you should agree.`, `You have decided to stay with your parents. You think stability is more important at this time of your life, so you have to endure the lack of freedom.`, `You have successfully move out. Now you are handling school and work at the same time. Freedom has a cost, but you think it is worth it.`, `You realized that having a child does not necessarily mean that you have control over who they are as a person.`, `You have decided to stay at home and to be a full time parent. You cannot afford much, but there is nothing more healing for you than watching your little sunshine grow.`, `You have decided to go work. You can afford much more to improve your family's life quality, sometimes you feel the insecurity within your child, but you think they should learn to be independant as life is not easy.`];
+        this.p2Content = [`socialble, warm, happy, curious, courageous.`, `socialble, introverted, imaginative, curious, careful.`];
         this.speechState = 0;
-        this.button = undefined;
-        this.buttonText = [`Back`];
+        this.button0 = undefined;
+        this.button1 = undefined;
+        this.buttonEnding = undefined;
+        this.button0Text = [`Revolt`, `Protest`, `Complain`];
+        this.button1Text = [`Okay`, `Accept`, `Understand`];
+        this.buttonEndText = `Next`;
+        this.randomNumber = 0;
+        this.fixedNumber = 0;
         this.ready = false;
+        this.finished = false;
+        this.decision0Made = false;
+        this.decision1Made = false;
         this.x = x;
         this.y = y;
     }
   
-    moveTo() {
-
+    getRandomContent() {
+        if (this.speechState === 0) {
+            this.randomNumber = Math.floor(Math.random() * 3);
+        } else if (this.speechState === 1) {
+            this.randomNumber = Math.floor(Math.random() * 3 + 3);
+        } else if (this.speechState === 2) {
+            this.randomNumber = Math.floor(Math.random() * 3 + 6);
+        } else if (this.speechState === 3) {
+            this.randomNumber = this.fixedNumber;
+        }
+        
     }
-     // display the clue button in colour
+     // display the box for simulation
     display() {
        //Container
-        this.container = document.getElementById('realityContainer');
+        this.container = document.getElementById('simulationContainer');
         this.container.style.top = `${this.y}px`;
         this.container.style.left = `${this.x}px`;
         this.container.style.display = `block`;
         //Title
-        this.title = document.getElementById('realityTitle');
+        this.title = document.getElementById('simulationTitle');
         this.title.textContent = this.titleContent[this.speechState];
         this.title.style.color = this.titleColour[this.speechState];
         //Subtitle
-        this.subtitle = document.getElementById('realitySubtitle');
+        this.subtitle = document.getElementById('simulationDescription');
         this.subtitle.textContent = this.subtitleContent[this.speechState];
         //Paragraphs
-        this.p0 = document.getElementById('realityP0');
-        this.p0.textContent = this.p0Content[this.speechState];
-        this.p1 = document.getElementById('realityP1');
-        this.p1.textContent = this.p1Content[this.speechState];
-        this.p2 = document.getElementById('realityP2');
-        this.p2.textContent = this.p2Content[this.speechState];
+        this.p0 = document.getElementById('simulationP0');
+        this.p0.textContent = this.p0Content[this.randomNumber];
+        this.p1 = document.getElementById('simulationP1');
+        if ((this.randomNumber === 1 || this.randomNumber === 4 || this.randomNumber === 7) && this.decision0Made === true) { //All the questions that offers effective choice
+            this.p1.textContent = this.p1Content[this.randomNumber+1];
+        } else if ((this.randomNumber === 1 || this.randomNumber === 4 || this.randomNumber === 7) && this.decision1Made === true) { //All the questions that offers effective choice
+            this.p1.textContent = this.p1Content[this.randomNumber];
+        } else if ((this.randomNumber === 0 || this.randomNumber === 2) && (this.decision0Made === true || this.decision1Made === true)) {
+            this.p1.textContent = this.p1Content[0];
+        } else if ((this.randomNumber === 3 || this.randomNumber === 5) && (this.decision0Made === true || this.decision1Made === true)) {
+            this.p1.textContent = this.p1Content[3];
+        } else if ((this.randomNumber === 6 || this.randomNumber === 8) && (this.decision0Made === true || this.decision1Made === true)) {
+            this.p1.textContent = this.p1Content[6];
+        } else {
+            this.p1.textContent = "";
+        }
+        this.p2 = document.getElementById('simulationP2');
+        this.p2.textContent = `Your current personality/mental state is: ${this.p2Content[this.speechState]}`;
         //Button
-        this.button = document.getElementById('realityButton');
-        this.button.textContent = this.buttonText[0];
-        // }  else if (this.speechState === 1) {
-        //     this.button.textContent = this.buttonText[1]; 
-        //     this.button1.style.display = 'inline';
-        //     this.button1.textContent = this.buttonText[2];
+        this.button0 = document.getElementById('simulationP0Button'); //first choice of P1
+        this.button0.textContent = this.button0Text[this.randomNumber%this.button0Text.length];
+        this.button1 = document.getElementById('simulationP1Button'); //second choice of P1
+        this.button1.textContent = this.button1Text[this.randomNumber%this.button1Text.length];
+        this.buttonEnding = document.getElementById('simulationEndingButton'); //Next button
+        this.buttonEnding.textContent = this.buttonEndText;
     }
 }
         
   
-  export default Simulation;
+export default Simulation;

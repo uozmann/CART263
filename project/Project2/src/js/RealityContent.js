@@ -4,9 +4,9 @@ class Reality {
         this.container = undefined;
         this.title = undefined;
         this.titleContent = [`Early Childhood`, `Adolescence`, `Young Parenthood`, `Elderly Ages`];
-        this.titleColour = [`rgb(255, 191, 80)`, `rgb(184, 255, 98)`, `rgb(251, 0, 255)`, `rgb(0, 98, 255)`]
+        this.titleColour = [`rgb(255, 191, 80)`, `rgb(184, 255, 98)`, `rgb(251, 0, 255)`, `rgb(0, 98, 255)`];
         this.subtitle = undefined;
-        this.subtitleContent = [`Effects of parenting on children`, `Dynamics between grown-up children and parents`, `Effects of children in early Parenthood`, `Dynamics between grown-up children and parents`]
+        this.subtitleContent = [`Effects of parenting on children`, `Dynamics between grown-up children and parents`, `Effects of children in early Parenthood`, `Dynamics between grown-up children and parents`];
         this.p0 = undefined;
         this.p1 = undefined;
         this.p2 = undefined;
@@ -21,6 +21,7 @@ ISSN 0049-089X, https://doi.org/10.1016/j.ssresearch.2011.08.001.`];
         this.button = undefined;
         this.buttonText = [`Back`];
         this.ready = false;
+        this.finished = false;
         this.x = x;
         this.y = y;
     }

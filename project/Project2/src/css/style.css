@@ -19,7 +19,7 @@ canvas {
 button{
     background-color: #ffffff9d;
     color: rgb(0, 0, 0);
-    border: none;
+    border: 1px solid rgb(103, 103, 103);;
     padding: 15px 32px;
     margin-right: 1em;
     text-align: center;
@@ -66,6 +66,7 @@ article#version0Container img{
 article#version0Container article h2{
     font-family: 'Palette Mosaic', cursive;
     font-size: 28px;
+    margin: 0.5em 0;
 }
 
 article#version0Container article p{
@@ -220,9 +221,6 @@ article#realityContainer {
     position: absolute;
     background: rgba(240, 240, 240, 0.5);
     padding: 5em;
-    border: 0.2em solid rgb(255, 162, 0);
-    /* border: rgb(52, 7, 103);
-    border-width: 1em; */
 }
 
 article#realityContainer h2{
@@ -256,8 +254,30 @@ article#realityContainer figcaption{
 }
 
 article#simulationContainer {
+    background: rgba(255, 255, 255, 0.5);
     display: none;
     position: absolute;
-    background: rgba(255, 255, 255, 0.5);
+    padding: 5em;
+    max-width: 50vw;
+}
+
+article#simulationContainer h2{
+    padding: 1em 1em 0em 1em;
+    font-size: 48px;
+	font-family: 'Palette Mosaic', cursive;
+    text-align: right;
+}
+
+article#simulationContainer h3{
+    font-size: 28px;
+    font-family: 'Quicksand', sans-serif;
     padding-top: 1em;
+    margin: 1em 0;
+}
+
+article#simulationContainer p{
+    background: rgb(255, 255, 255);
+    font-size: 24px;
+    font-family: 'Quicksand', sans-serif;
+    padding: 1em;
 }

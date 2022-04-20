@@ -13,10 +13,7 @@ class Version0 {
         this.y = y;
         this.z = z; 
     }
-  
-    moveTo() {
 
-    }
      // display the clue button in colour
     display() {
         this.container = document.getElementById('version0Container');

@@ -1,3 +1,5 @@
+//This is the class object for the simulation mechanism. It contains everything for the simulation section
+
 import randomContent from "./simulationRandomContent.js";
 //The text for the simulation questions
 class Simulation {

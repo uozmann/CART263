@@ -1,4 +1,13 @@
-//https://threejs.org/docs/#manual/en/introduction/Installation
+//Project Name: A Lifetime in Circle
+//Author: Man Zou
+//Class: CART 263, DART 449
+
+//Description: A 3 dimentional website where visitors have the choice to naviguate the scenes and experience how parent-child relationship evolves across different life stages.
+
+//All 3D elements are modelled and animated by myself. The emojis come from coolsymbol.com. 
+//Three.js used for 3D elements, DOM used for text elements
+//Help and reference: professor Pippin Barr, computation lab (Sabine Rosenberg), three.js documentation
+
 "use strict"
 
 import * as THREE from '../../threeJS/src/Three.js';
@@ -209,6 +218,7 @@ const loadAsync = url => {
 	 })
 	})
 }
+//The below promise loading code comes from Sabine (computation lab)
 Promise.all([loadAsync('./assets/visuals/exteriorwalls.glb'), loadAsync('./assets/visuals/version0.glb'), loadAsync('./assets/visuals/scene1.glb'), loadAsync('./assets/visuals/scene2.glb'), loadAsync('./assets/visuals/scene3.glb'), loadAsync('./assets/visuals/scene4.glb'), loadAsync('./assets/visuals/diaries.glb')]).then(models => {
 	let blenderMixerIndex = 0;
 	for(let j =0; j<models.length; j++){
@@ -224,10 +234,11 @@ Promise.all([loadAsync('./assets/visuals/exteriorwalls.glb'), loadAsync('./asset
 	blenderModels[1].position.set(version0Settings.model.x,version0Settings.model.y,version0Settings.model.z);
 	blenderModels[1].rotateY( Math.PI/4);
 });
-// version0.model.rotateY(  Math.PI / 4 );
+
 //Preload GUI
 const loadingElem = document.querySelector('#loading');
 const progressBarElem = loadingElem.querySelector('.progressbar');
+//The below loading code is inspired from the library documentation code at https://threejs.org/docs/index.html#api/en/loaders/managers/DefaultLoadingManager
 loadManager.onProgress = (urlOfLastItemLoaded, itemsLoaded, itemsTotal) => {
 	const progress = itemsLoaded / itemsTotal;
 	progressBarElem.style.transform = `scaleX(${progress})`; //move the progress bar as items load
@@ -277,22 +288,25 @@ loadManager.onLoad = () => {
 function draw() {
 	render();
 	requestAnimationFrame( draw );
-	console.log(`Version0 speechstate: ${version0.text.speechState}; Reality speechstate: ${reality.text.speechState}; Simulation random number: ${simulation.text.randomNumber}`);
 }
-draw();
+draw(); //call draw again to make it continuous
 
 function render() {
+	//update tweening for Version 0
 	TWEEN.update();
 	renderer.render( scene, camera );
+	//texts to be displayed
 	triggerNarrative();
 	displayVersion0Text();
 	displayRealitySimulationText();
+	//To update gltf models animations
 	let delta = clock.getDelta();
   	for(let i=0; i<blenderMixer.length; i++){
     blenderMixer[i].update( delta );
   }
 }
 
+//Detect if Version 0 should say something
 function displayVersion0Text() {
 	if (player.ready === true) {
 		version0.text.display();
@@ -301,10 +315,11 @@ function displayVersion0Text() {
 	}
 }
 
+//Detect if the texts on reality or simulation should be displayed
 function displayRealitySimulationText() {
 	if (reality.text.ready === true) {
 		reality.text.display();
-		renderer.domElement.style.filter = `blur(10px)`;
+		renderer.domElement.style.filter = `blur(10px)`; //blur the 3d model scene
 	} else if (simulation.text.ready === true) {
 		simulation.text.display();
 		renderer.domElement.style.filter = `blur(10px)`;
@@ -317,12 +332,13 @@ function detectNarrative(x, y, z) {
 	return camera.position.distanceTo(placeB);
 }
 
+//Calculate is the player is close enough to the scene to trigger narratives
 function triggerNarrative() {
-	let dScene0 = detectNarrative(models.cube.position.x, models.cube.position.y, models.cube.position.z);
-	let dScene1 = detectNarrative(models.sphere.position.x, models.sphere.position.y, models.sphere.position.z);
-	let dScene2 = detectNarrative(models.cylinder.position.x, models.cylinder.position.y, models.cylinder.position.z);
-	let dScene3 = detectNarrative(models.torusKnot.position.x, models.torusKnot.position.y, models.torusKnot.position.z);
-	if ((dScene0 <= 7 || dScene1 <= 7 || dScene2 <= 7 || dScene3 <= 7) && player.manualVisited === false) {
+	let dScene0 = detectNarrative(models.cube.position.x, models.cube.position.y, models.cube.position.z); //childhood
+	let dScene1 = detectNarrative(models.sphere.position.x, models.sphere.position.y, models.sphere.position.z); //teenager
+	let dScene2 = detectNarrative(models.cylinder.position.x, models.cylinder.position.y, models.cylinder.position.z); //parenthood
+	let dScene3 = detectNarrative(models.torusKnot.position.x, models.torusKnot.position.y, models.torusKnot.position.z); //elderly
+	if ((dScene0 <= 7 || dScene1 <= 7 || dScene2 <= 7 || dScene3 <= 7) && player.manualVisited === false) { //trigger the second explanatory speech from Version 0
 		version0.text.speechState = 6;
 		player.ready = true;
 		player.version0ReadyToMove = true;
@@ -381,6 +397,7 @@ function moveVersion0(xpos=5, ypos=0, zpos=0, rpos=-Math.PI/2, time=2000) {
 	blenderModels[1].rotateY(rpos);
 }
 
+//Detect which scene the player should go next and move Version 0 to the target place
 function activateVersion0Guidance() {
 	if (version0.text.speechState === 1) { //go to childhood scene
 		moveVersion0(modelsParameters.cube.x, modelsParameters.cube.y, modelsParameters.cube.z, 0, 10000);
@@ -406,7 +423,7 @@ function onDocumentMouseMove( event ) {
 		raycaster.setFromCamera( mouse, camera );
 		const intersects = raycaster.intersectObjects( scene.children, true);
 		if ( intersects.length > 0 ) { //if there is at least one intersected object
-			//The following code comes from the three.js documentation at: https://github.com/mrdoob/three.js/blob/master/examples/webgl_camera_cinematic.html
+			//The following code structure comes from the three.js documentation at: https://github.com/mrdoob/three.js/blob/master/examples/webgl_camera_cinematic.html
 			if ( INTERSECTED != intersects[ 0 ].object ) { 
 				if ( INTERSECTED ) {INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );} //record the current colour
 				INTERSECTED = intersects[ 0 ].object; //assign it to the pointed object
@@ -430,7 +447,7 @@ function onDocumentMouseMove( event ) {
 		} else {
 			if ( INTERSECTED ) {INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );} //when not hovered anyore, set the colour back to the initial one
 			INTERSECTED = null;
-		}
+		} //End of the Three.js code documentation
 	}
 	//Move Version0 when new dialog boxes are triggered
 	if (player.version0ReadyToMove === true && player.version0FinishMove === false) {
@@ -441,6 +458,7 @@ function onDocumentMouseMove( event ) {
 	}
 }
 
+//Mainly to detect mouse click on 3d objects, which are part of the document body
 function onDocumentMouseClick(event) {
 	event.preventDefault();
 	//check if diary is clicked on
@@ -458,6 +476,8 @@ function onDocumentMouseClick(event) {
 	}
 }
 
+
+//Used to control the player's movement
 function onDocumentKeyDown(event) {
 	if (event.keyCode === 38 || event.keyCode === 87) { //if arrow up or "w" is pressed
 		// modelsParameters.cube.z += -0.5;
@@ -474,17 +494,20 @@ function onDocumentKeyDown(event) {
 	}
 }
 
+//Nothing yet, just in case
 function onDocumentKeyUp() {
-
 }
 
+//Resize the canvas as when resizes
 function onWindowResize() {
+	//move objects according to screen proportion
 	camera.aspect = window.innerWidth / window.innerHeight;
 	camera.updateProjectionMatrix();
-
+	//resize the canvas
 	renderer.setSize( window.innerWidth, window.innerHeight );
 }
 
+//When the first button on version 0's dialog box is clicked
 function onVersion0ButtonClick() {
 	player.ready = false;
 	player.version0ReadyToMove = false;
@@ -498,13 +521,14 @@ function onVersion0ButtonClick() {
 		player.manualVisited = true;
 		version0.text.speechState = 1;
 	} 
-	//Trigger simulation if the button is clicked
+	//Trigger simulation if the simulation button is clicked
 	if (version0.text.speechState >= 2 && player.manualVisited === true && simulation.text.finished === false) {
 		simulation.text.ready = true;
 	}
 	moveVersion0(blenderModels[1].position.x, 0, blenderModels[1].position.z, 0, 2000);
 }
 
+//When the second button on version 0's dialog box is clicked
 function onVersion0Button1Click() {
 	player.ready = false;
 	player.version0ReadyToMove = false;
@@ -514,6 +538,7 @@ function onVersion0Button1Click() {
 	moveVersion0(blenderModels[1].position.x, 0, blenderModels[1].position.z, 0, 2000);
 }
 
+//Instruction (rule) button
 function onMenuMouseClick(element) {
 	this.style.display = 'none';
 	document.getElementById('instructions').style.display = 'flex';
@@ -521,6 +546,7 @@ function onMenuMouseClick(element) {
 	document.getElementById('closeLogo').style.right = '0em';
 }
 
+//Close button for all 3 toolbar buttons
 function onMenuCloseMouseClick(element) {
 	this.style.display = 'none';
 	document.getElementById('instructions').style.display = 'none';
@@ -531,6 +557,7 @@ function onMenuCloseMouseClick(element) {
 	document.getElementById('aboutLogo').style.display = 'flex';
 }
 
+//Attribution button
 function onAttributionMouseClick(element) {
 	this.style.display = 'none';
 	document.getElementById('attributions').style.display = 'block';
@@ -538,6 +565,7 @@ function onAttributionMouseClick(element) {
 	document.getElementById('closeLogo').style.right = '4em';
 }
 
+//About button
 function onAboutMouseClick(element) {
 	this.style.display = 'none';
 	document.getElementById('about').style.display = 'flex';
@@ -545,6 +573,7 @@ function onAboutMouseClick(element) {
 	document.getElementById('closeLogo').style.right = '6em';
 }
 
+//Ending the reality button 
 function onRealityMouseClick() {
 	reality.text.ready = false;
 	reality.text.container.style.display = 'none';
@@ -553,14 +582,17 @@ function onRealityMouseClick() {
 	}
 }
 
+//Button on simulation page
 function onSimulationChoice0MouseClick() {
 	simulation.text.decision0Made = true;
 }
 
+//Same
 function onSimulationChoice1MouseClick() {
 	simulation.text.decision1Made = true;
 }
 
+//Close button for simulation page
 function onSimulationEndMouseClick() {
 	simulation.text.ready = false;
 	simulation.text.decision0Made = false;
@@ -570,6 +602,8 @@ function onSimulationEndMouseClick() {
 		simulation.text.finished = true;
 	}
 }
+
+//general commands
 document.addEventListener( 'mousemove', onDocumentMouseMove );
 document.addEventListener( 'click', onDocumentMouseClick );
 document.addEventListener( 'keydown', onDocumentKeyDown);
@@ -588,5 +622,3 @@ document.getElementById('simulationP1Button').addEventListener('click', onSimula
 document.getElementById('simulationEndingButton').addEventListener('click', onSimulationEndMouseClick);
 //END OF EVENT HANDLERS SECTION
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// export default main;

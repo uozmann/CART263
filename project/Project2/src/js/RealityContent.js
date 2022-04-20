@@ -1,4 +1,4 @@
-//The text explaining challenges and issues to deal with each state
+//The text explaining challenges and issues to deal with each life state
 class Reality {
     constructor(x, y) {
         this.container = undefined;
@@ -26,9 +26,6 @@ ISSN 0049-089X, https://doi.org/10.1016/j.ssresearch.2011.08.001.`];
         this.y = y;
     }
   
-    moveTo() {
-
-    }
      // display the clue button in colour
     display() {
        //Container
@@ -56,10 +53,6 @@ ISSN 0049-089X, https://doi.org/10.1016/j.ssresearch.2011.08.001.`];
         //Button
         this.button = document.getElementById('realityButton');
         this.button.textContent = this.buttonText[0];
-        // }  else if (this.speechState === 1) {
-        //     this.button.textContent = this.buttonText[1]; 
-        //     this.button1.style.display = 'inline';
-        //     this.button1.textContent = this.buttonText[2];
     }
 }
         

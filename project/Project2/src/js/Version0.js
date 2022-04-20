@@ -38,15 +38,6 @@ class Version0 {
             this.button1.textContent = this.buttonText[2];
         }
     }
-
-    // detectClick() {
-    //     this.button.addEventListener('click', (element) => {
-    //         console.log("CLICKED");
-    //         this.container.style.display = 'none';
-    //         this.speechState = 2;
-    //         this.ready = false;
-    //     }); 
-    // }
 }
         
   

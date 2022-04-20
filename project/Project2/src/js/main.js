@@ -327,28 +327,28 @@ function triggerNarrative() {
 		player.ready = true;
 		player.version0ReadyToMove = true;
 		controls.unlock();
-	} else if (dScene0 <= 10 && player.manualVisited === true && player.diaryClicked === true && version0.text.speechState !== 2) {
+	} else if (dScene0 <= 10 && player.manualVisited === true && player.diaryClicked === true) {
 		version0.text.speechState = 1;
 		reality.text.speechState = 0;
 		simulation.text.speechState = 0;
 		player.ready = true;
 		player.version0ReadyToMove = true;
 		controls.unlock();
-	} else if (dScene1 <= 10 && player.manualVisited === true && player.diaryClicked === true && version0.text.speechState !== 3) {
+	} else if (dScene1 <= 10 && player.manualVisited === true && player.diaryClicked === true) {
 		version0.text.speechState = 2;
 		reality.text.speechState = 1;
 		simulation.text.speechState = 1;
 		player.ready = true;
 		player.version0ReadyToMove = true;
 		controls.unlock();
-	} else if (dScene2 <= 10 && player.manualVisited === true && player.diaryClicked === true && version0.text.speechState !== 4) {
+	} else if (dScene2 <= 10 && player.manualVisited === true && player.diaryClicked === true) {
 		version0.text.speechState = 3;
 		reality.text.speechState = 2;
 		simulation.text.speechState = 2;
 		player.ready = true;
 		player.version0ReadyToMove = true;
 		controls.unlock();
-	} else if (dScene3 <= 10 && player.manualVisited === true && player.diaryClicked === true && version0.text.speechState !== 5) {
+	} else if (dScene3 <= 10 && player.manualVisited === true && player.diaryClicked === true) {
 		version0.text.speechState = 4;
 		reality.text.speechState = 3;
 		simulation.text.speechState = 3;
@@ -364,13 +364,13 @@ function triggerNarrative() {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //EVENT HANDLERS SECTION
 //Tweenning for Version0
-function moveVersion0(xpos=5, ypos=0, zpos=0, rpos=-Math.PI/2) {
+function moveVersion0(xpos=5, ypos=0, zpos=0, rpos=-Math.PI/2, time=2000) {
 	//Update target position if needs to be changed
 	version0Settings.modelTweenTo.x = xpos;
 	version0Settings.modelTweenTo.y = ypos;
 	version0Settings.modelTweenTo.z = zpos;
 	//Change the position of the version0 model
-	version0Tweening.to(version0Settings.modelTweenTo, 2000);
+	version0Tweening.to(version0Settings.modelTweenTo, time);
 	version0Tweening.onUpdate(function(){
 		blenderModels[1].position.set(version0Settings.model.x, version0Settings.model.y, version0Settings.model.z); 
 	});
@@ -383,13 +383,13 @@ function moveVersion0(xpos=5, ypos=0, zpos=0, rpos=-Math.PI/2) {
 
 function activateVersion0Guidance() {
 	if (version0.text.speechState === 1) { //go to childhood scene
-		moveVersion0(modelsParameters.cube.x, modelsParameters.cube.y, modelsParameters.cube.z, 0);
+		moveVersion0(modelsParameters.cube.x, modelsParameters.cube.y, modelsParameters.cube.z, 0, 10000);
 	} else if (version0.text.speechState === 2) { //go to teenage scene
-		moveVersion0(modelsParameters.sphere.x, 0, modelsParameters.sphere.z +5, 0);
+		moveVersion0(modelsParameters.sphere.x, 0, modelsParameters.sphere.z +5, 0, 10000);
 	} else if (version0.text.speechState === 3) { //go to young parent scene
-		moveVersion0(modelsParameters.cylinder.x, 0, modelsParameters.cylinder.z +5, Math.PI*3/4);
+		moveVersion0(modelsParameters.cylinder.x, 0, modelsParameters.cylinder.z +5, Math.PI, 10000);
 	} else if (version0.text.speechState === 4) { //go to elderly scene
-		moveVersion0(modelsParameters.torusKnot.x, 0, modelsParameters.torusKnot.z - 5, 0);
+		moveVersion0(modelsParameters.torusKnot.x, 0, modelsParameters.torusKnot.z - 5, 0, 10000);
 	} else if (version0.text.speechState === 5) {
 		player.ready = true;
 		controls.unlock();
@@ -434,7 +434,7 @@ function onDocumentMouseMove( event ) {
 	}
 	//Move Version0 when new dialog boxes are triggered
 	if (player.version0ReadyToMove === true && player.version0FinishMove === false) {
-		moveVersion0(blenderModels[1].position.x, -1, blenderModels[1].position.z, 0);
+		moveVersion0(blenderModels[1].position.x, -1, blenderModels[1].position.z, 0, 2000);
 		player.version0FinishMove = true; //need this to stop the tweening from repeating due to mouse moves
 	} else if (player.version0ReadyToMove === false && player.version0FinishMove === true) {
 		player.version0FinishMove = false; //reset boolean to allow new tweening
@@ -502,7 +502,7 @@ function onVersion0ButtonClick() {
 	if (version0.text.speechState >= 2 && player.manualVisited === true && simulation.text.finished === false) {
 		simulation.text.ready = true;
 	}
-	moveVersion0(blenderModels[1].position.x, 0, blenderModels[1].position.z, 0);
+	moveVersion0(blenderModels[1].position.x, 0, blenderModels[1].position.z, 0, 2000);
 }
 
 function onVersion0Button1Click() {
@@ -511,7 +511,7 @@ function onVersion0Button1Click() {
 	version0.text.container.style.display = 'none';
 	reality.text.ready = true;
 	version0.text.speechState +=1;
-	moveVersion0(blenderModels[1].position.x, 0, blenderModels[1].position.z, 0);
+	moveVersion0(blenderModels[1].position.x, 0, blenderModels[1].position.z, 0, 2000);
 }
 
 function onMenuMouseClick(element) {
